@@ -1,71 +1,71 @@
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Router } from "./types";
-import { Fragment, lazy, Suspense } from "react";
+import {
+  HashRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import { Fragment, lazy, Suspense, useEffect } from "react";
+import { LayoutProps, nestedRoute } from "types/router";
+import { router } from "./router";
+import path from "path";
 
-const router: Router[] = [
-  {
-    path: "auth",
-    componentPath: "layouts/AuthLayout",
-    auth: false,
-    children: [
-      {
-        path: "login",
-        componentPath: "pages/Login",
-        auth: false,
-      },
-      {
-        path: "register",
-        componentPath: "pages/Register",
-        auth: false,
-      },
-      {
-        path: "password",
-        componentPath: "pages/Password",
-        auth: false,
-        children: [
-          {
-            path: "change",
-            componentPath: "pages/Password/Change",
-            auth: false,
-          },
-          {
-            path: "recover",
-            componentPath: "pages/Password/Recover",
-            auth: false,
-            children: [
-              {
-                path: "forget",
-                componentPath: "pages/Password/Recover/Forget",
-                auth: false,
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
+const Layout = ({ component, redirect = "", path }: LayoutProps) => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
-const nestedRoutes = ({
+  useEffect(() => {
+    if (redirect.length > 0 && pathname === path) return navigate(redirect);
+  }, [pathname]);
+
+  return component;
+};
+
+const nestedRoutes: nestedRoute = ({
   path,
   auth = false,
   children = [],
-  componentPath,
-}: Router): any => {
-  const PageComponent = lazy(() => import(`../${componentPath}`));
+  componentPath = "",
+  redirect = "",
+}) => {
+  if (redirect.length > 0 && componentPath.length === 0)
+    return <Route path={path} element={<Navigate to={redirect} replace />} />;
+
+  const PageComponent = lazy(
+    () => import(/* webpackChunkName: "[request]" */ `../${componentPath}`)
+  );
 
   if (children.length > 0) {
     return (
-      <Route path={path} element={<PageComponent />}>
+      <Route
+        path={path}
+        element={
+          <Layout
+            component={<PageComponent />}
+            redirect={redirect}
+            path={path}
+          />
+        }
+      >
         {children.map((route) => {
           if (route.children && route.children.length > 0) {
             return <Fragment key={route.path}>{nestedRoutes(route)}</Fragment>;
           }
 
-          const Component = lazy(() => import(`../${route.componentPath}`));
+          const ChildComponent = lazy(
+            () =>
+              import(
+                /* webpackChunkName: "[request]" */ `../${route.componentPath}`
+              )
+          );
 
           return (
-            <Route path={route.path} key={route.path} element={<Component />} />
+            <Route
+              path={route.path}
+              key={route.path}
+              element={<ChildComponent />}
+            />
           );
         })}
       </Route>
@@ -80,11 +80,9 @@ const App = () => {
     <Suspense fallback={<div>Loading...</div>}>
       <HashRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/auth/login" replace />} />
           {router.map((route) => {
             return <Fragment key={route.path}>{nestedRoutes(route)}</Fragment>;
           })}
-          <Route path="*" element={<div>Page Not Found</div>} />
         </Routes>
       </HashRouter>
     </Suspense>

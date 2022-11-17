@@ -1,12 +1,12 @@
 import { Outlet } from "react-router-dom";
 
-const Password = () => {
+const FormLayout = () => {
   return (
     <div>
-      <h2>Password</h2>
+      <h2>Form Layout</h2>
       <Outlet />
     </div>
   );
 };
 
-export default Password;
+export default FormLayout;
