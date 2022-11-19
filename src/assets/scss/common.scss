@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+}
+
+html {
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+body,
+#root {
+  height: inherit;
+}

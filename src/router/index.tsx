@@ -7,7 +7,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { Fragment, lazy, Suspense, useEffect } from "react";
-import { LayoutProps, nestedRoute } from "types/router";
+import { LayoutProps, nestedRoute } from "types/Router";
 import { router } from "./router";
 import path from "path";
 

@@ -1,9 +1,10 @@
-import { Router } from "types/router";
+import { Router } from "types/Router";
 
 export const router: Router[] = [
   {
     path: "/",
-    redirect: "/auth/login",
+    // redirect: "/auth/login",
+    redirect: "/123/edit",
   },
   {
     path: "/auth",

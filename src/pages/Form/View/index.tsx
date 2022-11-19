@@ -1,8 +1,8 @@
-import { useParams } from "react-router-dom";
-import { FormParams } from "types/form";
+import { useOutletContext } from "react-router-dom";
+import { FormDetail } from "types/Form";
 
 const ViewForm = () => {
-  const { formId } = useParams<FormParams>();
+  const { theme } = useOutletContext<FormDetail>();
   return (
     <div>
       <h2>ViewForm</h2>

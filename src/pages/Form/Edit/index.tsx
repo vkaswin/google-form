@@ -1,8 +1,6 @@
-import { useParams } from "react-router-dom";
-import { FormParams } from "types/form";
+import { ChangeEvent } from "react";
 
 const EditForm = () => {
-  const { formId } = useParams<FormParams>();
   return (
     <div>
       <h2>EditForm</h2>
