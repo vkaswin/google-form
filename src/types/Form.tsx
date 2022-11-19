@@ -6,7 +6,7 @@ export type FormDetail = {
 };
 
 export type Rules = {
-  required: boolean;
+  required?: boolean;
   pattern?: RegExp;
   minLength?: number;
   maxLength?: number;
@@ -36,11 +36,12 @@ export type Options = {
 };
 
 export type Field = {
-  label: string;
-  value: string;
-  type: Type;
-  validation: {
-    rules: Rules;
+  label?: string;
+  value?: string;
+  type?: Type;
+  description?: string;
+  validation?: {
+    rules?: Rules;
     errorText?: ErrorText;
   };
   options?: Options[];
