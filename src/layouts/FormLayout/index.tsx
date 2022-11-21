@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { FormParams, FormDetail } from "types/Form";
 import { FormHeader } from "./Header";
+import { useAuth } from "hooks/useAuth";
 
 import styles from "./FormLayout.module.scss";
 
 const FormLayout = () => {
   const { formId } = useParams<FormParams>();
+
+  const { user } = useAuth();
 
   let [formDetail, setFormDetail] = useState<FormDetail>({
     theme: "dark",
