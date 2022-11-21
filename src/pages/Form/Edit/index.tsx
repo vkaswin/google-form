@@ -1,10 +1,12 @@
-import { ChangeEvent } from "react";
+import { Fragment } from "react";
+
+import styles from "./Edit.module.scss";
 
 const EditForm = () => {
   return (
-    <div>
-      <h2>EditForm</h2>
-    </div>
+    <Fragment>
+      <span>Form</span>
+    </Fragment>
   );
 };
 

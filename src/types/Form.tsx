@@ -37,7 +37,7 @@ export type Options = {
 
 export type Field = {
   label?: string;
-  value?: string;
+  value?: string | string[];
   type?: Type;
   description?: string;
   validation?: {

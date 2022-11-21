@@ -1,7 +1,10 @@
 import React from "react";
-import { DropDownProps } from "types/DropDown";
 
 import styles from "./DropDown.module.scss";
+
+type DropDownProps = {
+  onChange?: () => void;
+};
 
 export const DropDown = ({ onChange = () => {} }: DropDownProps) => {
   return (

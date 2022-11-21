@@ -1,7 +1,10 @@
 import { ChangeEvent } from "react";
-import { TextEditorProps } from "types/TextEditor";
 
 import styles from "./TextEditor.module.scss";
+
+type TextEditorProps = {
+  onChange?: () => void;
+};
 
 export const TextEditor = ({ onChange = () => {} }: TextEditorProps) => {
   return (

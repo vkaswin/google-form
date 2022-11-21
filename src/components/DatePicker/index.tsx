@@ -1,7 +1,10 @@
 import React from "react";
-import { DatePickerProps } from "types/DatePicker";
 
 import styles from "./DatePicker.module.scss";
+
+type DatePickerProps = {
+  onChange?: () => void;
+};
 
 export const DatePicker = ({ onChange = () => {} }: DatePickerProps) => {
   return (

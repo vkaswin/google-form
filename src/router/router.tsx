@@ -4,7 +4,7 @@ export const router: Router[] = [
   {
     path: "/",
     // redirect: "/auth/login",
-    redirect: "/123/edit",
+    redirect: "/form/123/edit",
   },
   {
     path: "/auth",
@@ -36,7 +36,6 @@ export const router: Router[] = [
       {
         path: ":formId/edit",
         componentPath: "pages/Form/Edit",
-        auth: true,
       },
       {
         path: ":formId/view",

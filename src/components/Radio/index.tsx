@@ -1,7 +1,10 @@
 import React from "react";
-import { RadioProps } from "types/Radio";
 
 import styles from "./Radio.module.scss";
+
+type RadioProps = {
+  onChange?: () => void;
+};
 
 export const Radio = ({ onChange = () => {} }: RadioProps) => {
   return (
