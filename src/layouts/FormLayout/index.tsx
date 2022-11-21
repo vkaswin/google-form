@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { FormParams, FormDetail } from "types/Form";
-import { FormHeader } from "components";
+import { FormHeader } from "./Header";
 
 import styles from "./FormLayout.module.scss";
 

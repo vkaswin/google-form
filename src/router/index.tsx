@@ -9,7 +9,7 @@ import {
 import { Fragment, lazy, Suspense, useEffect } from "react";
 import { LayoutProps, nestedRoute } from "types/Router";
 import { router } from "./router";
-import path from "path";
+import { AuthProvider } from "hooks/useAuth";
 
 const Layout = ({ component, redirect = "", path }: LayoutProps) => {
   const navigate = useNavigate();
@@ -79,11 +79,15 @@ const App = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <HashRouter>
-        <Routes>
-          {router.map((route) => {
-            return <Fragment key={route.path}>{nestedRoutes(route)}</Fragment>;
-          })}
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            {router.map((route) => {
+              return (
+                <Fragment key={route.path}>{nestedRoutes(route)}</Fragment>
+              );
+            })}
+          </Routes>
+        </AuthProvider>
       </HashRouter>
     </Suspense>
   );
