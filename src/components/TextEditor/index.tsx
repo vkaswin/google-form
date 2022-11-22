@@ -1,32 +1,41 @@
-import { ChangeEvent, FocusEvent, ElementType, useRef } from "react";
+import {
+  ChangeEvent,
+  FocusEvent,
+  ElementType,
+  useRef,
+  ComponentPropsWithoutRef,
+} from "react";
 
 import styles from "./TextEditor.module.scss";
 
-type TextEditorProps = {
-  onChange?: (event: ChangeEvent<HTMLDivElement>) => void;
-  defaultValue?: string;
-  as?: ElementType;
-};
+type TextEditorProps<T extends ElementType> = {
+  as?: T;
+} & ComponentPropsWithoutRef<T>;
 
-export const TextEditor = ({
-  onChange = () => {},
+export const TextEditor = <T extends ElementType>({
+  as,
+  onFocus,
+  onBlur,
   defaultValue = "",
-  as = "div",
-  ...rest
-}: TextEditorProps) => {
+  placeholder = "Enter Here",
+  ...props
+}: TextEditorProps<T>) => {
+  let Component = as || "div";
   let editorRef = useRef<HTMLDivElement>(null);
   let toolBarRef = useRef<HTMLUListElement>(null);
-  let Component = as;
+
   const handleFocus = (event: FocusEvent<HTMLDivElement>): void => {
     editorRef.current?.classList.remove(styles.blur);
     editorRef.current?.classList.add(styles.focus);
     toolBarRef.current?.classList.add(styles.show);
+    if (typeof onFocus === "function") onFocus(event);
   };
 
   const handleBlur = (event: FocusEvent<HTMLDivElement>): void => {
     editorRef.current?.classList.remove(styles.focus);
     editorRef.current?.classList.add(styles.blur);
     toolBarRef.current?.classList.remove(styles.show);
+    if (typeof onBlur === "function") onBlur(event);
   };
 
   return (
@@ -35,11 +44,11 @@ export const TextEditor = ({
         ref={editorRef}
         className={styles.editor}
         contentEditable={true}
-        onInput={onChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        placeholder="Enter Here"
+        placeholder={placeholder}
         dangerouslySetInnerHTML={{ __html: defaultValue }}
+        {...props}
       />
       <ul ref={toolBarRef} className={styles.toolbar}>
         <li>

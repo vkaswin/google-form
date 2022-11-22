@@ -1,7 +1,5 @@
-import React, { ChangeEvent } from "react";
-import { TextEditor } from "components/TextEditor";
-
-import styles from "./FormHeader.module.scss";
+import { ChangeEvent } from "react";
+import { TextEditor, Box } from "components";
 
 export type FormHeaderProps = {
   disable?: boolean;
@@ -13,9 +11,13 @@ export const FormHeader = ({ disable = false }: FormHeaderProps) => {
   };
 
   return (
-    <div className={styles.container}>
-      <h2>Form</h2>
-      <TextEditor onChange={handleChange} />
-    </div>
+    <Box isHeader={true} isSelected={true}>
+      <TextEditor as="h1" placeholder="Form Title" onInput={handleChange} />
+      <TextEditor
+        as="div"
+        placeholder="Form Description"
+        onInput={handleChange}
+      />
+    </Box>
   );
 };
