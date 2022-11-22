@@ -1,0 +1,90 @@
+.container {
+  .toolbar {
+    display: flex;
+    gap: 7px;
+    padding: 0px;
+    margin: 5px 0px 0px 0px;
+    height: 0px;
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    &:is(.show) {
+      height: 25px;
+    }
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      list-style: none;
+      color: #606368;
+      width: 25px;
+      height: 25px;
+      border-radius: 4px;
+      cursor: pointer;
+      i {
+        color: inherit;
+        font-size: 20px;
+      }
+      &:hover {
+        color: #202020;
+      }
+    }
+  }
+  .editor {
+    position: relative;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #80868b;
+    padding: 10px 15px;
+    min-height: 46px;
+    color: var(--text-color);
+    outline: none;
+    font-weight: normal;
+    &:empty::before {
+      content: attr(placeholder);
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      color: #606368;
+    }
+    &:hover {
+      background-color: #f1f3f4;
+    }
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 0px;
+      background-color: var(--primary-color);
+      height: 2px;
+      width: 100%;
+      opacity: 0;
+    }
+    &:is(.focus)::after {
+      animation: showLine 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    &:is(.blur)::after {
+      animation: hideLine 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+  }
+}
+
+@keyframes showLine {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes hideLine {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}

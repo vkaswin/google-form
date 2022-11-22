@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { FormParams, FormDetail } from "types/Form";
-import { FormHeader } from "./Header";
+import { FormHeader } from "./FormHeader";
 import { useAuth } from "hooks/useAuth";
 
 import styles from "./FormLayout.module.scss";
@@ -47,7 +47,6 @@ const FormLayout = () => {
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
-        <h2>Form Layout</h2>
         <FormHeader />
         <Outlet context={formDetail} />
       </div>
