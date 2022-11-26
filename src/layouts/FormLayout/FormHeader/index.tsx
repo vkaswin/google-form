@@ -2,22 +2,28 @@ import { ChangeEvent } from "react";
 import { TextEditor, Box } from "components";
 
 export type FormHeaderProps = {
-  disable?: boolean;
+  selectedId: string | null;
+  handleClickForm: (id: string) => void;
 };
 
-export const FormHeader = ({ disable = false }: FormHeaderProps) => {
+let headerId: string = crypto.randomUUID();
+
+export const FormHeader = ({
+  selectedId,
+  handleClickForm,
+}: FormHeaderProps) => {
   const handleChange = (event: ChangeEvent<HTMLDivElement>) => {
     console.log(event);
   };
 
   return (
-    <Box isHeader={true} isSelected={true}>
-      <TextEditor as="h1" placeholder="Form Title" onInput={handleChange} />
-      <TextEditor
-        as="div"
-        placeholder="Form Description"
-        onInput={handleChange}
-      />
+    <Box
+      isHeader={true}
+      isSelected={selectedId === headerId}
+      onClick={() => handleClickForm(headerId)}
+    >
+      <TextEditor as="h1" placeholder="Form title" onInput={handleChange} />
+      <TextEditor placeholder="Form description" onInput={handleChange} />
     </Box>
   );
 };

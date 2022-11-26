@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, ReactNode } from "react";
+import { ComponentProps, ReactNode } from "react";
 
 import styles from "./Box.module.scss";
 
@@ -6,18 +6,19 @@ type BoxProps = {
   isSelected?: boolean;
   isHeader?: boolean;
   children: ReactNode;
-} & ComponentPropsWithoutRef<"div">;
+} & ComponentProps<"div">;
 
 export const Box = ({
   children,
   isHeader = false,
   isSelected = false,
+  className,
   ...props
 }: BoxProps) => {
   return (
     <div
       {...(isHeader && { "aria-label": "header" })}
-      className={styles.container}
+      className={`${styles.container} ${className || ""}`.trim()}
       {...props}
     >
       {!isHeader && (

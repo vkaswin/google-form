@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 type CookieSetter<T> = {
   name: string;
   value: T;
@@ -28,4 +30,29 @@ export const cookies = () => {
     get,
     remove,
   };
+};
+
+export const clickOutside = ({
+  ref,
+  onClose,
+  doNotClose = () => false,
+}: {
+  ref: HTMLElement;
+  onClose: () => void;
+  doNotClose: (element: HTMLElement) => boolean;
+}) => {
+  if (!ref) return;
+
+  const handleClickOutside = (event: MouseEvent) => {
+    let { target } = event;
+    if (
+      ref.contains(target as HTMLElement) ||
+      doNotClose(target as HTMLElement)
+    )
+      return;
+    onClose();
+    document.removeEventListener("click", handleClickOutside);
+  };
+
+  document.addEventListener("click", handleClickOutside);
 };

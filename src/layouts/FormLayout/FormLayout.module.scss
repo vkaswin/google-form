@@ -2,6 +2,9 @@
   height: 100%;
   background-color: #f0ebf8;
   .wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
     max-width: 768px;
     margin: 0px auto;
     padding: 15px 0px;

@@ -1,26 +1,22 @@
-import {
-  ChangeEvent,
-  FocusEvent,
-  ElementType,
-  useRef,
-  ComponentPropsWithoutRef,
-} from "react";
+import { FocusEvent, ElementType, useRef, ComponentProps } from "react";
 
 import styles from "./TextEditor.module.scss";
 
-type TextEditorProps<T extends ElementType> = {
-  as?: T;
-} & ComponentPropsWithoutRef<T>;
+type TextEditorOwnProps<E extends ElementType> = {
+  as?: E;
+};
 
-export const TextEditor = <T extends ElementType>({
+export type TextEditorProps<E extends ElementType> = TextEditorOwnProps<E> &
+  Omit<ComponentProps<E>, keyof TextEditorOwnProps<E>>;
+
+export const TextEditor = <E extends ElementType = "div">({
   as,
   onFocus,
   onBlur,
   defaultValue = "",
   placeholder = "Enter Here",
   ...props
-}: TextEditorProps<T>) => {
-  let Component = as || "div";
+}: TextEditorProps<E>) => {
   let editorRef = useRef<HTMLDivElement>(null);
   let toolBarRef = useRef<HTMLUListElement>(null);
 
@@ -38,6 +34,7 @@ export const TextEditor = <T extends ElementType>({
     if (typeof onBlur === "function") onBlur(event);
   };
 
+  const Component = as || "div";
   return (
     <div className={styles.container}>
       <Component

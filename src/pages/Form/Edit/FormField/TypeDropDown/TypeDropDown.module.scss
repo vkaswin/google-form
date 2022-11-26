@@ -1,0 +1,25 @@
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  padding: 10px 15px;
+  max-width: 250px;
+  width: 100%;
+  color: #202124;
+  cursor: pointer;
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: inherit;
+    i {
+      font-size: 20px;
+    }
+  }
+  i {
+    color: inherit;
+    font-size: 12px;
+  }
+}

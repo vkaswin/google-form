@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   let [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    getUser();
+    // getUser();
   }, []);
 
   const getUser = (): void => {

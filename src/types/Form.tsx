@@ -5,6 +5,13 @@ export type FormDetail = {
   fields: Field[];
 };
 
+export type FormContextType = {
+  selectedId: string | null;
+  handleSelectType: (type: FormType) => void;
+  handleClickForm: (id: string) => void;
+  formDetail: FormDetail;
+};
+
 export type Rules = {
   required?: boolean;
   pattern?: RegExp;
@@ -21,7 +28,7 @@ export type ErrorText = {
   validate?: string;
 };
 
-export type Type =
+export type FormType =
   | "checkbox"
   | "dropdown"
   | "radio"
@@ -30,15 +37,22 @@ export type Type =
   | "date"
   | "file";
 
+export type FormOption = {
+  label: string;
+  icon: string;
+  type: FormType;
+};
+
 export type Options = {
   label: string;
   value: string;
 };
 
 export type Field = {
+  id: string;
   label?: string;
   value?: string | string[];
-  type?: Type;
+  type: FormType;
   description?: string;
   validation?: {
     rules?: Rules;
