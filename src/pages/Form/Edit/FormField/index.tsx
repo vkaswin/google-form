@@ -1,6 +1,6 @@
-import { useMemo } from "react";
-import { Options } from "./TypeDropDown";
-import { FormOption, Field, FormType } from "types/Form";
+import { ReactNode, useMemo } from "react";
+import { TypeDropDown } from "./TypeDropDown";
+import { FormOption, Field, FormType, FormContextType } from "types/Form";
 import { TextEditor, Box } from "components";
 
 import styles from "./FormField.module.scss";
@@ -8,8 +8,8 @@ import styles from "./FormField.module.scss";
 type FormFieldProps = {
   selectedId: string | null;
   handleClickForm: (id: string) => void;
-  handleSelectType: (type: FormType) => void;
-} & Field;
+} & Pick<FormContextType, "handleChange"> &
+  Field;
 
 let formOptions: FormOption[] = [
   { type: "input", icon: "bx-text", label: "Short answer" },
@@ -25,6 +25,62 @@ let formOptions: FormOption[] = [
   { type: "file", icon: "bx-cloud-upload", label: "File Upload" },
 ];
 
+const CheckBox = () => {
+  return (
+    <div>
+      <span>Checkbox</span>
+    </div>
+  );
+};
+
+const Radio = () => {
+  return (
+    <div>
+      <span>Radio</span>
+    </div>
+  );
+};
+
+const Paragraph = () => {
+  return (
+    <div>
+      <span>Paragraph</span>
+    </div>
+  );
+};
+
+const ShortText = () => {
+  return (
+    <div>
+      <span>Text</span>
+    </div>
+  );
+};
+
+const Date = () => {
+  return (
+    <div>
+      <span>Date</span>
+    </div>
+  );
+};
+
+const File = () => {
+  return (
+    <div>
+      <span>File</span>
+    </div>
+  );
+};
+
+const DropDown = () => {
+  return (
+    <div>
+      <span>DropDown</span>
+    </div>
+  );
+};
+
 export const FormField = ({
   id,
   type,
@@ -35,12 +91,33 @@ export const FormField = ({
   value,
   selectedId,
   handleClickForm,
-  handleSelectType,
+  handleChange,
 }: FormFieldProps) => {
-  let selectedOption = useMemo(() => {
+  let selectedOption = useMemo<FormOption | undefined>(() => {
     return formOptions.find((option) => {
       return option.type === type;
-    }) as FormOption;
+    });
+  }, [type]);
+
+  let component = useMemo<ReactNode>(() => {
+    switch (type) {
+      case "checkbox":
+        return <CheckBox />;
+      case "date":
+        return <Date />;
+      case "dropdown":
+        return <DropDown />;
+      case "file":
+        return <File />;
+      case "input":
+        return <ShortText />;
+      case "radio":
+        return <Radio />;
+      case "textarea":
+        return <Paragraph />;
+      default:
+        return null;
+    }
   }, [type]);
 
   return (
@@ -52,19 +129,16 @@ export const FormField = ({
       <div className={styles.wrapper}>
         <TextEditor as="div" placeholder="Question" />
         {selectedId === id && (
-          <Options
+          <TypeDropDown
             id={id}
             type={type}
-            handleSelectType={handleSelectType}
+            handleChange={handleChange}
             options={formOptions}
             selectedOption={selectedOption}
           />
         )}
       </div>
-      <div className={styles.short_para}></div>
-      <div className={styles.long_para}></div>
-      <div className={styles.date}></div>
-      <div className={styles.options}></div>
+      {component}
     </Box>
   );
 };

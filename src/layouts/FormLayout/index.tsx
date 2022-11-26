@@ -4,8 +4,8 @@ import {
   FormParams,
   FormDetail,
   FormContextType,
-  FormOption,
   FormType,
+  Field,
 } from "types/Form";
 import { FormHeader } from "./FormHeader";
 import { useAuth } from "hooks/useAuth";
@@ -50,8 +50,35 @@ const FormLayout = () => {
     setSelectedId(id);
   };
 
-  const handleSelectType = (type: FormType) => {
-    console.log(type);
+  type Keys = keyof Field;
+
+  const handleChange = (
+    key: Exclude<keyof Field, "id" | "validation">,
+    id: string,
+    type: FormType
+  ): void => {
+    let form = { ...formDetail };
+
+    switch (key) {
+      case "description":
+        break;
+      case "label":
+        break;
+      case "options":
+        break;
+      case "type":
+        let field = form.fields.find((field) => {
+          return field.id === id;
+        });
+        if (!field) return;
+        field.type = type;
+        break;
+      case "value":
+        break;
+      default:
+        return;
+    }
+    setFormDetail(form);
   };
 
   useEffect(() => {
@@ -66,7 +93,7 @@ const FormLayout = () => {
     formDetail,
     selectedId,
     handleClickForm,
-    handleSelectType,
+    handleChange,
   };
 
   return (

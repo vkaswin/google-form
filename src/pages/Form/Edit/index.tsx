@@ -11,7 +11,7 @@ const EditForm = () => {
     formDetail: { theme, fields },
     selectedId,
     handleClickForm,
-    handleSelectType,
+    handleChange,
   } = useOutletContext<FormContextType>();
 
   return (
@@ -22,7 +22,7 @@ const EditForm = () => {
             key={field.id}
             selectedId={selectedId}
             handleClickForm={handleClickForm}
-            handleSelectType={handleSelectType}
+            handleChange={handleChange}
             {...field}
           />
         );
