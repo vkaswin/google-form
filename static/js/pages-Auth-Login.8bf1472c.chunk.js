@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkreact_google_form=self.webpackChunkreact_google_form||[]).push([[899],{5622:function(e,n,r){r.r(n);var t=r(7689),c=r(184);n.default=function(){var e=(0,t.s0)();return(0,c.jsxs)("div",{children:[(0,c.jsx)("h2",{children:"Login"}),(0,c.jsx)("button",{onClick:function(){return e("/auth")},children:"Navigate"})]})}}}]);
+//# sourceMappingURL=pages-Auth-Login.8bf1472c.chunk.js.map

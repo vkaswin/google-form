@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkreact_google_form=self.webpackChunkreact_google_form||[]).push([[7397],{3898:function(e,r,s){s.r(r);var c=s(7689),o=s(184);r.default=function(){return(0,o.jsxs)("div",{children:[(0,o.jsx)("h2",{children:"RecoverPassword"}),(0,o.jsx)(c.j3,{})]})}}}]);
+//# sourceMappingURL=pages-Auth-RecoverPassword.52dd98eb.chunk.js.map

@@ -1,0 +1,1 @@
+{"version":3,"file":"static/js/pages-Auth-Register.82e5e9ca.chunk.js","mappings":"gJAQA,UARiB,WACf,OACE,0BACE,sCAGN,C","sources":["pages/Auth/Register/index.tsx"],"sourcesContent":["const Register = () => {\n  return (\n    <div>\n      <h2>Register</h2>\n    </div>\n  );\n};\n\nexport default Register;\n"],"names":[],"sourceRoot":""}

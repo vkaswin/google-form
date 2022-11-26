@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkreact_google_form=self.webpackChunkreact_google_form||[]).push([[2028],{1292:function(e,r,c){c.r(r);var n=c(184);r.default=function(){return(0,n.jsx)("div",{children:(0,n.jsx)("h2",{children:"Register"})})}}}]);
+//# sourceMappingURL=pages-Auth-Register.82e5e9ca.chunk.js.map
