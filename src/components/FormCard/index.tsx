@@ -51,13 +51,13 @@ export const FormCard = ({
       case "date":
         return <DateField readOnly={readOnly} />;
       case "dropdown":
-        return <DropDownField readOnly={readOnly} />;
+        return <DropDownField readOnly={readOnly} {...field} />;
       case "file":
         return <FileField readOnly={readOnly} />;
       case "input":
-        return <Input disabled={readOnly} />;
+        return <Input placeholder="Short answer text" disabled={readOnly} />;
       case "textarea":
-        return <TextArea disabled={readOnly} />;
+        return <TextArea placeholder="Long answer text" disabled={readOnly} />;
       case "radio":
         return <RadioField readOnly={readOnly} {...field} />;
       default:

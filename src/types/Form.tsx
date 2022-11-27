@@ -43,7 +43,7 @@ export type FormErrorText = {
 
 export type FormField = {
   readonly id: string;
-  label?: string;
+  question: string;
   value: string | string[];
   type: FormType;
   description?: string;

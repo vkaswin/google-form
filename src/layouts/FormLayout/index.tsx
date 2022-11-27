@@ -24,7 +24,7 @@ const FormLayout = () => {
     fields: [
       {
         id: crypto.randomUUID(),
-        label: "Loreum Ipsum",
+        question: "Loreum Ipsum",
         type: "input",
         value: "Loreum Ispum",
         validation: {
@@ -33,7 +33,7 @@ const FormLayout = () => {
       },
       {
         id: crypto.randomUUID(),
-        label: "Gender",
+        question: "Gender",
         type: "radio",
         value: "Male",
         validation: {
@@ -61,7 +61,7 @@ const FormLayout = () => {
     switch (key) {
       case "description":
         break;
-      case "label":
+      case "question":
         break;
       case "options":
         break;
