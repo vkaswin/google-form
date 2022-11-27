@@ -1,5 +1,5 @@
 import { ChangeEvent } from "react";
-import { TextEditor, Box } from "components";
+import { TextEditor, FormWrapper } from "components";
 
 export type FormHeaderProps = {
   selectedId: string | null;
@@ -17,13 +17,13 @@ export const FormHeader = ({
   };
 
   return (
-    <Box
+    <FormWrapper
       isHeader={true}
       isSelected={selectedId === headerId}
       onClick={() => handleClickForm(headerId)}
     >
       <TextEditor as="h1" placeholder="Form title" onInput={handleChange} />
       <TextEditor placeholder="Form description" onInput={handleChange} />
-    </Box>
+    </FormWrapper>
   );
 };

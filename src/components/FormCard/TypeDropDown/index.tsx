@@ -26,7 +26,7 @@ export const TypeDropDown = ({
         </div>
         <i className="bxs-down-arrow"></i>
       </div>
-      <DropDown selector={`#option-${id}`}>
+      <DropDown selector={`#option-${id}`} size="auto">
         {options.map((option) => {
           return (
             <DropDown.Item

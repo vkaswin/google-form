@@ -1,15 +1,16 @@
-import React from "react";
+import { ComponentProps } from "react";
 
 import styles from "./DatePicker.module.scss";
 
-type DatePickerProps = {
-  onChange?: () => void;
-};
+type DatePickerProps = { disabled: boolean } & ComponentProps<"input">;
 
-export const DatePicker = ({ onChange = () => {} }: DatePickerProps) => {
+export const DatePicker = ({
+  placeholder = "Enter Here",
+  ...props
+}: DatePickerProps) => {
   return (
-    <div>
-      <span>DatePicker</span>
+    <div className={styles.field}>
+      <input type="date" placeholder={placeholder} {...props} />
     </div>
   );
 };

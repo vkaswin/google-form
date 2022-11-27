@@ -1,14 +1,12 @@
-import React from "react";
+import { ComponentProps } from "react";
 
 import styles from "./Switch.module.scss";
 
-export type SwitchProps = {
-  onChange?: () => void;
-};
+export type SwitchProps = {} & ComponentProps<"div">;
 
-export const Switch = ({ onChange = () => {} }: SwitchProps) => {
+export const Switch = ({ ...props }: SwitchProps) => {
   return (
-    <div>
+    <div {...props}>
       <span>Switch</span>
     </div>
   );

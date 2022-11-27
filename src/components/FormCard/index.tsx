@@ -1,12 +1,15 @@
 import { ReactNode, useMemo } from "react";
 import { TypeDropDown } from "./TypeDropDown";
 import { FormDropDown, FormField, FormContextType } from "types/Form";
-import { TextEditor, Box, Input, TextArea } from "components";
-import { RadioField } from "./RadioField";
-import { CheckBoxField } from "./CheckBoxField";
-import { DropDownField } from "./DropDownField";
-import { DateField } from "./DateField";
-import { FileField } from "./FileField";
+import {
+  TextEditor,
+  FormWrapper,
+  Input,
+  TextArea,
+  DatePicker,
+  DropDown,
+} from "components";
+import { MutiOptionField } from "./MutiOptionField";
 
 import styles from "./FormCard.module.scss";
 
@@ -47,26 +50,26 @@ export const FormCard = ({
   let component = useMemo<ReactNode>(() => {
     switch (field.type) {
       case "checkbox":
-        return <CheckBoxField readOnly={readOnly} />;
+        return <MutiOptionField readOnly={readOnly} {...field} />;
       case "date":
-        return <DateField readOnly={readOnly} />;
+        return <DatePicker disabled={readOnly} />;
       case "dropdown":
-        return <DropDownField readOnly={readOnly} {...field} />;
+        return <MutiOptionField readOnly={readOnly} {...field} />;
       case "file":
-        return <FileField readOnly={readOnly} />;
+        return <Input disabled={readOnly} />;
       case "input":
         return <Input placeholder="Short answer text" disabled={readOnly} />;
       case "textarea":
         return <TextArea placeholder="Long answer text" disabled={readOnly} />;
       case "radio":
-        return <RadioField readOnly={readOnly} {...field} />;
+        return <MutiOptionField readOnly={readOnly} {...field} />;
       default:
         return null;
     }
   }, [field.type]);
 
   return (
-    <Box
+    <FormWrapper
       className={styles.card}
       onClick={() => handleClickForm(field.id)}
       isSelected={selectedId === field.id}
@@ -86,6 +89,24 @@ export const FormCard = ({
       <div className={styles.field} data-type={field.type}>
         {component}
       </div>
-    </Box>
+      <div className={styles.footer}>
+        <i className="bx-trash"></i>
+        <i className="bx-duplicate"></i>
+        <div className={styles.split}></div>
+        <div>
+          <span>Required</span>
+        </div>
+        <div id={`more-options-${field.id}`} className={styles.more_options}>
+          <i className="bx-dots-vertical-rounded"></i>
+        </div>
+      </div>
+      <DropDown
+        selector={`#more-options-${field.id}`}
+        className={styles.option_drop_down}
+      >
+        <DropDown.Item>Descripton</DropDown.Item>
+        <DropDown.Item>Shuffle option order</DropDown.Item>
+      </DropDown>
+    </FormWrapper>
   );
 };

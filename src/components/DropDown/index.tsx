@@ -17,9 +17,9 @@ type DropDownProps = {
   selector: string;
   children?: ReactNode;
   isOpen?: boolean;
+  size?: "auto" | null;
   toggle?: () => void;
-  zIndex?: number;
-};
+} & ComponentProps<"div">;
 
 type DropDownContextType = {
   close: () => void;
@@ -28,10 +28,13 @@ type DropDownContextType = {
 const DropDownContext = createContext<DropDownContextType | null>(null);
 
 export const DropDown = ({
+  className,
   selector,
   children,
   isOpen,
+  size = null,
   toggle = () => {},
+  ...props
 }: DropDownProps) => {
   let [referenceElement, setReferenceElement] = useState<HTMLElement | null>(
     null
@@ -105,9 +108,13 @@ export const DropDown = ({
       >
         <div
           ref={setPopperElement}
-          className={styles.container}
-          style={{ ...style.popper, width: state?.rects?.reference?.width }}
+          className={`${styles.container} ${className || ""}`.trim()}
+          style={{
+            ...style.popper,
+            ...(size === "auto" && { width: state?.rects?.reference?.width }),
+          }}
           {...attributes.popper}
+          {...props}
         >
           <div className={styles.menu}>{children}</div>
         </div>

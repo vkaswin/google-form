@@ -25,7 +25,7 @@ const FormLayout = () => {
       {
         id: crypto.randomUUID(),
         question: "Loreum Ipsum",
-        type: "input",
+        type: "date",
         value: "Loreum Ispum",
         validation: {
           rules: { required: true },

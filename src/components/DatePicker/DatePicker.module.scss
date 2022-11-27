@@ -1,0 +1,14 @@
+.field {
+  input {
+    background-color: #f8f9fa;
+    border: 1px solid #80868b;
+    color: var(--text-color);
+    outline: none;
+    padding: 5px 10px;
+    height: 35px;
+    &:disabled {
+      border-color: #9e9e9e;
+      padding: 5px 5px;
+    }
+  }
+}

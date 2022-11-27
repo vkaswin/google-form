@@ -1,6 +1,6 @@
 import { ComponentProps, ReactNode } from "react";
 
-import styles from "./Box.module.scss";
+import styles from "./FormWrapper.module.scss";
 
 type BoxProps = {
   isSelected?: boolean;
@@ -8,7 +8,7 @@ type BoxProps = {
   children: ReactNode;
 } & ComponentProps<"div">;
 
-export const Box = ({
+export const FormWrapper = ({
   children,
   isHeader = false,
   isSelected = false,
