@@ -1,14 +1,14 @@
 import { Fragment } from "react";
 import { DropDown } from "components/DropDown";
-import { FormContextType, FormOption, FormType } from "types/Form";
+import { FormContextType, FormDropDown } from "types/Form";
 
 import styles from "./TypeDropDown.module.scss";
 
 type OptionsProps = {
   id: string;
   type: string;
-  options: FormOption[];
-  selectedOption: FormOption | undefined;
+  options: FormDropDown[];
+  selectedOption: FormDropDown | undefined;
 } & Pick<FormContextType, "handleChange">;
 
 export const TypeDropDown = ({

@@ -11,4 +11,11 @@
       width: calc(100% - 280px);
     }
   }
+  .field {
+    margin: 15px 0px 30px 0px;
+  }
+  .field[data-type="input"],
+  .field[data-type="textarea"] {
+    max-width: 75%;
+  }
 }

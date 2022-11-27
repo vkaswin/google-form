@@ -2,13 +2,13 @@ export type FormDetail = {
   theme: string;
   title: string;
   description: string;
-  fields: Field[];
+  fields: FormField[];
 };
 
 export type FormContextType = {
   selectedId: string | null;
   handleChange: (
-    key: Exclude<keyof Field, "id" | "validation">,
+    key: Exclude<keyof FormField, "id" | "validation">,
     id: string,
     type: FormType
   ) => void;
@@ -20,12 +20,12 @@ export type FormType =
   | "checkbox"
   | "dropdown"
   | "radio"
-  | "input"
   | "textarea"
+  | "input"
   | "date"
   | "file";
 
-export type Rules = {
+export type FormRules = {
   required?: boolean;
   pattern?: RegExp;
   minLength?: number;
@@ -33,7 +33,7 @@ export type Rules = {
   validate?: () => boolean;
 };
 
-export type ErrorText = {
+export type FormErrorText = {
   required?: string;
   pattern?: string;
   minLength?: string;
@@ -41,30 +41,31 @@ export type ErrorText = {
   validate?: string;
 };
 
-export type Options = {
-  label: string;
-  value: string;
-};
-
-export type Field = {
+export type FormField = {
   readonly id: string;
   label?: string;
   value: string | string[];
   type: FormType;
   description?: string;
   validation?: {
-    rules?: Rules;
-    errorText?: ErrorText;
+    rules?: FormRules;
+    errorText?: FormErrorText;
   };
-  options?: Options[];
+  options?: FormOption[];
+  other?: string;
 };
 
 export type FormParams = {
   formId: string;
 };
 
-export type FormOption = {
+export type FormDropDown = {
   label: string;
   icon: string;
   type: FormType;
+};
+
+export type FormOption = {
+  value: string;
+  url?: string;
 };

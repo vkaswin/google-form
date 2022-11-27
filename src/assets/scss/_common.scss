@@ -2,20 +2,22 @@
   box-sizing: border-box;
   margin: 0px;
   padding: 0px;
-  font-family: "Poppins", sans-serif;
-}
-
-html {
-  height: 100%;
-  scroll-behavior: smooth;
 }
 
 :root {
   --primary-color: #673ab7;
   --text-color: #202124;
+  --bg-color: #f0ebf8;
 }
 
-body,
-#root {
-  height: inherit;
+body {
+  background-color: var(--bg-color);
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+}
+
+input,
+textarea {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
 }

@@ -5,7 +5,7 @@ import {
   FormDetail,
   FormContextType,
   FormType,
-  Field,
+  FormField,
 } from "types/Form";
 import { FormHeader } from "./FormHeader";
 import { useAuth } from "hooks/useAuth";
@@ -33,13 +33,14 @@ const FormLayout = () => {
       },
       {
         id: crypto.randomUUID(),
-        label: "Loreum Ipsum",
+        label: "Gender",
         type: "radio",
-        value: "Loreum Ispum",
+        value: "Male",
         validation: {
           rules: { required: true },
         },
-        options: [{ label: "label", value: "value" }],
+        options: [{ value: "Male" }, { value: "Female" }],
+        other: "Other",
       },
     ],
   });
@@ -50,10 +51,8 @@ const FormLayout = () => {
     setSelectedId(id);
   };
 
-  type Keys = keyof Field;
-
   const handleChange = (
-    key: Exclude<keyof Field, "id" | "validation">,
+    key: Exclude<keyof FormField, "id" | "validation">,
     id: string,
     type: FormType
   ): void => {
@@ -98,10 +97,8 @@ const FormLayout = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.wrapper}>
-        <FormHeader selectedId={selectedId} handleClickForm={handleClickForm} />
-        <Outlet context={context} />
-      </div>
+      <FormHeader selectedId={selectedId} handleClickForm={handleClickForm} />
+      <Outlet context={context} />
     </div>
   );
 };

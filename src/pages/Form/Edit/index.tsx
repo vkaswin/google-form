@@ -1,8 +1,7 @@
 import { Fragment } from "react";
 import { useOutletContext } from "react-router-dom";
 import { FormContextType } from "types/Form";
-
-import { FormField } from "./FormField";
+import { FormCard } from "components";
 
 import styles from "./Edit.module.scss";
 
@@ -18,11 +17,12 @@ const EditForm = () => {
     <Fragment>
       {fields.map((field) => {
         return (
-          <FormField
+          <FormCard
             key={field.id}
             selectedId={selectedId}
             handleClickForm={handleClickForm}
             handleChange={handleChange}
+            readOnly={true}
             {...field}
           />
         );

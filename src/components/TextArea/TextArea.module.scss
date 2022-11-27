@@ -1,11 +1,13 @@
 .field {
   width: 100%;
   padding: 5px 10px;
-  height: 35px;
+  resize: none;
   &:disabled {
     border-width: 0px 0px 1px 0px;
     border-color: #9e9e9e;
     border-style: dashed;
     padding: 5px 5px;
+    height: 35px;
+    overflow: hidden;
   }
 }

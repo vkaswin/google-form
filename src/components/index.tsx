@@ -6,3 +6,5 @@ export { Radio } from "./Radio";
 export { DatePicker } from "./DatePicker";
 export { ToolTip } from "./ToolTip";
 export { Box } from "./Box";
+export { TextArea } from "./TextArea";
+export { FormCard } from "./FormCard";

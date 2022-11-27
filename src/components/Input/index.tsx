@@ -1,15 +1,21 @@
-import React from "react";
+import { ComponentProps } from "react";
 
 import styles from "./Input.module.scss";
 
-type InputProps = {
-  onChange?: () => void;
-};
+type InputProps = {} & ComponentProps<"input">;
 
-export const Input = ({ onChange = () => {} }: InputProps) => {
+export const Input = ({
+  className,
+  type = "text",
+  placeholder = "Enter Here",
+  ...props
+}: InputProps) => {
   return (
-    <div>
-      <span>Input</span>
-    </div>
+    <input
+      type={type}
+      placeholder={placeholder}
+      className={`${styles.field} ${className || ""}`.trim()}
+      {...props}
+    />
   );
 };
