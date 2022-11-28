@@ -1,7 +1,19 @@
-.card {
+.container {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  gap: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  padding: 30px 25px 0px 25px;
+  &:hover {
+    .drag_icon {
+      display: block;
+    }
+  }
   .wrapper {
     display: flex;
     justify-content: space-between;
@@ -25,21 +37,13 @@
     gap: 10px;
     border-top: 1px solid #dadce0;
     padding: 15px 0px;
+    font-family: "Poppins", sans-serif;
     .split {
       position: relative;
       width: 30px;
       background-color: #dadce0;
       height: 1px;
       transform: rotate(90deg);
-      //   &::after {
-      //     content: "";
-      //     position: absolute;
-      //     top: -15px;
-      //     left: 0px;
-      //     height: 25px;
-      //     background-color: #dadce0;
-      //     width: 1px;
-      //   }
     }
     i {
       color: #606368;
@@ -59,6 +63,45 @@
         background-color: #f6f6f6;
       }
     }
+  }
+  .drag_icon {
+    display: none;
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #9aa0a6;
+    z-index: 2;
+    cursor: move;
+    i {
+      position: absolute;
+      top: 0px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 22px;
+      &:last-child {
+        top: 6px;
+      }
+    }
+  }
+  .highlight {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    height: 100%;
+    width: 6px;
+    border-radius: 6px 0px 0px 6px;
+    background-color: #4185f4;
+  }
+  .indicator {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 10px;
+    background-color: var(--primary-color);
+    border-radius: 8px 8px 0px 0px;
+    z-index: 1;
   }
 }
 

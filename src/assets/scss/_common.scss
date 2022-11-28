@@ -2,6 +2,7 @@
   box-sizing: border-box;
   margin: 0px;
   padding: 0px;
+  font-family: "Poppins", sans-serif;
 }
 
 :root {
@@ -12,12 +13,11 @@
 
 body {
   background-color: var(--bg-color);
-  font-family: "Poppins", sans-serif;
   font-size: 16px;
 }
 
 input,
-textarea {
-  font-family: "Poppins", sans-serif;
+textarea,
+button {
   font-size: 16px;
 }

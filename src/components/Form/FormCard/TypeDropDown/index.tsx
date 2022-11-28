@@ -1,21 +1,22 @@
 import { Fragment } from "react";
 import { DropDown } from "components/DropDown";
-import { FormContextType, FormDropDown } from "types/Form";
+import { FormContextType, FormTypeOption } from "types/Form";
 
 import styles from "./TypeDropDown.module.scss";
 
 type OptionsProps = {
   id: string;
   type: string;
-  options: FormDropDown[];
-  selectedOption: FormDropDown | undefined;
-} & Pick<FormContextType, "handleChange">;
+  options: FormTypeOption[];
+  selectedOption: FormTypeOption | undefined;
+  handleChangeForm: FormContextType["handleChangeForm"];
+};
 
 export const TypeDropDown = ({
   id,
   options,
   selectedOption,
-  handleChange,
+  handleChangeForm,
 }: OptionsProps) => {
   return (
     <Fragment>
@@ -31,7 +32,7 @@ export const TypeDropDown = ({
           return (
             <DropDown.Item
               key={`${option.label}-${id}`}
-              onClick={() => handleChange("type", id, option.type)}
+              onClick={() => handleChangeForm("type", id, option.type)}
             >
               <i className={option.icon}></i>
               <span>{option.label}</span>

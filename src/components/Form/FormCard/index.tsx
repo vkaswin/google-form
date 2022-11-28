@@ -1,9 +1,13 @@
 import { ReactNode, useMemo } from "react";
 import { TypeDropDown } from "./TypeDropDown";
-import { FormDropDown, FormField, FormContextType } from "types/Form";
+import {
+  FormTypeOption,
+  FormField,
+  FormContextType,
+  FormMoreOption,
+} from "types/Form";
 import {
   TextEditor,
-  FormWrapper,
   Input,
   TextArea,
   DatePicker,
@@ -17,11 +21,17 @@ import styles from "./FormCard.module.scss";
 type FormFieldProps = {
   selectedId: string | null;
   readOnly: boolean;
-  handleClickForm: (id: string) => void;
-} & Pick<FormContextType, "handleChange"> &
+} & Pick<
+  FormContextType,
+  | "handleChangeForm"
+  | "handleClickForm"
+  | "handleDeleteForm"
+  | "handleDuplicateForm"
+  | "handleMoreOptions"
+> &
   FormField;
 
-let formDropDown: FormDropDown[] = [
+let formTypes: FormTypeOption[] = [
   { type: "input", icon: "bx-text", label: "Short answer" },
   { type: "textarea", icon: "bx-paragraph", label: "Paragraph" },
   { type: "checkbox", icon: "bx-checkbox-checked", label: "Checkboxes" },
@@ -35,15 +45,29 @@ let formDropDown: FormDropDown[] = [
   { type: "file", icon: "bx-cloud-upload", label: "File Upload" },
 ];
 
+let moreOptions: FormMoreOption[] = [
+  {
+    label: "Description",
+    action: "description",
+  },
+  {
+    label: "Shuffle option order",
+    action: "shuffle",
+  },
+];
+
 export const FormCard = ({
   selectedId,
   readOnly,
   handleClickForm,
-  handleChange,
+  handleChangeForm,
+  handleDeleteForm,
+  handleDuplicateForm,
+  handleMoreOptions,
   ...field
 }: FormFieldProps) => {
-  let selectedOption = useMemo<FormDropDown | undefined>(() => {
-    return formDropDown.find((option) => {
+  let selectedOption = useMemo<FormTypeOption | undefined>(() => {
+    return formTypes.find((option) => {
       return option.type === field.type;
     });
   }, [field.type]);
@@ -70,19 +94,15 @@ export const FormCard = ({
   }, [field.type]);
 
   return (
-    <FormWrapper
-      className={styles.card}
-      onClick={() => handleClickForm(field.id)}
-      isSelected={selectedId === field.id}
-    >
+    <div className={styles.container} onClick={() => handleClickForm(field.id)}>
       <div className={styles.wrapper}>
         <TextEditor as="div" placeholder="Question" />
         {selectedId === field.id && (
           <TypeDropDown
             id={field.id}
             type={field.type}
-            handleChange={handleChange}
-            options={formDropDown}
+            handleChangeForm={handleChangeForm}
+            options={formTypes}
             selectedOption={selectedOption}
           />
         )}
@@ -91,10 +111,18 @@ export const FormCard = ({
         {component}
       </div>
       <div className={styles.footer}>
-        <i id="trash" className="bx-trash"></i>
-        <ToolTip selector="#trash">Trash</ToolTip>
-        <i id="duplicate" className="bx-duplicate"></i>
-        <ToolTip selector="#duplicate">Duplicate</ToolTip>
+        <i
+          id={`trash-${field.id}`}
+          className="bx-trash"
+          onClick={() => handleDeleteForm(field.id)}
+        ></i>
+        <ToolTip selector={`#trash-${field.id}`}>Trash</ToolTip>
+        <i
+          id={`duplicate-${field.id}`}
+          className="bx-duplicate"
+          onClick={() => handleDuplicateForm(field.id)}
+        ></i>
+        <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
         <div className={styles.split}></div>
         <div>
           <span>Required</span>
@@ -107,9 +135,22 @@ export const FormCard = ({
         selector={`#more-options-${field.id}`}
         className={styles.option_drop_down}
       >
-        <DropDown.Item>Descripton</DropDown.Item>
-        <DropDown.Item>Shuffle option order</DropDown.Item>
+        {moreOptions.map(({ label, action }, index) => {
+          return (
+            <DropDown.Item
+              key={index}
+              onClick={() => handleMoreOptions(action, field.id)}
+            >
+              {label}
+            </DropDown.Item>
+          );
+        })}
       </DropDown>
-    </FormWrapper>
+      {selectedId === field.id && <div className={styles.highlight}></div>}
+      <div className={styles.drag_icon}>
+        <i className="bx-dots-horizontal-rounded"></i>
+        <i className="bx-dots-horizontal-rounded"></i>
+      </div>
+    </div>
   );
 };

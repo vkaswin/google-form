@@ -5,6 +5,7 @@ import {
   createContext,
   useContext,
   ComponentProps,
+  MouseEvent,
 } from "react";
 import { CSSTransition } from "react-transition-group";
 import { createPortal } from "react-dom";
@@ -120,7 +121,7 @@ export const DropDown = ({
 
 type DropDownItemProps = {
   children?: ReactNode;
-  onClick?: () => void;
+  onClick?: (event: MouseEvent) => void;
   className?: string;
 } & ComponentProps<"button">;
 
@@ -132,9 +133,9 @@ export const Item = ({
 }: DropDownItemProps) => {
   const { close } = useContext(DropDownContext) as DropDownContextType;
 
-  const handleClick = () => {
+  const handleClick = (event: MouseEvent): void => {
     close();
-    if (typeof onClick === "function") onClick();
+    if (typeof onClick === "function") onClick(event);
   };
 
   return (

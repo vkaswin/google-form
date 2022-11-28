@@ -7,13 +7,21 @@ export type FormDetail = {
 
 export type FormContextType = {
   selectedId: string | null;
-  handleChange: (
+  handleChangeForm: (
     key: Exclude<keyof FormField, "id" | "validation">,
     id: string,
     type: FormType
   ) => void;
   handleClickForm: (id: string) => void;
+  handleDeleteForm: (id: string) => void;
+  handleDuplicateForm: (id: string) => void;
+  handleMoreOptions: (action: FormMoreOption["action"], id: string) => void;
   formDetail: FormDetail;
+};
+
+export type FormMoreOption = {
+  label: string;
+  action: "description" | "shuffle";
 };
 
 export type FormType =
@@ -59,7 +67,7 @@ export type FormParams = {
   formId: string;
 };
 
-export type FormDropDown = {
+export type FormTypeOption = {
   label: string;
   icon: string;
   type: FormType;

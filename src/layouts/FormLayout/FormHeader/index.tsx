@@ -1,9 +1,12 @@
 import { ChangeEvent } from "react";
-import { TextEditor, FormWrapper } from "components";
+import { TextEditor } from "components";
+import { FormContextType } from "types/Form";
+
+import styles from "./FormHeader.module.scss";
 
 export type FormHeaderProps = {
   selectedId: string | null;
-  handleClickForm: (id: string) => void;
+  handleClickForm: FormContextType["handleClickForm"];
 };
 
 let headerId: string = crypto.randomUUID();
@@ -17,13 +20,11 @@ export const FormHeader = ({
   };
 
   return (
-    <FormWrapper
-      isHeader={true}
-      isSelected={selectedId === headerId}
-      onClick={() => handleClickForm(headerId)}
-    >
+    <div className={styles.container} onClick={() => handleClickForm(headerId)}>
       <TextEditor as="h1" placeholder="Form title" onInput={handleChange} />
       <TextEditor placeholder="Form description" onInput={handleChange} />
-    </FormWrapper>
+      <div className={styles.indicator}></div>
+      {selectedId === headerId && <div className={styles.highlight}></div>}
+    </div>
   );
 };

@@ -6,6 +6,7 @@ import { CSSTransition } from "react-transition-group";
 import styles from "./ToolTip.module.scss";
 
 type ToolTipProps = {
+  container?: HTMLElement;
   selector: string;
   children: ReactNode;
 } & ComponentProps<"div">;
@@ -59,6 +60,8 @@ export const ToolTip = ({
     setReferenceElement(element);
   }, []);
 
+  if (!referenceElement) return null;
+
   return createPortal(
     <CSSTransition
       in={isOpen}
@@ -81,6 +84,6 @@ export const ToolTip = ({
         <div className={styles.menu}>{children}</div>
       </div>
     </CSSTransition>,
-    document.body
+    referenceElement
   );
 };
