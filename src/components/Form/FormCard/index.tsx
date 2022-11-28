@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from "react";
+import { ChangeEvent, FormEvent, ReactNode, useMemo } from "react";
 import { TypeDropDown } from "./TypeDropDown";
 import {
   FormTypeOption,
@@ -75,19 +75,75 @@ export const FormCard = ({
   let component = useMemo<ReactNode>(() => {
     switch (field.type) {
       case "checkbox":
-        return <MutiOptionField readOnly={readOnly} {...field} />;
+        return (
+          <MutiOptionField
+            readOnly={readOnly}
+            handleChangeForm={handleChangeForm}
+            {...field}
+          />
+        );
       case "date":
         return <DatePicker disabled={readOnly} />;
       case "dropdown":
-        return <MutiOptionField readOnly={readOnly} {...field} />;
+        return (
+          <MutiOptionField
+            readOnly={readOnly}
+            handleChangeForm={handleChangeForm}
+            {...field}
+          />
+        );
       case "file":
-        return <Input disabled={readOnly} />;
+        return (
+          <Input
+            disabled={readOnly}
+            onChange={(event) =>
+              handleChangeForm({
+                event,
+                key: "value",
+                id: field.id,
+                type: field.type,
+              })
+            }
+          />
+        );
       case "input":
-        return <Input placeholder="Short answer text" disabled={readOnly} />;
+        return (
+          <Input
+            placeholder="Short answer text"
+            disabled={readOnly}
+            onChange={(event) =>
+              handleChangeForm({
+                event,
+                key: "value",
+                id: field.id,
+                type: field.type,
+              })
+            }
+          />
+        );
       case "textarea":
-        return <TextArea placeholder="Long answer text" disabled={readOnly} />;
+        return (
+          <TextArea
+            placeholder="Long answer text"
+            disabled={readOnly}
+            onChange={(event) =>
+              handleChangeForm({
+                event,
+                key: "value",
+                id: field.id,
+                type: field.type,
+              })
+            }
+          />
+        );
       case "radio":
-        return <MutiOptionField readOnly={readOnly} {...field} />;
+        return (
+          <MutiOptionField
+            readOnly={readOnly}
+            handleChangeForm={handleChangeForm}
+            {...field}
+          />
+        );
       default:
         return null;
     }
@@ -96,7 +152,18 @@ export const FormCard = ({
   return (
     <div className={styles.container} onClick={() => handleClickForm(field.id)}>
       <div className={styles.wrapper}>
-        <TextEditor as="div" placeholder="Question" />
+        <TextEditor
+          as="div"
+          placeholder="Question"
+          onInput={(event: ChangeEvent<HTMLDivElement>) =>
+            handleChangeForm({
+              event,
+              key: "question",
+              id: field.id,
+              type: field.type,
+            })
+          }
+        />
         {selectedId === field.id && (
           <TypeDropDown
             id={field.id}

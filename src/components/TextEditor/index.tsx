@@ -1,3 +1,4 @@
+import { clickOutside } from "helpers/index";
 import { FocusEvent, ElementType, useRef, ComponentProps } from "react";
 
 import styles from "./TextEditor.module.scss";
@@ -11,8 +12,6 @@ export type TextEditorProps<E extends ElementType> = TextEditorOwnProps<E> &
 
 export const TextEditor = <E extends ElementType = "div">({
   as,
-  onFocus,
-  onBlur,
   defaultValue = "",
   placeholder = "Enter Here",
   ...props
@@ -20,29 +19,28 @@ export const TextEditor = <E extends ElementType = "div">({
   let editorRef = useRef<HTMLDivElement>(null);
   let toolBarRef = useRef<HTMLUListElement>(null);
 
-  const handleFocus = (event: FocusEvent<HTMLDivElement>): void => {
+  const handleFocus = (): void => {
     editorRef.current?.classList.remove(styles.blur);
     editorRef.current?.classList.add(styles.focus);
     toolBarRef.current?.classList.add(styles.show);
-    if (typeof onFocus === "function") onFocus(event);
-  };
-
-  const handleBlur = (event: FocusEvent<HTMLDivElement>): void => {
-    editorRef.current?.classList.remove(styles.focus);
-    editorRef.current?.classList.add(styles.blur);
-    toolBarRef.current?.classList.remove(styles.show);
-    if (typeof onBlur === "function") onBlur(event);
+    if (editorRef.current) {
+      clickOutside({
+        ref: editorRef.current,
+        onClose: () => {
+          editorRef.current?.classList.remove(styles.focus);
+          editorRef.current?.classList.add(styles.blur);
+          toolBarRef.current?.classList.remove(styles.show);
+        },
+      });
+    }
   };
 
   const Component = as || "div";
   return (
-    <div className={styles.container}>
+    <div ref={editorRef} className={styles.container} onFocus={handleFocus}>
       <Component
-        ref={editorRef}
         className={styles.editor}
         contentEditable={true}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
         placeholder={placeholder}
         dangerouslySetInnerHTML={{ __html: defaultValue }}
         {...props}

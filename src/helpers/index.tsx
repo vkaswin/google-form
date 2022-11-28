@@ -39,7 +39,7 @@ export const clickOutside = ({
 }: {
   ref: HTMLElement;
   onClose: () => void;
-  doNotClose: (element: HTMLElement) => boolean;
+  doNotClose?: (element: HTMLElement) => boolean;
 }) => {
   if (!ref) return;
 

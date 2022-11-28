@@ -6,6 +6,7 @@ import {
   FormContextType,
   FormField,
   FormType,
+  FormHandler,
 } from "types/Form";
 import { FormHeader } from "./FormHeader";
 import { useAuth } from "hooks";
@@ -115,23 +116,40 @@ const FormLayout = () => {
     form.fields.push(form.fields[index]);
   };
 
-  const handleChangeForm: FormContextType["handleChangeForm"] = (
+  const handleChangeForm: FormContextType["handleChangeForm"] = ({
     key,
     id,
-    type
-  ): void => {
+    type,
+    event,
+  }): void => {
     let form = { ...formDetail };
 
     switch (key) {
       case "description":
         break;
       case "question":
+        handleFormQuestion({
+          id,
+          type,
+          fields: form.fields,
+          value: event?.target.innerHTML,
+        });
         break;
       case "options":
-        handleFormOptions(id, type, form.fields);
+        handleFormOptions({
+          id,
+          type,
+          fields: form.fields,
+          value: event?.target.value,
+        });
         break;
       case "type":
-        handleFormType(id, type, form.fields);
+        handleFormType({
+          id,
+          type,
+          fields: form.fields,
+          value: event?.target.value,
+        });
         break;
       case "value":
         break;
@@ -141,7 +159,7 @@ const FormLayout = () => {
     setFormDetail(form);
   };
 
-  const handleFormType = (id: string, type: FormType, fields: FormField[]) => {
+  const handleFormType: FormHandler = ({ id, type, fields, value }) => {
     let field = fields.find((field) => {
       return field.id === id;
     });
@@ -159,12 +177,12 @@ const FormLayout = () => {
     }
   };
 
-  const handleFormOptions = (
-    id: string,
-    type: FormType,
-    fields: FormField[]
-  ) => {
-    console.log(id, type, fields);
+  const handleFormOptions: FormHandler = ({ id, type, fields, value }) => {
+    console.log(id, type, fields, value);
+  };
+
+  const handleFormQuestion: FormHandler = ({ id, type, fields, value }) => {
+    console.log(id, type, fields, value);
   };
 
   const handleMoreOptions: FormContextType["handleMoreOptions"] = (

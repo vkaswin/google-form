@@ -1,3 +1,5 @@
+import { ChangeEvent } from "react";
+
 export type FormDetail = {
   theme: string;
   title: string;
@@ -7,11 +9,15 @@ export type FormDetail = {
 
 export type FormContextType = {
   selectedId: string | null;
-  handleChangeForm: (
-    key: Exclude<keyof FormField, "id" | "validation">,
-    id: string,
-    type: FormType
-  ) => void;
+  handleChangeForm: <E>(data: {
+    key: Exclude<keyof FormField, "id" | "validation">;
+    id: string;
+    type: FormType;
+    event?:
+      | ChangeEvent<HTMLInputElement>
+      | ChangeEvent<HTMLDivElement>
+      | ChangeEvent<HTMLTextAreaElement>;
+  }) => void;
   handleClickForm: (id: string) => void;
   handleDeleteForm: (id: string) => void;
   handleDuplicateForm: (id: string) => void;
@@ -77,3 +83,10 @@ export type FormOption = {
   value: string;
   url?: string;
 };
+
+export type FormHandler = (data: {
+  id: string;
+  type: FormType;
+  fields: FormField[];
+  value?: string;
+}) => void;

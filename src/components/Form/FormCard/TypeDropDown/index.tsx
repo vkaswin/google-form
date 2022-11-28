@@ -32,7 +32,9 @@ export const TypeDropDown = ({
           return (
             <DropDown.Item
               key={`${option.label}-${id}`}
-              onClick={() => handleChangeForm("type", id, option.type)}
+              onClick={() =>
+                handleChangeForm({ key: "type", id, type: option.type })
+              }
             >
               <i className={option.icon}></i>
               <span>{option.label}</span>

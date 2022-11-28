@@ -1,12 +1,13 @@
 import React, { useMemo } from "react";
 import { Input } from "components";
-import { FormField } from "types/Form";
+import { FormContextType, FormField } from "types/Form";
 
 import styles from "./MultiOptionField.module.scss";
 
 type MutiOptionFieldProps = {
   readOnly: boolean;
-} & FormField;
+} & Pick<FormContextType, "handleChangeForm"> &
+  FormField;
 
 export const MutiOptionField = ({
   readOnly,
@@ -18,6 +19,7 @@ export const MutiOptionField = ({
   question,
   other = "",
   validation,
+  handleChangeForm,
 }: MutiOptionFieldProps) => {
   let icon = useMemo<string>(() => {
     switch (type) {
@@ -40,7 +42,18 @@ export const MutiOptionField = ({
             ) : (
               <i className={icon}></i>
             )}
-            <Input defaultValue={`Option ${index + 1}`} />
+            <Input
+              name={index.toString()}
+              defaultValue={`Option ${index + 1}`}
+              onChange={(event) =>
+                handleChangeForm({
+                  event,
+                  key: "options",
+                  id,
+                  type,
+                })
+              }
+            />
             <i className="bx-x"></i>
           </div>
         );
@@ -48,7 +61,18 @@ export const MutiOptionField = ({
       {type !== "dropdown" && other.length !== 0 && (
         <div className={styles.option_field}>
           <i className={icon}></i>
-          <Input defaultValue={other} />
+          <Input
+            name="other"
+            defaultValue={other}
+            onChange={(event) =>
+              handleChangeForm({
+                event,
+                key: "other",
+                id,
+                type,
+              })
+            }
+          />
           <i className="bx-x"></i>
         </div>
       )}
