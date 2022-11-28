@@ -8,7 +8,7 @@ import {
 } from "react";
 import { CSSTransition } from "react-transition-group";
 import { createPortal } from "react-dom";
-import { usePopper, Popper } from "react-popper";
+import { usePopper } from "react-popper";
 import { clickOutside } from "helpers";
 
 import styles from "./DropDown.module.scss";
@@ -16,9 +16,7 @@ import styles from "./DropDown.module.scss";
 type DropDownProps = {
   selector: string;
   children?: ReactNode;
-  isOpen?: boolean;
   size?: "auto" | null;
-  toggle?: () => void;
 } & ComponentProps<"div">;
 
 type DropDownContextType = {
@@ -31,9 +29,7 @@ export const DropDown = ({
   className,
   selector,
   children,
-  isOpen,
   size = null,
-  toggle = () => {},
   ...props
 }: DropDownProps) => {
   let [referenceElement, setReferenceElement] = useState<HTMLElement | null>(
@@ -74,7 +70,7 @@ export const DropDown = ({
 
     if (!element) return;
 
-    element.onclick = typeof isOpen === "boolean" ? toggle : open;
+    element.onclick = open;
 
     setReferenceElement(element);
   }, []);
@@ -84,7 +80,7 @@ export const DropDown = ({
 
     clickOutside({
       ref: element,
-      onClose: typeof isOpen === "boolean" ? toggle : close,
+      onClose: close,
       doNotClose: (event) => {
         if (!referenceElement) return false;
         return referenceElement.contains(event);
@@ -94,7 +90,7 @@ export const DropDown = ({
 
   return createPortal(
     <CSSTransition
-      in={typeof isOpen === "boolean" ? isOpen : show}
+      in={show}
       timeout={200}
       unmountOnExit
       classNames={{
@@ -103,9 +99,7 @@ export const DropDown = ({
       }}
       onEntered={onEntered}
     >
-      <DropDownContext.Provider
-        value={{ close: typeof isOpen === "boolean" ? toggle : close }}
-      >
+      <DropDownContext.Provider value={{ close: close }}>
         <div
           ref={setPopperElement}
           className={`${styles.container} ${className || ""}`.trim()}

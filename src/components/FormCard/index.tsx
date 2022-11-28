@@ -8,6 +8,7 @@ import {
   TextArea,
   DatePicker,
   DropDown,
+  ToolTip,
 } from "components";
 import { MutiOptionField } from "./MutiOptionField";
 
@@ -90,8 +91,10 @@ export const FormCard = ({
         {component}
       </div>
       <div className={styles.footer}>
-        <i className="bx-trash"></i>
-        <i className="bx-duplicate"></i>
+        <i id="trash" className="bx-trash"></i>
+        <ToolTip selector="#trash">Trash</ToolTip>
+        <i id="duplicate" className="bx-duplicate"></i>
+        <ToolTip selector="#duplicate">Duplicate</ToolTip>
         <div className={styles.split}></div>
         <div>
           <span>Required</span>
