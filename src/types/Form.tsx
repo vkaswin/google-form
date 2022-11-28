@@ -1,10 +1,15 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, FormEvent } from "react";
 
 export type FormDetail = {
   theme: string;
+  header: FormHeader;
+  fields: FormField[];
+};
+
+export type FormHeader = {
+  id: string;
   title: string;
   description: string;
-  fields: FormField[];
 };
 
 export type FormContextType = {
@@ -22,6 +27,10 @@ export type FormContextType = {
   handleDeleteForm: (id: string) => void;
   handleDuplicateForm: (id: string) => void;
   handleMoreOptions: (action: FormMoreOption["action"], id: string) => void;
+  handleFormHeader: (
+    key: "title" | "description",
+    event: ChangeEvent<HTMLDivElement>
+  ) => void;
   formDetail: FormDetail;
 };
 

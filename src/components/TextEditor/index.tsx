@@ -1,5 +1,11 @@
 import { clickOutside } from "helpers/index";
-import { FocusEvent, ElementType, useRef, ComponentProps } from "react";
+import {
+  FocusEvent,
+  ElementType,
+  useRef,
+  ComponentProps,
+  useEffect,
+} from "react";
 
 import styles from "./TextEditor.module.scss";
 
@@ -18,6 +24,13 @@ export const TextEditor = <E extends ElementType = "div">({
 }: TextEditorProps<E>) => {
   let editorRef = useRef<HTMLDivElement>(null);
   let toolBarRef = useRef<HTMLUListElement>(null);
+  let inputRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (defaultValue.length > 0 && inputRef.current) {
+      inputRef.current.innerHTML = defaultValue;
+    }
+  }, []);
 
   const handleFocus = (): void => {
     editorRef.current?.classList.remove(styles.blur);
@@ -39,10 +52,10 @@ export const TextEditor = <E extends ElementType = "div">({
   return (
     <div ref={editorRef} className={styles.container} onFocus={handleFocus}>
       <Component
+        ref={inputRef}
         className={styles.editor}
         contentEditable={true}
         placeholder={placeholder}
-        dangerouslySetInnerHTML={{ __html: defaultValue }}
         {...props}
       />
       <ul ref={toolBarRef} className={styles.toolbar}>

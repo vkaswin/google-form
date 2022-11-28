@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
-import {
-  FormParams,
-  FormDetail,
-  FormContextType,
-  FormField,
-  FormType,
-  FormHandler,
-} from "types/Form";
+import { FormParams, FormContextType, FormHandler } from "types/Form";
 import { FormHeader } from "./FormHeader";
 import { useAuth } from "hooks";
 
@@ -18,10 +11,13 @@ const FormLayout = () => {
 
   const { user } = useAuth();
 
-  let [formDetail, setFormDetail] = useState<FormDetail>({
+  let [formDetail, setFormDetail] = useState<FormContextType["formDetail"]>({
     theme: "dark",
-    description: "Loreum Ispum",
-    title: "Google Form",
+    header: {
+      id: crypto.randomUUID(),
+      description: "Loreum Ispum",
+      title: "Google Form",
+    },
     fields: [
       {
         id: crypto.randomUUID(),
@@ -92,6 +88,14 @@ const FormLayout = () => {
 
   let [selectedId, setSelectedId] = useState<string | null>(null);
 
+  useEffect(() => {
+    // getFormDetails();
+  }, [formId]);
+
+  const getFormDetails = (): void => {
+    console.log("form details", formId);
+  };
+
   const handleClickForm: FormContextType["handleClickForm"] = (id) => {
     setSelectedId(id);
   };
@@ -140,7 +144,7 @@ const FormLayout = () => {
           id,
           type,
           fields: form.fields,
-          value: event?.target.value,
+          value: (event?.target as HTMLInputElement).value,
         });
         break;
       case "type":
@@ -148,18 +152,18 @@ const FormLayout = () => {
           id,
           type,
           fields: form.fields,
-          value: event?.target.value,
         });
         break;
       case "value":
         break;
+
       default:
         return;
     }
     setFormDetail(form);
   };
 
-  const handleFormType: FormHandler = ({ id, type, fields, value }) => {
+  const handleFormType: FormHandler = ({ id, type, fields }) => {
     let field = fields.find((field) => {
       return field.id === id;
     });
@@ -200,12 +204,22 @@ const FormLayout = () => {
     }
   };
 
-  useEffect(() => {
-    // getFormDetails();
-  }, [formId]);
-
-  const getFormDetails = (): void => {
-    console.log("form details", formId);
+  const handleFormHeader: FormContextType["handleFormHeader"] = (
+    key,
+    event
+  ) => {
+    let form = { ...formDetail };
+    switch (key) {
+      case "title":
+        form.header.title = event.target.innerHTML;
+        break;
+      case "description":
+        form.header.description = event.target.innerHTML;
+        break;
+      default:
+        break;
+    }
+    setFormDetail(form);
   };
 
   const context: FormContextType = {
@@ -216,11 +230,17 @@ const FormLayout = () => {
     handleDeleteForm,
     handleDuplicateForm,
     handleMoreOptions,
+    handleFormHeader,
   };
 
   return (
     <div className={styles.container}>
-      <FormHeader selectedId={selectedId} handleClickForm={handleClickForm} />
+      <FormHeader
+        selectedId={selectedId}
+        handleClickForm={handleClickForm}
+        handleFormHeader={handleFormHeader}
+        {...formDetail.header}
+      />
       <Outlet context={context} />
     </div>
   );

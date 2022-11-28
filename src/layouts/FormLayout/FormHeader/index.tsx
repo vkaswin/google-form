@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, FormEvent } from "react";
 import { TextEditor } from "components";
 import { FormContextType } from "types/Form";
 
@@ -7,24 +7,36 @@ import styles from "./FormHeader.module.scss";
 export type FormHeaderProps = {
   selectedId: string | null;
   handleClickForm: FormContextType["handleClickForm"];
-};
-
-let headerId: string = crypto.randomUUID();
+  handleFormHeader: FormContextType["handleFormHeader"];
+} & FormContextType["formDetail"]["header"];
 
 export const FormHeader = ({
+  id,
+  title,
+  description,
   selectedId,
   handleClickForm,
+  handleFormHeader,
 }: FormHeaderProps) => {
-  const handleChange = (event: ChangeEvent<HTMLDivElement>) => {
-    console.log(event);
-  };
-
   return (
-    <div className={styles.container} onClick={() => handleClickForm(headerId)}>
-      <TextEditor as="h1" placeholder="Form title" onInput={handleChange} />
-      <TextEditor placeholder="Form description" onInput={handleChange} />
+    <div className={styles.container} onClick={() => handleClickForm(id)}>
+      <TextEditor
+        as="h1"
+        placeholder="Form title"
+        defaultValue={title}
+        onInput={(event: ChangeEvent<HTMLDivElement>) =>
+          handleFormHeader("title", event)
+        }
+      />
+      <TextEditor
+        placeholder="Form description"
+        defaultValue={description}
+        onInput={(event: ChangeEvent<HTMLDivElement>) =>
+          handleFormHeader("description", event)
+        }
+      />
       <div className={styles.indicator}></div>
-      {selectedId === headerId && <div className={styles.highlight}></div>}
+      {selectedId === id && <div className={styles.highlight}></div>}
     </div>
   );
 };
