@@ -31,6 +31,7 @@ type FormFieldProps = {
   | "handleMoreOptions"
   | "handleFormType"
   | "handleDeleteOptions"
+  | "handleDeleteOther"
 > &
   FormIndexes &
   FormField;
@@ -70,6 +71,7 @@ export const FormCard = ({
   handleMoreOptions,
   handleFormType,
   handleDeleteOptions,
+  handleDeleteOther,
   ...field
 }: FormFieldProps) => {
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
@@ -86,22 +88,31 @@ export const FormCard = ({
             readOnly={readOnly}
             handleChangeForm={handleChangeForm}
             handleDeleteOptions={handleDeleteOptions}
+            handleDeleteOther={handleDeleteOther}
             {...field}
           />
         );
-      case "date":
-        return <DatePicker disabled={readOnly} />;
+
       case "dropdown":
         return (
           <MutiOptionField
             readOnly={readOnly}
             handleChangeForm={handleChangeForm}
             handleDeleteOptions={handleDeleteOptions}
+            handleDeleteOther={handleDeleteOther}
             {...field}
           />
         );
-      case "file":
-        return <Input disabled={readOnly} onChange={handleChangeForm} />;
+      case "radio":
+        return (
+          <MutiOptionField
+            readOnly={readOnly}
+            handleChangeForm={handleChangeForm}
+            handleDeleteOptions={handleDeleteOptions}
+            handleDeleteOther={handleDeleteOther}
+            {...field}
+          />
+        );
       case "input":
         return (
           <Input
@@ -119,15 +130,10 @@ export const FormCard = ({
             onChange={handleChangeForm}
           />
         );
-      case "radio":
-        return (
-          <MutiOptionField
-            readOnly={readOnly}
-            handleChangeForm={handleChangeForm}
-            handleDeleteOptions={handleDeleteOptions}
-            {...field}
-          />
-        );
+      case "file":
+        return <Input disabled={readOnly} onChange={handleChangeForm} />;
+      case "date":
+        return <DatePicker disabled={readOnly} />;
       default:
         return null;
     }

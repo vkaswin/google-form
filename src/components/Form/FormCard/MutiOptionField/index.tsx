@@ -6,7 +6,10 @@ import styles from "./MultiOptionField.module.scss";
 
 type MutiOptionFieldProps = {
   readOnly: boolean;
-} & Pick<FormContextType, "handleChangeForm" | "handleDeleteOptions"> &
+} & Pick<
+  FormContextType,
+  "handleChangeForm" | "handleDeleteOptions" | "handleDeleteOther"
+> &
   FormIndexes &
   FormField;
 
@@ -24,6 +27,7 @@ export const MutiOptionField = ({
   sectionindex,
   handleChangeForm,
   handleDeleteOptions,
+  handleDeleteOther,
 }: MutiOptionFieldProps) => {
   let icon = useMemo<string>(() => {
     switch (type) {
@@ -75,7 +79,10 @@ export const MutiOptionField = ({
             value={other}
             onChange={handleChangeForm}
           />
-          <i className="bx-x"></i>
+          <i
+            className="bx-x"
+            onClick={() => handleDeleteOther(sectionindex, fieldindex)}
+          ></i>
         </div>
       )}
       <div className={styles.wrapper}>

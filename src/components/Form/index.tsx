@@ -16,6 +16,7 @@ export const Form = () => {
     handleFormType,
     handleFormHeader,
     handleDeleteOptions,
+    handleDeleteOther,
   } = useOutletContext<FormContextType>();
 
   return (
@@ -44,6 +45,7 @@ export const Form = () => {
                   handleMoreOptions={handleMoreOptions}
                   handleFormType={handleFormType}
                   handleDeleteOptions={handleDeleteOptions}
+                  handleDeleteOther={handleDeleteOther}
                   {...field}
                 />
               );

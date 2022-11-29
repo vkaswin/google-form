@@ -36,6 +36,7 @@ export type FormContextType = {
     optionindex: string
   ) => void;
   handleMoreOptions: (action: FormMoreOption["action"], id: string) => void;
+  handleDeleteOther: (sectionindex: string, fieldindex: string) => void;
 };
 
 export type FormMoreOption = {

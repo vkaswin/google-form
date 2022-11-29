@@ -191,7 +191,6 @@ const FormLayout = () => {
       "value" in event.target ? event.target.value : event.target.innerHTML;
 
     if (!sectionindex || !fieldindex || !name || !type) return;
-    console.dir(value);
 
     let form = { ...formDetail };
     let field = form.sections[+sectionindex][+fieldindex];
@@ -258,6 +257,15 @@ const FormLayout = () => {
     setFormDetail(form);
   };
 
+  const handleDeleteOther: FormContextType["handleDeleteOther"] = (
+    sectionindex,
+    fieldindex
+  ) => {
+    let form = { ...formDetail };
+    form.sections[+sectionindex][+fieldindex].other = "";
+    setFormDetail(form);
+  };
+
   const handleFormHeader: FormContextType["handleFormHeader"] = (event) => {
     let form = { ...formDetail };
     let { name } = event?.target.dataset;
@@ -286,6 +294,7 @@ const FormLayout = () => {
     handleFormHeader,
     handleFormType,
     handleDeleteOptions,
+    handleDeleteOther,
   };
 
   return (
