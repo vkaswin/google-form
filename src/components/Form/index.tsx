@@ -2,35 +2,53 @@ import { Fragment } from "react";
 import { useOutletContext } from "react-router-dom";
 import { FormContextType } from "types/Form";
 import { FormCard } from "./FormCard";
+import { FormHeader } from "./FormHeader";
 
-type FormProps = {} & FormContextType;
-
-export const Form = ({}) => {
+export const Form = () => {
   const {
-    formDetail: { theme, fields },
+    formDetail: { theme, header, sections },
     selectedId,
     handleClickForm,
     handleChangeForm,
     handleDeleteForm,
     handleDuplicateForm,
     handleMoreOptions,
+    handleFormType,
+    handleFormHeader,
+    handleDeleteOptions,
   } = useOutletContext<FormContextType>();
 
   return (
     <Fragment>
-      {fields.map((field) => {
+      <FormHeader
+        selectedId={selectedId}
+        handleClickForm={handleClickForm}
+        handleFormHeader={handleFormHeader}
+        {...header}
+      />
+      {sections.map((section, sectionIndex) => {
         return (
-          <FormCard
-            key={field.id}
-            selectedId={selectedId}
-            readOnly={true}
-            handleClickForm={handleClickForm}
-            handleChangeForm={handleChangeForm}
-            handleDeleteForm={handleDeleteForm}
-            handleDuplicateForm={handleDuplicateForm}
-            handleMoreOptions={handleMoreOptions}
-            {...field}
-          />
+          <Fragment key={sectionIndex}>
+            {section.map((field, fieldIndex) => {
+              return (
+                <FormCard
+                  key={field.id}
+                  selectedId={selectedId}
+                  readOnly={true}
+                  fieldindex={fieldIndex.toString()}
+                  sectionindex={sectionIndex.toString()}
+                  handleClickForm={handleClickForm}
+                  handleChangeForm={handleChangeForm}
+                  handleDeleteForm={handleDeleteForm}
+                  handleDuplicateForm={handleDuplicateForm}
+                  handleMoreOptions={handleMoreOptions}
+                  handleFormType={handleFormType}
+                  handleDeleteOptions={handleDeleteOptions}
+                  {...field}
+                />
+              );
+            })}
+          </Fragment>
         );
       })}
     </Fragment>

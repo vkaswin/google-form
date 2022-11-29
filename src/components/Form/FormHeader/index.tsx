@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent } from "react";
+import { ChangeEvent } from "react";
 import { TextEditor } from "components";
 import { FormContextType } from "types/Form";
 
@@ -22,17 +22,19 @@ export const FormHeader = ({
     <div className={styles.container} onClick={() => handleClickForm(id)}>
       <TextEditor
         as="h1"
+        data-name="title"
         placeholder="Form title"
         defaultValue={title}
         onInput={(event: ChangeEvent<HTMLDivElement>) =>
-          handleFormHeader("title", event)
+          handleFormHeader(event)
         }
       />
       <TextEditor
         placeholder="Form description"
         defaultValue={description}
+        data-name="description"
         onInput={(event: ChangeEvent<HTMLDivElement>) =>
-          handleFormHeader("description", event)
+          handleFormHeader(event)
         }
       />
       <div className={styles.indicator}></div>

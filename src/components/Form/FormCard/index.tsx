@@ -5,6 +5,7 @@ import {
   FormField,
   FormContextType,
   FormMoreOption,
+  FormIndexes,
 } from "types/Form";
 import {
   TextEditor,
@@ -28,7 +29,10 @@ type FormFieldProps = {
   | "handleDeleteForm"
   | "handleDuplicateForm"
   | "handleMoreOptions"
+  | "handleFormType"
+  | "handleDeleteOptions"
 > &
+  FormIndexes &
   FormField;
 
 let formTypes: FormTypeOption[] = [
@@ -64,6 +68,8 @@ export const FormCard = ({
   handleDeleteForm,
   handleDuplicateForm,
   handleMoreOptions,
+  handleFormType,
+  handleDeleteOptions,
   ...field
 }: FormFieldProps) => {
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
@@ -79,6 +85,7 @@ export const FormCard = ({
           <MutiOptionField
             readOnly={readOnly}
             handleChangeForm={handleChangeForm}
+            handleDeleteOptions={handleDeleteOptions}
             {...field}
           />
         );
@@ -89,36 +96,19 @@ export const FormCard = ({
           <MutiOptionField
             readOnly={readOnly}
             handleChangeForm={handleChangeForm}
+            handleDeleteOptions={handleDeleteOptions}
             {...field}
           />
         );
       case "file":
-        return (
-          <Input
-            disabled={readOnly}
-            onChange={(event) =>
-              handleChangeForm({
-                event,
-                key: "value",
-                id: field.id,
-                type: field.type,
-              })
-            }
-          />
-        );
+        return <Input disabled={readOnly} onChange={handleChangeForm} />;
       case "input":
         return (
           <Input
             placeholder="Short answer text"
             disabled={readOnly}
-            onChange={(event) =>
-              handleChangeForm({
-                event,
-                key: "value",
-                id: field.id,
-                type: field.type,
-              })
-            }
+            value={field.value}
+            onChange={handleChangeForm}
           />
         );
       case "textarea":
@@ -126,14 +116,7 @@ export const FormCard = ({
           <TextArea
             placeholder="Long answer text"
             disabled={readOnly}
-            onChange={(event) =>
-              handleChangeForm({
-                event,
-                key: "value",
-                id: field.id,
-                type: field.type,
-              })
-            }
+            onChange={handleChangeForm}
           />
         );
       case "radio":
@@ -141,36 +124,36 @@ export const FormCard = ({
           <MutiOptionField
             readOnly={readOnly}
             handleChangeForm={handleChangeForm}
+            handleDeleteOptions={handleDeleteOptions}
             {...field}
           />
         );
       default:
         return null;
     }
-  }, [field.type]);
+  }, [field]);
 
   return (
     <div className={styles.container} onClick={() => handleClickForm(field.id)}>
       <div className={styles.wrapper}>
         <TextEditor
           as="div"
+          data-name="question"
+          data-type={field.type}
+          data-fieldindex={field.fieldindex}
+          data-sectionindex={field.sectionindex}
           placeholder="Question"
-          onInput={(event: ChangeEvent<HTMLDivElement>) =>
-            handleChangeForm({
-              event,
-              key: "question",
-              id: field.id,
-              type: field.type,
-            })
-          }
+          defaultValue={field.question}
+          onInput={(e: ChangeEvent<HTMLDivElement>) => handleChangeForm(e)}
         />
         {selectedId === field.id && (
           <TypeDropDown
             id={field.id}
-            type={field.type}
-            handleChangeForm={handleChangeForm}
+            handleFormType={handleFormType}
             options={formTypes}
             selectedOption={selectedOption}
+            sectionindex={field.sectionindex}
+            fieldindex={field.fieldindex}
           />
         )}
       </div>
@@ -181,13 +164,15 @@ export const FormCard = ({
         <i
           id={`trash-${field.id}`}
           className="bx-trash"
-          onClick={() => handleDeleteForm(field.id)}
+          onClick={() => handleDeleteForm(field.sectionindex, field.fieldindex)}
         ></i>
         <ToolTip selector={`#trash-${field.id}`}>Trash</ToolTip>
         <i
           id={`duplicate-${field.id}`}
           className="bx-duplicate"
-          onClick={() => handleDuplicateForm(field.id)}
+          onClick={() =>
+            handleDuplicateForm(field.sectionindex, field.fieldindex)
+          }
         ></i>
         <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
         <div className={styles.split}></div>

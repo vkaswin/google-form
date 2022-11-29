@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
-import { FormParams, FormContextType, FormHandler } from "types/Form";
-import { FormHeader } from "./FormHeader";
+import {
+  FormParams,
+  FormContextType,
+  FormHandler,
+  FormCustomAttributes,
+  FormField,
+} from "types/Form";
+import { FormHeader } from "../../components/Form/FormHeader";
 import { useAuth } from "hooks";
 
 import styles from "./FormLayout.module.scss";
@@ -18,71 +24,126 @@ const FormLayout = () => {
       description: "Loreum Ispum",
       title: "Google Form",
     },
-    fields: [
-      {
-        id: crypto.randomUUID(),
-        question: "Loreum Ipsum",
-        type: "input",
-        value: "Loreum Ispum",
-        validation: {
-          rules: { required: true },
-        },
-      },
-      {
-        id: crypto.randomUUID(),
-        question: "Loreum Ipsum",
-        type: "textarea",
-        value:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-        validation: {
-          rules: { required: true },
-        },
-      },
-      {
-        id: crypto.randomUUID(),
-        question: "Gender",
-        type: "radio",
-        value: "Male",
-        validation: {
-          rules: { required: true },
-        },
-        options: [{ value: "Male" }, { value: "Female" }],
-        other: "Other",
-      },
-      {
-        id: crypto.randomUUID(),
-        question: "Hobbies",
-        type: "checkbox",
-        value: "Basketball",
-        validation: {
-          rules: { required: true },
-        },
-        options: [
-          { value: "Football" },
-          { value: "Basketball" },
-          { value: "Cricket" },
-        ],
-        other: "",
-      },
-      {
-        id: crypto.randomUUID(),
-        question: "Location",
-        type: "dropdown",
-        value: "Chennai",
-        validation: {
-          rules: { required: true },
-        },
-        options: [
-          { value: "Chennai" },
-          { value: "Hyderabad" },
-          { value: "Mumbai" },
-          { value: "Delhi" },
-          {
-            value: "Bangalore",
+    sections: [
+      [
+        {
+          id: crypto.randomUUID(),
+          question: "Gender",
+          type: "radio",
+          value: "Male",
+          validation: {
+            rules: { required: true },
           },
-        ],
-        other: "Other",
-      },
+          options: ["Male", "Female"],
+          other: "Other",
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "input",
+          value: "Loreum Ispum",
+          validation: {
+            rules: { required: true },
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "textarea",
+          value:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+          validation: {
+            rules: { required: true },
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Gender",
+          type: "radio",
+          value: "Male",
+          validation: {
+            rules: { required: true },
+          },
+          options: ["Male", "Female"],
+          other: "Other",
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Hobbies",
+          type: "checkbox",
+          value: "Basketball",
+          validation: {
+            rules: { required: true },
+          },
+          options: ["Football", "Basketball", "Cricket"],
+          other: "",
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Location",
+          type: "dropdown",
+          value: "Chennai",
+          validation: {
+            rules: { required: true },
+          },
+          options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
+          other: "Other",
+        },
+      ],
+      [
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "input",
+          value: "Loreum Ispum",
+          validation: {
+            rules: { required: true },
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "textarea",
+          value:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+          validation: {
+            rules: { required: true },
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Gender",
+          type: "radio",
+          value: "Male",
+          validation: {
+            rules: { required: true },
+          },
+          options: ["Male", "Female"],
+          other: "Other",
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Hobbies",
+          type: "checkbox",
+          value: "Basketball",
+          validation: {
+            rules: { required: true },
+          },
+          options: ["Football", "Basketball", "Cricket"],
+          other: "",
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Location",
+          type: "dropdown",
+          value: "Chennai",
+          validation: {
+            rules: { required: true },
+          },
+          options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
+          other: "Other",
+        },
+      ],
     ],
   });
 
@@ -100,93 +161,76 @@ const FormLayout = () => {
     setSelectedId(id);
   };
 
-  const handleDeleteForm = (id: string) => {
+  const handleDeleteForm: FormContextType["handleDeleteForm"] = (
+    sectionindex,
+    fieldindex
+  ) => {
     let form = { ...formDetail };
-    let index = form.fields.findIndex((field) => {
-      return field.id === id;
-    });
-    if (index === -1) return;
-    form.fields.splice(index, 1);
+    delete form.sections[+sectionindex][+fieldindex];
     setFormDetail(form);
   };
 
-  const handleDuplicateForm: FormContextType["handleDuplicateForm"] = (id) => {
-    console.log(id);
+  const handleDuplicateForm: FormContextType["handleDuplicateForm"] = (
+    sectionindex,
+    fieldindex
+  ) => {
     let form = { ...formDetail };
-    let index = form.fields.findIndex((field) => {
-      return field.id === id;
-    });
-    if (index === -1) return;
-    form.fields.push(form.fields[index]);
+    let field = { ...form.sections[+sectionindex][+fieldindex] };
+    field.id = crypto.randomUUID();
+    form.sections[+sectionindex].push(field);
+    setFormDetail(form);
   };
 
-  const handleChangeForm: FormContextType["handleChangeForm"] = ({
-    key,
-    id,
-    type,
-    event,
-  }): void => {
-    let form = { ...formDetail };
+  const handleChangeForm: FormContextType["handleChangeForm"] = (
+    event
+  ): void => {
+    let { fieldindex, sectionindex, optionindex, name, type } = event?.target
+      .dataset as FormCustomAttributes;
 
-    switch (key) {
+    let value =
+      "value" in event.target ? event.target.value : event.target.innerHTML;
+
+    if (!sectionindex || !fieldindex || !name || !type) return;
+    console.dir(value);
+
+    let form = { ...formDetail };
+    let field = form.sections[+sectionindex][+fieldindex];
+
+    switch (name) {
       case "description":
-        break;
-      case "question":
-        handleFormQuestion({
-          id,
-          type,
-          fields: form.fields,
-          value: event?.target.innerHTML,
-        });
+        field.description = value;
         break;
       case "options":
-        handleFormOptions({
-          id,
-          type,
-          fields: form.fields,
-          value: (event?.target as HTMLInputElement).value,
-        });
+        if (!Array.isArray(field.options) || typeof optionindex !== "string")
+          return;
+        field.options[+optionindex] = value;
         break;
-      case "type":
-        handleFormType({
-          id,
-          type,
-          fields: form.fields,
-        });
+      case "other":
+        field.other = value;
+        break;
+      case "question":
+        field.question = value;
         break;
       case "value":
         break;
-
+      case "other":
+        field.other = value;
+        break;
       default:
         return;
     }
+
     setFormDetail(form);
   };
 
-  const handleFormType: FormHandler = ({ id, type, fields }) => {
-    let field = fields.find((field) => {
-      return field.id === id;
-    });
-    if (!field) return;
-    field.type = type;
-    switch (type) {
-      case "checkbox":
-        break;
-      case "dropdown":
-        break;
-      case "radio":
-        break;
-      default:
-        return;
-    }
-  };
-
-  const handleFormOptions: FormHandler = ({ id, type, fields, value }) => {
-    console.log(id, type, fields, value);
-  };
-
-  const handleFormQuestion: FormHandler = ({ id, type, fields, value }) => {
-    console.log(id, type, fields, value);
+  const handleFormType: FormContextType["handleFormType"] = (
+    sectionindex,
+    fieldindex,
+    type
+  ) => {
+    let form = { ...formDetail };
+    form.sections[+sectionindex][+fieldindex].type = type;
+    setFormDetail(form);
   };
 
   const handleMoreOptions: FormContextType["handleMoreOptions"] = (
@@ -204,20 +248,29 @@ const FormLayout = () => {
     }
   };
 
-  const handleFormHeader: FormContextType["handleFormHeader"] = (
-    key,
-    event
+  const handleDeleteOptions: FormContextType["handleDeleteOptions"] = (
+    sectionindex,
+    fieldindex,
+    optionindex
   ) => {
     let form = { ...formDetail };
-    switch (key) {
+    form.sections[+sectionindex][+fieldindex].options?.splice(+optionindex, 1);
+    setFormDetail(form);
+  };
+
+  const handleFormHeader: FormContextType["handleFormHeader"] = (event) => {
+    let form = { ...formDetail };
+    let { name } = event?.target.dataset;
+    let value = event.target.innerHTML;
+    switch (name) {
       case "title":
-        form.header.title = event.target.innerHTML;
+        form.header.title = value;
         break;
       case "description":
-        form.header.description = event.target.innerHTML;
+        form.header.description = value;
         break;
       default:
-        break;
+        return;
     }
     setFormDetail(form);
   };
@@ -231,16 +284,12 @@ const FormLayout = () => {
     handleDuplicateForm,
     handleMoreOptions,
     handleFormHeader,
+    handleFormType,
+    handleDeleteOptions,
   };
 
   return (
     <div className={styles.container}>
-      <FormHeader
-        selectedId={selectedId}
-        handleClickForm={handleClickForm}
-        handleFormHeader={handleFormHeader}
-        {...formDetail.header}
-      />
       <Outlet context={context} />
     </div>
   );

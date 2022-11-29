@@ -1,9 +1,9 @@
-import { ChangeEvent, FormEvent } from "react";
+import { ChangeEvent } from "react";
 
 export type FormDetail = {
   theme: string;
   header: FormHeader;
-  fields: FormField[];
+  sections: FormField[][];
 };
 
 export type FormHeader = {
@@ -14,24 +14,28 @@ export type FormHeader = {
 
 export type FormContextType = {
   selectedId: string | null;
-  handleChangeForm: <E>(data: {
-    key: Exclude<keyof FormField, "id" | "validation">;
-    id: string;
-    type: FormType;
-    event?:
+  formDetail: FormDetail;
+  handleChangeForm: (
+    event:
       | ChangeEvent<HTMLInputElement>
       | ChangeEvent<HTMLDivElement>
-      | ChangeEvent<HTMLTextAreaElement>;
-  }) => void;
-  handleClickForm: (id: string) => void;
-  handleDeleteForm: (id: string) => void;
-  handleDuplicateForm: (id: string) => void;
-  handleMoreOptions: (action: FormMoreOption["action"], id: string) => void;
-  handleFormHeader: (
-    key: "title" | "description",
-    event: ChangeEvent<HTMLDivElement>
+      | ChangeEvent<HTMLTextAreaElement>
   ) => void;
-  formDetail: FormDetail;
+  handleClickForm: (fieldId: string) => void;
+  handleDeleteForm: (sectionindex: string, fieldindex: string) => void;
+  handleDuplicateForm: (sectionindex: string, fieldindex: string) => void;
+  handleFormHeader: (event: ChangeEvent<HTMLDivElement>) => void;
+  handleFormType: (
+    sectionindex: string,
+    fieldindex: string,
+    type: FormType
+  ) => void;
+  handleDeleteOptions: (
+    sectionindex: string,
+    fieldindex: string,
+    optionindex: string
+  ) => void;
+  handleMoreOptions: (action: FormMoreOption["action"], id: string) => void;
 };
 
 export type FormMoreOption = {
@@ -65,7 +69,7 @@ export type FormErrorText = {
 };
 
 export type FormField = {
-  readonly id: string;
+  id: string;
   question: string;
   value: string | string[];
   type: FormType;
@@ -74,7 +78,7 @@ export type FormField = {
     rules?: FormRules;
     errorText?: FormErrorText;
   };
-  options?: FormOption[];
+  options?: string[];
   other?: string;
 };
 
@@ -88,14 +92,20 @@ export type FormTypeOption = {
   type: FormType;
 };
 
-export type FormOption = {
-  value: string;
-  url?: string;
-};
+export type FormHandler = (
+  id: string,
+  type: FormType,
+  value: string,
+  fields: FormField[]
+) => void;
 
-export type FormHandler = (data: {
-  id: string;
+export type FormCustomAttributes = {
   type: FormType;
-  fields: FormField[];
-  value?: string;
-}) => void;
+  name: Exclude<keyof FormField, "id" | "validation">;
+} & FormIndexes;
+
+export type FormIndexes = {
+  sectionindex: string;
+  fieldindex: string;
+  optionindex?: string;
+};

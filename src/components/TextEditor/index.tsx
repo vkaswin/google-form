@@ -11,6 +11,7 @@ import styles from "./TextEditor.module.scss";
 
 type TextEditorOwnProps<E extends ElementType> = {
   as?: E;
+  value?: string;
 };
 
 export type TextEditorProps<E extends ElementType> = TextEditorOwnProps<E> &

@@ -1,12 +1,13 @@
 import React, { useMemo } from "react";
 import { Input } from "components";
-import { FormContextType, FormField } from "types/Form";
+import { FormContextType, FormField, FormIndexes } from "types/Form";
 
 import styles from "./MultiOptionField.module.scss";
 
 type MutiOptionFieldProps = {
   readOnly: boolean;
-} & Pick<FormContextType, "handleChangeForm"> &
+} & Pick<FormContextType, "handleChangeForm" | "handleDeleteOptions"> &
+  FormIndexes &
   FormField;
 
 export const MutiOptionField = ({
@@ -19,7 +20,10 @@ export const MutiOptionField = ({
   question,
   other = "",
   validation,
+  fieldindex,
+  sectionindex,
   handleChangeForm,
+  handleDeleteOptions,
 }: MutiOptionFieldProps) => {
   let icon = useMemo<string>(() => {
     switch (type) {
@@ -43,18 +47,20 @@ export const MutiOptionField = ({
               <i className={icon}></i>
             )}
             <Input
-              name={index.toString()}
-              defaultValue={`Option ${index + 1}`}
-              onChange={(event) =>
-                handleChangeForm({
-                  event,
-                  key: "options",
-                  id,
-                  type,
-                })
-              }
+              data-name="options"
+              data-type={type}
+              data-fieldindex={fieldindex}
+              data-sectionindex={sectionindex}
+              data-optionindex={index}
+              value={option}
+              onChange={handleChangeForm}
             />
-            <i className="bx-x"></i>
+            <i
+              className="bx-x"
+              onClick={() =>
+                handleDeleteOptions(sectionindex, fieldindex, index.toString())
+              }
+            ></i>
           </div>
         );
       })}
@@ -62,16 +68,12 @@ export const MutiOptionField = ({
         <div className={styles.option_field}>
           <i className={icon}></i>
           <Input
-            name="other"
-            defaultValue={other}
-            onChange={(event) =>
-              handleChangeForm({
-                event,
-                key: "other",
-                id,
-                type,
-              })
-            }
+            data-name="other"
+            data-type={type}
+            data-fieldindex={fieldindex}
+            data-sectionindex={sectionindex}
+            value={other}
+            onChange={handleChangeForm}
           />
           <i className="bx-x"></i>
         </div>
