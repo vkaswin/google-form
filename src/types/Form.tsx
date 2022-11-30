@@ -25,6 +25,8 @@ export type FormTypes = {
   handleDeleteForm: (sectionindex: string, fieldindex: string) => void;
   handleDuplicateForm: (sectionindex: string, fieldindex: string) => void;
   handleFormHeader: (event: ChangeEvent<HTMLDivElement>) => void;
+  handleAddOther: (sectionindex: string, fieldindex: string) => void;
+  handleAddOption: (sectionindex: string, fieldindex: string) => void;
   handleFormType: (
     sectionindex: string,
     fieldindex: string,
@@ -78,7 +80,10 @@ export type FormField = {
   question: string;
   value: string | string[];
   type: FormType;
-  description?: string;
+  description: {
+    enabled: boolean;
+    value: string;
+  };
   validation?: {
     rules?: FormRules;
     errorText?: FormErrorText;

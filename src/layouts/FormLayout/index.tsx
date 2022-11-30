@@ -6,6 +6,7 @@ import { FormParams, FormTypes, FormCustomAttributes } from "types/Form";
 import { useAuth } from "hooks";
 
 import styles from "./FormLayout.module.scss";
+import { shuffleArray } from "helpers/index";
 
 const FormLayout = () => {
   const { formId } = useParams<FormParams>();
@@ -31,6 +32,10 @@ const FormLayout = () => {
           },
           options: ["Male", "Female"],
           other: "Other",
+          description: {
+            enabled: false,
+            value: "",
+          },
         },
         {
           id: crypto.randomUUID(),
@@ -39,6 +44,10 @@ const FormLayout = () => {
           value: "Loreum Ispum",
           validation: {
             rules: { required: true },
+          },
+          description: {
+            enabled: false,
+            value: "",
           },
         },
         {
@@ -49,6 +58,10 @@ const FormLayout = () => {
             "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
           validation: {
             rules: { required: true },
+          },
+          description: {
+            enabled: false,
+            value: "",
           },
         },
         {
@@ -61,6 +74,10 @@ const FormLayout = () => {
           },
           options: ["Male", "Female"],
           other: "Other",
+          description: {
+            enabled: false,
+            value: "",
+          },
         },
         {
           id: crypto.randomUUID(),
@@ -72,6 +89,10 @@ const FormLayout = () => {
           },
           options: ["Football", "Basketball", "Cricket"],
           other: "",
+          description: {
+            enabled: false,
+            value: "",
+          },
         },
         {
           id: crypto.randomUUID(),
@@ -82,7 +103,10 @@ const FormLayout = () => {
             rules: { required: true },
           },
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
-          other: "Other",
+          description: {
+            enabled: false,
+            value: "",
+          },
         },
       ],
       [
@@ -94,6 +118,10 @@ const FormLayout = () => {
           validation: {
             rules: { required: true },
           },
+          description: {
+            enabled: false,
+            value: "",
+          },
         },
         {
           id: crypto.randomUUID(),
@@ -103,6 +131,10 @@ const FormLayout = () => {
             "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
           validation: {
             rules: { required: true },
+          },
+          description: {
+            enabled: false,
+            value: "",
           },
         },
         {
@@ -115,6 +147,10 @@ const FormLayout = () => {
           },
           options: ["Male", "Female"],
           other: "Other",
+          description: {
+            enabled: false,
+            value: "",
+          },
         },
         {
           id: crypto.randomUUID(),
@@ -126,6 +162,10 @@ const FormLayout = () => {
           },
           options: ["Football", "Basketball", "Cricket"],
           other: "",
+          description: {
+            enabled: false,
+            value: "",
+          },
         },
         {
           id: crypto.randomUUID(),
@@ -136,7 +176,10 @@ const FormLayout = () => {
             rules: { required: true },
           },
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
-          other: "Other",
+          description: {
+            enabled: false,
+            value: "",
+          },
         },
       ],
     ],
@@ -190,7 +233,7 @@ const FormLayout = () => {
 
     switch (name) {
       case "description":
-        field.description = value;
+        field.description.value = value;
         break;
       case "options":
         if (!Array.isArray(field.options) || typeof optionindex !== "string")
@@ -230,15 +273,22 @@ const FormLayout = () => {
     fieldindex,
     action
   ) => {
-    console.log(sectionindex, fieldindex, action);
+    let form = { ...formDetail };
+    let field = form.sections[+sectionindex][+fieldindex];
+
     switch (action) {
       case "description":
+        field.description.enabled = !field.description.enabled;
         break;
       case "shuffle":
+        if (!Array.isArray(field.options)) return;
+        shuffleArray(field.options);
         break;
       default:
         return;
     }
+
+    setFormDetail(form);
   };
 
   const handleDeleteOptions: FormTypes["handleDeleteOptions"] = (
@@ -248,6 +298,26 @@ const FormLayout = () => {
   ) => {
     let form = { ...formDetail };
     form.sections[+sectionindex][+fieldindex].options?.splice(+optionindex, 1);
+    setFormDetail(form);
+  };
+
+  const handleAddOther: FormTypes["handleAddOther"] = (
+    sectionindex,
+    fieldindex
+  ) => {
+    let form = { ...formDetail };
+    form.sections[+sectionindex][+fieldindex].other = "Other";
+    setFormDetail(form);
+  };
+
+  const handleAddOption: FormTypes["handleAddOption"] = (
+    sectionindex,
+    fieldindex
+  ) => {
+    let form = { ...formDetail };
+    let field = form.sections[+sectionindex][+fieldindex];
+    if (!Array.isArray(field.options)) return;
+    field.options.push(`Option ${field.options.length + 1}`);
     setFormDetail(form);
   };
 
@@ -313,6 +383,8 @@ const FormLayout = () => {
                   handleFormType={handleFormType}
                   handleDeleteOptions={handleDeleteOptions}
                   handleDeleteOther={handleDeleteOther}
+                  handleAddOther={handleAddOther}
+                  handleAddOption={handleAddOption}
                   onClick={() => handleClickForm(field.id)}
                 />
               );

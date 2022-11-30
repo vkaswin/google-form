@@ -32,6 +32,8 @@ type FormFieldProps = {
   | "handleFormType"
   | "handleDeleteOptions"
   | "handleDeleteOther"
+  | "handleAddOther"
+  | "handleAddOption"
 > &
   FormIndexes &
   ComponentProps<"div">;
@@ -77,6 +79,8 @@ export const FormCard = ({
   handleFormType,
   handleDeleteOptions,
   handleDeleteOther,
+  handleAddOther,
+  handleAddOption,
   ...props
 }: FormFieldProps) => {
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
@@ -97,6 +101,8 @@ export const FormCard = ({
             handleChangeForm={handleChangeForm}
             handleDeleteOptions={handleDeleteOptions}
             handleDeleteOther={handleDeleteOther}
+            handleAddOther={handleAddOther}
+            handleAddOption={handleAddOption}
           />
         );
 
@@ -110,6 +116,8 @@ export const FormCard = ({
             handleChangeForm={handleChangeForm}
             handleDeleteOptions={handleDeleteOptions}
             handleDeleteOther={handleDeleteOther}
+            handleAddOther={handleAddOther}
+            handleAddOption={handleAddOption}
           />
         );
       case "radio":
@@ -122,6 +130,8 @@ export const FormCard = ({
             handleChangeForm={handleChangeForm}
             handleDeleteOptions={handleDeleteOptions}
             handleDeleteOther={handleDeleteOther}
+            handleAddOther={handleAddOther}
+            handleAddOption={handleAddOption}
           />
         );
       case "input":
@@ -148,7 +158,7 @@ export const FormCard = ({
       default:
         return null;
     }
-  }, [field]);
+  }, [{ ...field }]);
 
   return (
     <div
@@ -184,6 +194,20 @@ export const FormCard = ({
             />
           )}
         </div>
+        {field.description.enabled && (
+          <div className={styles.field_description}>
+            <TextEditor
+              as="div"
+              data-name="description"
+              data-type={field.type}
+              data-fieldindex={fieldindex}
+              data-sectionindex={sectionindex}
+              placeholder="Description"
+              defaultValue={field.description.value}
+              onInput={(e: ChangeEvent<HTMLDivElement>) => handleChangeForm(e)}
+            />
+          </div>
+        )}
         <div className={styles.field} data-type={field.type}>
           {component}
         </div>
@@ -227,7 +251,7 @@ export const FormCard = ({
               <DropDown.Item
                 key={index}
                 onClick={() =>
-                  handleMoreOptions(fieldindex, fieldindex, action)
+                  handleMoreOptions(sectionindex, fieldindex, action)
                 }
               >
                 {label}

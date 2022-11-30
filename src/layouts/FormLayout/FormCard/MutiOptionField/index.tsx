@@ -9,7 +9,11 @@ type MutiOptionFieldProps = {
   field: FormField;
 } & Pick<
   FormTypes,
-  "handleChangeForm" | "handleDeleteOptions" | "handleDeleteOther"
+  | "handleChangeForm"
+  | "handleDeleteOptions"
+  | "handleDeleteOther"
+  | "handleAddOther"
+  | "handleAddOption"
 > &
   FormIndexes;
 
@@ -29,6 +33,8 @@ const MutiOptionField = ({
   handleChangeForm,
   handleDeleteOptions,
   handleDeleteOther,
+  handleAddOther,
+  handleAddOption,
 }: MutiOptionFieldProps) => {
   let icon = useMemo<string>(() => {
     switch (type) {
@@ -62,6 +68,7 @@ const MutiOptionField = ({
             />
             <i
               className="bx-x"
+              style={{ visibility: index === 0 ? "hidden" : "visible" }}
               onClick={() =>
                 handleDeleteOptions(sectionindex, fieldindex, index.toString())
               }
@@ -93,11 +100,14 @@ const MutiOptionField = ({
           <i className={icon}></i>
         )}
         <div className={styles.add_option}>
-          <div>
+          <div onClick={() => handleAddOption(sectionindex, fieldindex)}>
             <span>Add Option</span>
           </div>
           {type !== "dropdown" && other.length === 0 && (
-            <div className={styles.other_option}>
+            <div
+              className={styles.other_option}
+              onClick={() => handleAddOther(sectionindex, fieldindex)}
+            >
               <span>or </span>
               <span>add "Other"</span>
             </div>
