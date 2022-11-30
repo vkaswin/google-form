@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactNode, useMemo } from "react";
+import { ChangeEvent, ComponentProps, ReactNode, useMemo } from "react";
 import {
   FormTypeOption,
   FormField,
@@ -20,6 +20,8 @@ import styles from "./FormCard.module.scss";
 type FormFieldProps = {
   selectedId: string | null;
   readOnly: boolean;
+  field: FormField;
+  sectionHeader: string | null;
 } & Pick<
   FormTypes,
   | "handleChangeForm"
@@ -32,7 +34,7 @@ type FormFieldProps = {
   | "handleDeleteOther"
 > &
   FormIndexes &
-  FormField;
+  ComponentProps<"div">;
 
 let formTypes: FormTypeOption[] = [
   { type: "input", icon: "bx-text", label: "Short answer" },
@@ -60,8 +62,13 @@ let moreOptions: FormMoreOption[] = [
 ];
 
 export const FormCard = ({
+  field,
   selectedId,
   readOnly,
+  fieldindex,
+  sectionindex,
+  sectionHeader,
+  className,
   handleClickForm,
   handleChangeForm,
   handleDeleteForm,
@@ -70,7 +77,7 @@ export const FormCard = ({
   handleFormType,
   handleDeleteOptions,
   handleDeleteOther,
-  ...field
+  ...props
 }: FormFieldProps) => {
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
     return formTypes.find((option) => {
@@ -83,32 +90,38 @@ export const FormCard = ({
       case "checkbox":
         return (
           <MutiOptionField
+            field={field}
             readOnly={readOnly}
+            sectionindex={sectionindex}
+            fieldindex={fieldindex}
             handleChangeForm={handleChangeForm}
             handleDeleteOptions={handleDeleteOptions}
             handleDeleteOther={handleDeleteOther}
-            {...field}
           />
         );
 
       case "dropdown":
         return (
           <MutiOptionField
+            field={field}
             readOnly={readOnly}
+            sectionindex={sectionindex}
+            fieldindex={fieldindex}
             handleChangeForm={handleChangeForm}
             handleDeleteOptions={handleDeleteOptions}
             handleDeleteOther={handleDeleteOther}
-            {...field}
           />
         );
       case "radio":
         return (
           <MutiOptionField
+            field={field}
             readOnly={readOnly}
+            sectionindex={sectionindex}
+            fieldindex={fieldindex}
             handleChangeForm={handleChangeForm}
             handleDeleteOptions={handleDeleteOptions}
             handleDeleteOther={handleDeleteOther}
-            {...field}
           />
         );
       case "input":
@@ -138,86 +151,95 @@ export const FormCard = ({
   }, [field]);
 
   return (
-    <div className={styles.container} onClick={() => handleClickForm(field.id)}>
+    <div
+      className={`${styles.container} ${className || ""}`.trim()}
+      data-section={!!sectionHeader}
+      {...props}
+    >
+      {sectionHeader && (
+        <div className={styles.section}>
+          <span>{sectionHeader}</span>
+        </div>
+      )}
       <div className={styles.wrapper}>
-        <TextEditor
-          as="div"
-          data-name="question"
-          data-type={field.type}
-          data-fieldindex={field.fieldindex}
-          data-sectionindex={field.sectionindex}
-          placeholder="Question"
-          defaultValue={field.question}
-          onInput={(e: ChangeEvent<HTMLDivElement>) => handleChangeForm(e)}
-        />
-        {selectedId === field.id && (
-          <TypeDropDown
-            id={field.id}
-            handleFormType={handleFormType}
-            options={formTypes}
-            selectedOption={selectedOption}
-            sectionindex={field.sectionindex}
-            fieldindex={field.fieldindex}
+        <div className={styles.field_label}>
+          <TextEditor
+            as="div"
+            data-name="question"
+            data-type={field.type}
+            data-fieldindex={fieldindex}
+            data-sectionindex={sectionindex}
+            placeholder="Question"
+            defaultValue={field.question}
+            onInput={(e: ChangeEvent<HTMLDivElement>) => handleChangeForm(e)}
           />
-        )}
-      </div>
-      <div className={styles.field} data-type={field.type}>
-        {component}
-      </div>
-      <div className={styles.footer}>
-        <i
-          id={`trash-${field.id}`}
-          className="bx-trash"
-          onClick={() => handleDeleteForm(field.sectionindex, field.fieldindex)}
-        ></i>
-        <ToolTip selector={`#trash-${field.id}`}>Trash</ToolTip>
-        <i
-          id={`duplicate-${field.id}`}
-          className="bx-duplicate"
-          onClick={() =>
-            handleDuplicateForm(field.sectionindex, field.fieldindex)
-          }
-        ></i>
-        <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
-        <div className={styles.split}></div>
-        <div>
-          <span>Required</span>
+          {selectedId === field.id && (
+            <TypeDropDown
+              id={field.id}
+              handleFormType={handleFormType}
+              options={formTypes}
+              selectedOption={selectedOption}
+              sectionindex={sectionindex}
+              fieldindex={fieldindex}
+            />
+          )}
         </div>
-        <div id={`more-options-${field.id}`} className={styles.more_options}>
-          <i className="bx-dots-vertical-rounded"></i>
+        <div className={styles.field} data-type={field.type}>
+          {component}
         </div>
-      </div>
-      <DropDown
-        selector={`#more-options-${field.id}`}
-        className={styles.option_drop_down}
-      >
-        {moreOptions.map(({ label, action }, index) => {
-          if (
-            action === "shuffle" &&
-            !(
-              field.type === "checkbox" ||
-              field.type === "dropdown" ||
-              field.type === "radio"
+        <div className={styles.footer}>
+          <i
+            id={`trash-${field.id}`}
+            className="bx-trash"
+            onClick={() => handleDeleteForm(sectionindex, fieldindex)}
+          ></i>
+          <ToolTip selector={`#trash-${field.id}`}>Trash</ToolTip>
+          <i
+            id={`duplicate-${field.id}`}
+            className="bx-duplicate"
+            onClick={() => handleDuplicateForm(sectionindex, fieldindex)}
+          ></i>
+          <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
+          <div className={styles.split}></div>
+          <div>
+            <span>Required</span>
+          </div>
+          <div id={`more-options-${field.id}`} className={styles.more_options}>
+            <i className="bx-dots-vertical-rounded"></i>
+          </div>
+        </div>
+        <DropDown
+          selector={`#more-options-${field.id}`}
+          className={styles.option_drop_down}
+        >
+          {moreOptions.map(({ label, action }, index) => {
+            if (
+              action === "shuffle" &&
+              !(
+                field.type === "checkbox" ||
+                field.type === "dropdown" ||
+                field.type === "radio"
+              )
             )
-          )
-            return null;
+              return null;
 
-          return (
-            <DropDown.Item
-              key={index}
-              onClick={() =>
-                handleMoreOptions(field.fieldindex, field.fieldindex, action)
-              }
-            >
-              {label}
-            </DropDown.Item>
-          );
-        })}
-      </DropDown>
-      {selectedId === field.id && <div className={styles.highlight}></div>}
-      <div className={styles.drag_icon}>
-        <i className="bx-dots-horizontal-rounded"></i>
-        <i className="bx-dots-horizontal-rounded"></i>
+            return (
+              <DropDown.Item
+                key={index}
+                onClick={() =>
+                  handleMoreOptions(fieldindex, fieldindex, action)
+                }
+              >
+                {label}
+              </DropDown.Item>
+            );
+          })}
+        </DropDown>
+        {selectedId === field.id && <div className={styles.highlight}></div>}
+        <div className={styles.drag_icon}>
+          <i className="bx-dots-horizontal-rounded"></i>
+          <i className="bx-dots-horizontal-rounded"></i>
+        </div>
       </div>
     </div>
   );

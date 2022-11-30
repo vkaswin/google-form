@@ -8,13 +8,27 @@
   background-color: #fff;
   border: 1px solid #dadce0;
   border-radius: 8px;
-  padding: 30px 25px 0px 25px;
   &:hover {
     .drag_icon {
       display: block;
     }
   }
+  .section {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    background-color: var(--primary-color);
+    height: 55px;
+    border-radius: 8px 8px 0px 0px;
+    color: white;
+    padding: 0px 15px;
+    font-size: 18px;
+    z-index: 3;
+  }
   .wrapper {
+    padding: 30px 25px 0px 25px;
+  }
+  .field_label {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -102,6 +116,12 @@
     background-color: var(--primary-color);
     border-radius: 8px 8px 0px 0px;
     z-index: 1;
+  }
+}
+
+.container[data-section] {
+  .highlight {
+    height: 98%;
   }
 }
 

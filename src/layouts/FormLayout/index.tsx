@@ -292,11 +292,17 @@ const FormLayout = () => {
         return (
           <Fragment key={sectionIndex}>
             {section.map((field, fieldIndex) => {
+              let sectionHeader =
+                fieldIndex === 0 && sections.length > 1
+                  ? `Section ${sectionIndex + 1} of ${sections.length}`
+                  : null;
               return (
                 <FormCard
                   key={field.id}
-                  selectedId={selectedId}
+                  field={field}
                   readOnly={true}
+                  selectedId={selectedId}
+                  sectionHeader={sectionHeader}
                   fieldindex={fieldIndex.toString()}
                   sectionindex={sectionIndex.toString()}
                   handleClickForm={handleClickForm}
@@ -307,7 +313,7 @@ const FormLayout = () => {
                   handleFormType={handleFormType}
                   handleDeleteOptions={handleDeleteOptions}
                   handleDeleteOther={handleDeleteOther}
-                  {...field}
+                  onClick={() => handleClickForm(field.id)}
                 />
               );
             })}

@@ -6,23 +6,24 @@ import styles from "./MultiOptionField.module.scss";
 
 type MutiOptionFieldProps = {
   readOnly: boolean;
+  field: FormField;
 } & Pick<
   FormTypes,
   "handleChangeForm" | "handleDeleteOptions" | "handleDeleteOther"
 > &
-  FormIndexes &
-  FormField;
+  FormIndexes;
 
 const MutiOptionField = ({
-  readOnly,
-  options,
-  id,
-  type,
-  value,
-  description,
-  question,
-  other = "",
-  validation,
+  field: {
+    id,
+    type,
+    value,
+    description,
+    question,
+    options,
+    other = "",
+    validation,
+  },
   fieldindex,
   sectionindex,
   handleChangeForm,
