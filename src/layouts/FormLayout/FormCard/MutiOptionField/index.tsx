@@ -18,16 +18,8 @@ type MutiOptionFieldProps = {
   FormIndexes;
 
 const MutiOptionField = ({
-  field: {
-    id,
-    type,
-    value,
-    description,
-    question,
-    options,
-    other = "",
-    validation,
-  },
+  field: { id, type, value, description, question, options, other, required },
+  readOnly,
   fieldindex,
   sectionindex,
   handleChangeForm,
@@ -76,7 +68,7 @@ const MutiOptionField = ({
           </div>
         );
       })}
-      {type !== "dropdown" && other.length !== 0 && (
+      {other?.enabled && (
         <div className={styles.option_field}>
           <i className={icon}></i>
           <Input
@@ -84,8 +76,10 @@ const MutiOptionField = ({
             data-type={type}
             data-fieldindex={fieldindex}
             data-sectionindex={sectionindex}
-            value={other}
+            placeholder="Other..."
+            disabled={readOnly}
             onChange={handleChangeForm}
+            {...(!readOnly && { value: other.value })}
           />
           <i
             className="bx-x"
@@ -103,7 +97,7 @@ const MutiOptionField = ({
           <div onClick={() => handleAddOption(sectionindex, fieldindex)}>
             <span>Add Option</span>
           </div>
-          {type !== "dropdown" && other.length === 0 && (
+          {type !== "dropdown" && other && !other.enabled && (
             <div
               className={styles.other_option}
               onClick={() => handleAddOther(sectionindex, fieldindex)}

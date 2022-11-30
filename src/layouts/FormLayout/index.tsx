@@ -4,9 +4,9 @@ import { FormHeader } from "./FormHeader";
 import { FormCard } from "./FormCard";
 import { FormParams, FormTypes, FormCustomAttributes } from "types/Form";
 import { useAuth } from "hooks";
+import { shuffleArray } from "helpers/index";
 
 import styles from "./FormLayout.module.scss";
-import { shuffleArray } from "helpers/index";
 
 const FormLayout = () => {
   const { formId } = useParams<FormParams>();
@@ -24,27 +24,10 @@ const FormLayout = () => {
       [
         {
           id: crypto.randomUUID(),
-          question: "Gender",
-          type: "radio",
-          value: "Male",
-          validation: {
-            rules: { required: true },
-          },
-          options: ["Male", "Female"],
-          other: "Other",
-          description: {
-            enabled: false,
-            value: "",
-          },
-        },
-        {
-          id: crypto.randomUUID(),
           question: "Loreum Ipsum",
-          type: "input",
+          type: "date",
           value: "Loreum Ispum",
-          validation: {
-            rules: { required: true },
-          },
+          required: true,
           description: {
             enabled: false,
             value: "",
@@ -53,12 +36,10 @@ const FormLayout = () => {
         {
           id: crypto.randomUUID(),
           question: "Loreum Ipsum",
-          type: "textarea",
+          type: "file",
           value:
             "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-          validation: {
-            rules: { required: true },
-          },
+          required: true,
           description: {
             enabled: false,
             value: "",
@@ -69,11 +50,12 @@ const FormLayout = () => {
           question: "Gender",
           type: "radio",
           value: "Male",
-          validation: {
-            rules: { required: true },
-          },
+          required: true,
           options: ["Male", "Female"],
-          other: "Other",
+          other: {
+            enabled: false,
+            value: "",
+          },
           description: {
             enabled: false,
             value: "",
@@ -84,11 +66,12 @@ const FormLayout = () => {
           question: "Hobbies",
           type: "checkbox",
           value: "Basketball",
-          validation: {
-            rules: { required: true },
-          },
+          required: true,
           options: ["Football", "Basketball", "Cricket"],
-          other: "",
+          other: {
+            enabled: false,
+            value: "",
+          },
           description: {
             enabled: false,
             value: "",
@@ -99,82 +82,7 @@ const FormLayout = () => {
           question: "Location",
           type: "dropdown",
           value: "Chennai",
-          validation: {
-            rules: { required: true },
-          },
-          options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
-          description: {
-            enabled: false,
-            value: "",
-          },
-        },
-      ],
-      [
-        {
-          id: crypto.randomUUID(),
-          question: "Loreum Ipsum",
-          type: "input",
-          value: "Loreum Ispum",
-          validation: {
-            rules: { required: true },
-          },
-          description: {
-            enabled: false,
-            value: "",
-          },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Loreum Ipsum",
-          type: "textarea",
-          value:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-          validation: {
-            rules: { required: true },
-          },
-          description: {
-            enabled: false,
-            value: "",
-          },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Gender",
-          type: "radio",
-          value: "Male",
-          validation: {
-            rules: { required: true },
-          },
-          options: ["Male", "Female"],
-          other: "Other",
-          description: {
-            enabled: false,
-            value: "",
-          },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Hobbies",
-          type: "checkbox",
-          value: "Basketball",
-          validation: {
-            rules: { required: true },
-          },
-          options: ["Football", "Basketball", "Cricket"],
-          other: "",
-          description: {
-            enabled: false,
-            value: "",
-          },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Location",
-          type: "dropdown",
-          value: "Chennai",
-          validation: {
-            rules: { required: true },
-          },
+          required: true,
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
           description: {
             enabled: false,
@@ -241,15 +149,13 @@ const FormLayout = () => {
         field.options[+optionindex] = value;
         break;
       case "other":
-        field.other = value;
+        if (typeof field.other !== "object") return;
+        field.other.value = value;
         break;
       case "question":
         field.question = value;
         break;
       case "value":
-        break;
-      case "other":
-        field.other = value;
         break;
       default:
         return;
@@ -282,7 +188,7 @@ const FormLayout = () => {
         break;
       case "shuffle":
         if (!Array.isArray(field.options)) return;
-        shuffleArray(field.options);
+        field.options = shuffleArray(field.options);
         break;
       default:
         return;
@@ -306,7 +212,9 @@ const FormLayout = () => {
     fieldindex
   ) => {
     let form = { ...formDetail };
-    form.sections[+sectionindex][+fieldindex].other = "Other";
+    let field = form.sections[+sectionindex][+fieldindex];
+    if (typeof field.other !== "object") return;
+    field.other.enabled = true;
     setFormDetail(form);
   };
 
@@ -326,8 +234,21 @@ const FormLayout = () => {
     fieldindex
   ) => {
     let form = { ...formDetail };
-    form.sections[+sectionindex][+fieldindex].other = "";
+    let field = form.sections[+sectionindex][+fieldindex];
+    if (typeof field.other !== "object") return;
+    field.other.enabled = false;
     setFormDetail(form);
+  };
+
+  const handleRequired: FormTypes["handleRequired"] = (
+    sectionindex,
+    fieldindex
+  ) => {
+    console.log(sectionindex, fieldindex);
+  };
+
+  const handleFormTheme: FormTypes["handleFormTheme"] = (theme) => {
+    console.log(theme);
   };
 
   const handleFormHeader: FormTypes["handleFormHeader"] = (event) => {
@@ -385,6 +306,7 @@ const FormLayout = () => {
                   handleDeleteOther={handleDeleteOther}
                   handleAddOther={handleAddOther}
                   handleAddOption={handleAddOption}
+                  handleRequired={handleRequired}
                   onClick={() => handleClickForm(field.id)}
                 />
               );

@@ -43,7 +43,11 @@ export type FormTypes = {
     action: FormMoreOption["action"]
   ) => void;
   handleDeleteOther: (sectionindex: string, fieldindex: string) => void;
+  handleRequired: (sectionindex: string, fieldindex: string) => void;
+  handleFormTheme: (theme: FormTheme) => void;
 };
+
+export type FormTheme = "dark" | "light";
 
 export type FormMoreOption = {
   label: string;
@@ -84,12 +88,12 @@ export type FormField = {
     enabled: boolean;
     value: string;
   };
-  validation?: {
-    rules?: FormRules;
-    errorText?: FormErrorText;
-  };
+  required?: boolean;
   options?: string[];
-  other?: string;
+  other?: {
+    enabled: boolean;
+    value: string;
+  };
 };
 
 export type FormParams = {
@@ -104,7 +108,7 @@ export type FormTypeOption = {
 
 export type FormCustomAttributes = {
   type: FormType;
-  name: Exclude<keyof FormField, "id" | "validation">;
+  name: Exclude<keyof FormField, "id">;
 } & FormIndexes;
 
 export type FormIndexes = {

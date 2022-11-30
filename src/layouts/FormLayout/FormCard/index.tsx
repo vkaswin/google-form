@@ -34,6 +34,7 @@ type FormFieldProps = {
   | "handleDeleteOther"
   | "handleAddOther"
   | "handleAddOption"
+  | "handleRequired"
 > &
   FormIndexes &
   ComponentProps<"div">;
@@ -81,6 +82,7 @@ export const FormCard = ({
   handleDeleteOther,
   handleAddOther,
   handleAddOption,
+  handleRequired,
   ...props
 }: FormFieldProps) => {
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
@@ -225,7 +227,7 @@ export const FormCard = ({
           ></i>
           <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
           <div className={styles.split}></div>
-          <div>
+          <div onClick={() => handleRequired(sectionindex, fieldindex)}>
             <span>Required</span>
           </div>
           <div id={`more-options-${field.id}`} className={styles.more_options}>

@@ -1,13 +1,13 @@
-import { ReactNode } from "react";
-
-type CookieSetter<T> = {
-  name: string;
-  value: T;
-  days: number;
-};
-
 export const cookies = () => {
-  const set = <T,>({ name, value, days }: CookieSetter<T>): void => {
+  const set = <T,>({
+    name,
+    value,
+    days,
+  }: {
+    name: string;
+    value: T;
+    days: number;
+  }): void => {
     let expireDate = new Date();
     expireDate.setTime(expireDate.getTime() + days * 24 * 60 * 60 * 1000);
     let expires = "; expires=" + expireDate.toUTCString();
@@ -16,7 +16,6 @@ export const cookies = () => {
 
   const get = (name: string): string | null => {
     let match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-
     return match ? match[2] : null;
   };
 
@@ -57,11 +56,14 @@ export const clickOutside = ({
   document.addEventListener("click", handleClickOutside);
 };
 
-export const shuffleArray = <T,>(array: T[]) => {
-  for (var i = array.length - 1; i > 0; i--) {
+export const shuffleArray = <T,>(array: T[]): T[] | undefined => {
+  if (!Array.isArray(array)) return;
+  let arr = [...array];
+  for (var i = arr.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
-    var temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
+    var temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
   }
+  return arr;
 };
