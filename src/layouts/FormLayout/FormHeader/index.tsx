@@ -1,14 +1,14 @@
 import { ChangeEvent } from "react";
-import { TextEditor } from "components";
-import { FormContextType } from "types/Form";
+import { FormTypes } from "types/Form";
+import TextEditor from "components/TextEditor";
 
 import styles from "./FormHeader.module.scss";
 
 export type FormHeaderProps = {
   selectedId: string | null;
-  handleClickForm: FormContextType["handleClickForm"];
-  handleFormHeader: FormContextType["handleFormHeader"];
-} & FormContextType["formDetail"]["header"];
+  handleClickForm: FormTypes["handleClickForm"];
+  handleFormHeader: FormTypes["handleFormHeader"];
+} & FormTypes["formDetail"]["header"];
 
 export const FormHeader = ({
   id,

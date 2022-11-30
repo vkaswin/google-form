@@ -4,7 +4,7 @@ import styles from "./Input.module.scss";
 
 type InputProps = {} & ComponentProps<"input">;
 
-export const Input = ({
+const Input = ({
   className,
   type = "text",
   placeholder = "Enter Here",
@@ -39,3 +39,5 @@ export const Input = ({
     </div>
   );
 };
+
+export default Input;

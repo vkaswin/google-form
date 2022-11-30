@@ -6,10 +6,12 @@ type RadioProps = {
   onChange?: () => void;
 };
 
-export const Radio = ({ onChange = () => {} }: RadioProps) => {
+const Radio = ({ onChange = () => {} }: RadioProps) => {
   return (
     <div>
       <span>Radio</span>
     </div>
   );
 };
+
+export default Radio;

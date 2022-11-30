@@ -26,7 +26,7 @@ type DropDownContextType = {
 
 const DropDownContext = createContext<DropDownContextType | null>(null);
 
-export const DropDown = ({
+const DropDown = ({
   className,
   selector,
   children,
@@ -150,3 +150,5 @@ export const Item = ({
 };
 
 DropDown.Item = Item;
+
+export default DropDown;

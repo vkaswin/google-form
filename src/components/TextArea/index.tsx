@@ -4,7 +4,7 @@ import styles from "./TextArea.module.scss";
 
 type TextAreaProps = {} & ComponentProps<"textarea">;
 
-export const TextArea = ({
+const TextArea = ({
   placeholder = "Enter Here",
   className,
   ...props
@@ -17,3 +17,5 @@ export const TextArea = ({
     />
   );
 };
+
+export default TextArea;

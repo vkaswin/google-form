@@ -1,21 +1,19 @@
-import { ChangeEvent, FormEvent, ReactNode, useMemo } from "react";
-import { TypeDropDown } from "./TypeDropDown";
+import { ChangeEvent, ReactNode, useMemo } from "react";
 import {
   FormTypeOption,
   FormField,
-  FormContextType,
+  FormTypes,
   FormMoreOption,
   FormIndexes,
 } from "types/Form";
-import {
-  TextEditor,
-  Input,
-  TextArea,
-  DatePicker,
-  DropDown,
-  ToolTip,
-} from "components";
-import { MutiOptionField } from "./MutiOptionField";
+import TextArea from "components/TextArea";
+import Input from "components/Input";
+import TextEditor from "components/TextEditor";
+import DatePicker from "components/DatePicker";
+import DropDown from "components/DropDown";
+import ToolTip from "components/ToolTip";
+import MutiOptionField from "./MutiOptionField";
+import TypeDropDown from "./TypeDropDown";
 
 import styles from "./FormCard.module.scss";
 
@@ -23,7 +21,7 @@ type FormFieldProps = {
   selectedId: string | null;
   readOnly: boolean;
 } & Pick<
-  FormContextType,
+  FormTypes,
   | "handleChangeForm"
   | "handleClickForm"
   | "handleDeleteForm"
@@ -194,10 +192,22 @@ export const FormCard = ({
         className={styles.option_drop_down}
       >
         {moreOptions.map(({ label, action }, index) => {
+          if (
+            action === "shuffle" &&
+            !(
+              field.type === "checkbox" ||
+              field.type === "dropdown" ||
+              field.type === "radio"
+            )
+          )
+            return null;
+
           return (
             <DropDown.Item
               key={index}
-              onClick={() => handleMoreOptions(action, field.id)}
+              onClick={() =>
+                handleMoreOptions(field.fieldindex, field.fieldindex, action)
+              }
             >
               {label}
             </DropDown.Item>

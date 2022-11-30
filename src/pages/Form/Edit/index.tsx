@@ -1,10 +1,9 @@
 import { Fragment } from "react";
-import { Form } from "components";
 
 const EditForm = () => {
   return (
     <Fragment>
-      <Form />
+      <span>Edit Form</span>
     </Fragment>
   );
 };

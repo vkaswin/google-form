@@ -1,50 +1,35 @@
-import { Router } from "types/Router";
+import { createHashRouter, Navigate } from "react-router-dom";
+import AuthLayout from "layouts/AuthLayout";
+import FormLayout from "layouts/FormLayout";
+import Login from "pages/Auth/Login";
+import Register from "pages/Auth/Register";
+import EditForm from "pages/Form/Edit";
+import ViewForm from "pages/Form/View";
+import PageNotFound from "pages/404";
 
-export const router: Router[] = [
+export const router = createHashRouter([
   {
     path: "/",
-    // redirect: "/auth/login",
-    redirect: "/form/123/edit",
+    element: <Navigate to="/form/123/edit" replace />,
   },
   {
     path: "/auth",
-    componentPath: "layouts/AuthLayout",
-    redirect: "/auth/login",
+    element: <AuthLayout />,
     children: [
-      {
-        path: "login",
-        componentPath: "pages/Auth/Login",
-      },
-      {
-        path: "register",
-        componentPath: "pages/Auth/Register",
-      },
-      {
-        path: "change-password",
-        componentPath: "pages/Auth/ChangePassword",
-      },
-      {
-        path: "recover-password",
-        componentPath: "pages/Auth/RecoverPassword",
-      },
+      { path: "login", element: <Login /> },
+      { path: "register", element: <Register /> },
     ],
   },
   {
     path: "/form",
-    componentPath: "layouts/FormLayout",
+    element: <FormLayout />,
     children: [
-      {
-        path: ":formId/edit",
-        componentPath: "pages/Form/Edit",
-      },
-      {
-        path: ":formId/view",
-        componentPath: "pages/Form/View",
-      },
+      { path: ":id/edit", element: <EditForm /> },
+      { path: ":id/fill", element: <ViewForm /> },
     ],
   },
   {
     path: "*",
-    componentPath: "pages/404",
+    element: <PageNotFound />,
   },
-];
+]);

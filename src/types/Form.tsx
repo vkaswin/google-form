@@ -12,7 +12,7 @@ export type FormHeader = {
   description: string;
 };
 
-export type FormContextType = {
+export type FormTypes = {
   selectedId: string | null;
   formDetail: FormDetail;
   handleChangeForm: (
@@ -35,7 +35,11 @@ export type FormContextType = {
     fieldindex: string,
     optionindex: string
   ) => void;
-  handleMoreOptions: (action: FormMoreOption["action"], id: string) => void;
+  handleMoreOptions: (
+    sectionindex: string,
+    fieldindex: string,
+    action: FormMoreOption["action"]
+  ) => void;
   handleDeleteOther: (sectionindex: string, fieldindex: string) => void;
 };
 
@@ -92,13 +96,6 @@ export type FormTypeOption = {
   icon: string;
   type: FormType;
 };
-
-export type FormHandler = (
-  id: string,
-  type: FormType,
-  value: string,
-  fields: FormField[]
-) => void;
 
 export type FormCustomAttributes = {
   type: FormType;

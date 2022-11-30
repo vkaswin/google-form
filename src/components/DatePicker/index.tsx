@@ -4,7 +4,7 @@ import styles from "./DatePicker.module.scss";
 
 type DatePickerProps = { disabled: boolean } & ComponentProps<"input">;
 
-export const DatePicker = ({
+const DatePicker = ({
   placeholder = "Enter Here",
   ...props
 }: DatePickerProps) => {
@@ -14,3 +14,5 @@ export const DatePicker = ({
     </div>
   );
 };
+
+export default DatePicker;

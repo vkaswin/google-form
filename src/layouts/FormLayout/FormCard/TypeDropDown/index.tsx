@@ -1,6 +1,6 @@
 import { Fragment } from "react";
-import { DropDown } from "components/DropDown";
-import { FormContextType, FormIndexes, FormTypeOption } from "types/Form";
+import DropDown from "components/DropDown";
+import { FormTypes, FormIndexes, FormTypeOption } from "types/Form";
 
 import styles from "./TypeDropDown.module.scss";
 
@@ -8,10 +8,10 @@ type OptionsProps = {
   id: string;
   options: FormTypeOption[];
   selectedOption: FormTypeOption | undefined;
-  handleFormType: FormContextType["handleFormType"];
+  handleFormType: FormTypes["handleFormType"];
 } & FormIndexes;
 
-export const TypeDropDown = ({
+const TypeDropDown = ({
   id,
   options,
   selectedOption,
@@ -46,3 +46,5 @@ export const TypeDropDown = ({
     </Fragment>
   );
 };
+
+export default TypeDropDown;

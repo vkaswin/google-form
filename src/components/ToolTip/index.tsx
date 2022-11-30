@@ -11,12 +11,7 @@ type ToolTipProps = {
   children: ReactNode;
 } & ComponentProps<"div">;
 
-export const ToolTip = ({
-  selector,
-  children,
-  className,
-  ...props
-}: ToolTipProps) => {
+const ToolTip = ({ selector, children, className, ...props }: ToolTipProps) => {
   let [referenceElement, setReferenceElement] = useState<HTMLElement | null>(
     null
   );
@@ -87,3 +82,5 @@ export const ToolTip = ({
     referenceElement
   );
 };
+
+export default ToolTip;

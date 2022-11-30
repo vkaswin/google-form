@@ -1,19 +1,19 @@
-import React, { useMemo } from "react";
-import { Input } from "components";
-import { FormContextType, FormField, FormIndexes } from "types/Form";
+import { useMemo } from "react";
+import { FormTypes, FormField, FormIndexes } from "types/Form";
+import Input from "components/Input";
 
 import styles from "./MultiOptionField.module.scss";
 
 type MutiOptionFieldProps = {
   readOnly: boolean;
 } & Pick<
-  FormContextType,
+  FormTypes,
   "handleChangeForm" | "handleDeleteOptions" | "handleDeleteOther"
 > &
   FormIndexes &
   FormField;
 
-export const MutiOptionField = ({
+const MutiOptionField = ({
   readOnly,
   options,
   id,
@@ -106,3 +106,5 @@ export const MutiOptionField = ({
     </div>
   );
 };
+
+export default MutiOptionField;

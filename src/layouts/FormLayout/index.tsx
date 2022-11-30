@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
-import {
-  FormParams,
-  FormContextType,
-  FormHandler,
-  FormCustomAttributes,
-  FormField,
-} from "types/Form";
-import { FormHeader } from "../../components/Form/FormHeader";
+import { FormHeader } from "./FormHeader";
+import { FormCard } from "./FormCard";
+import { FormParams, FormTypes, FormCustomAttributes } from "types/Form";
 import { useAuth } from "hooks";
 
 import styles from "./FormLayout.module.scss";
@@ -17,7 +12,7 @@ const FormLayout = () => {
 
   const { user } = useAuth();
 
-  let [formDetail, setFormDetail] = useState<FormContextType["formDetail"]>({
+  let [formDetail, setFormDetail] = useState<FormTypes["formDetail"]>({
     theme: "dark",
     header: {
       id: crypto.randomUUID(),
@@ -157,11 +152,11 @@ const FormLayout = () => {
     console.log("form details", formId);
   };
 
-  const handleClickForm: FormContextType["handleClickForm"] = (id) => {
+  const handleClickForm: FormTypes["handleClickForm"] = (id) => {
     setSelectedId(id);
   };
 
-  const handleDeleteForm: FormContextType["handleDeleteForm"] = (
+  const handleDeleteForm: FormTypes["handleDeleteForm"] = (
     sectionindex,
     fieldindex
   ) => {
@@ -170,7 +165,7 @@ const FormLayout = () => {
     setFormDetail(form);
   };
 
-  const handleDuplicateForm: FormContextType["handleDuplicateForm"] = (
+  const handleDuplicateForm: FormTypes["handleDuplicateForm"] = (
     sectionindex,
     fieldindex
   ) => {
@@ -181,9 +176,7 @@ const FormLayout = () => {
     setFormDetail(form);
   };
 
-  const handleChangeForm: FormContextType["handleChangeForm"] = (
-    event
-  ): void => {
+  const handleChangeForm: FormTypes["handleChangeForm"] = (event): void => {
     let { fieldindex, sectionindex, optionindex, name, type } = event?.target
       .dataset as FormCustomAttributes;
 
@@ -222,7 +215,7 @@ const FormLayout = () => {
     setFormDetail(form);
   };
 
-  const handleFormType: FormContextType["handleFormType"] = (
+  const handleFormType: FormTypes["handleFormType"] = (
     sectionindex,
     fieldindex,
     type
@@ -232,11 +225,12 @@ const FormLayout = () => {
     setFormDetail(form);
   };
 
-  const handleMoreOptions: FormContextType["handleMoreOptions"] = (
-    action,
-    id
+  const handleMoreOptions: FormTypes["handleMoreOptions"] = (
+    sectionindex,
+    fieldindex,
+    action
   ) => {
-    console.log(action, id);
+    console.log(sectionindex, fieldindex, action);
     switch (action) {
       case "description":
         break;
@@ -247,7 +241,7 @@ const FormLayout = () => {
     }
   };
 
-  const handleDeleteOptions: FormContextType["handleDeleteOptions"] = (
+  const handleDeleteOptions: FormTypes["handleDeleteOptions"] = (
     sectionindex,
     fieldindex,
     optionindex
@@ -257,7 +251,7 @@ const FormLayout = () => {
     setFormDetail(form);
   };
 
-  const handleDeleteOther: FormContextType["handleDeleteOther"] = (
+  const handleDeleteOther: FormTypes["handleDeleteOther"] = (
     sectionindex,
     fieldindex
   ) => {
@@ -266,7 +260,7 @@ const FormLayout = () => {
     setFormDetail(form);
   };
 
-  const handleFormHeader: FormContextType["handleFormHeader"] = (event) => {
+  const handleFormHeader: FormTypes["handleFormHeader"] = (event) => {
     let form = { ...formDetail };
     let { name } = event?.target.dataset;
     let value = event.target.innerHTML;
@@ -283,23 +277,43 @@ const FormLayout = () => {
     setFormDetail(form);
   };
 
-  const context: FormContextType = {
-    formDetail,
-    selectedId,
-    handleClickForm,
-    handleChangeForm,
-    handleDeleteForm,
-    handleDuplicateForm,
-    handleMoreOptions,
-    handleFormHeader,
-    handleFormType,
-    handleDeleteOptions,
-    handleDeleteOther,
-  };
+  let { header, sections, theme } = formDetail;
 
   return (
     <div className={styles.container}>
-      <Outlet context={context} />
+      <Outlet />
+      <FormHeader
+        selectedId={selectedId}
+        handleClickForm={handleClickForm}
+        handleFormHeader={handleFormHeader}
+        {...header}
+      />
+      {sections.map((section, sectionIndex) => {
+        return (
+          <Fragment key={sectionIndex}>
+            {section.map((field, fieldIndex) => {
+              return (
+                <FormCard
+                  key={field.id}
+                  selectedId={selectedId}
+                  readOnly={true}
+                  fieldindex={fieldIndex.toString()}
+                  sectionindex={sectionIndex.toString()}
+                  handleClickForm={handleClickForm}
+                  handleChangeForm={handleChangeForm}
+                  handleDeleteForm={handleDeleteForm}
+                  handleDuplicateForm={handleDuplicateForm}
+                  handleMoreOptions={handleMoreOptions}
+                  handleFormType={handleFormType}
+                  handleDeleteOptions={handleDeleteOptions}
+                  handleDeleteOther={handleDeleteOther}
+                  {...field}
+                />
+              );
+            })}
+          </Fragment>
+        );
+      })}
     </div>
   );
 };

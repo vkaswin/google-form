@@ -14,10 +14,10 @@ type TextEditorOwnProps<E extends ElementType> = {
   value?: string;
 };
 
-export type TextEditorProps<E extends ElementType> = TextEditorOwnProps<E> &
+type TextEditorProps<E extends ElementType> = TextEditorOwnProps<E> &
   Omit<ComponentProps<E>, keyof TextEditorOwnProps<E>>;
 
-export const TextEditor = <E extends ElementType = "div">({
+const TextEditor = <E extends ElementType = "div">({
   as,
   defaultValue = "",
   placeholder = "Enter Here",
@@ -88,3 +88,5 @@ export const TextEditor = <E extends ElementType = "div">({
     </div>
   );
 };
+
+export default TextEditor;
