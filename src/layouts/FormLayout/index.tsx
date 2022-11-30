@@ -271,50 +271,55 @@ const FormLayout = () => {
   let { header, sections, theme } = formDetail;
 
   return (
-    <div className={styles.container}>
-      <Outlet />
-      <FormHeader
-        selectedId={selectedId}
-        handleClickForm={handleClickForm}
-        handleFormHeader={handleFormHeader}
-        {...header}
-      />
-      {sections.map((section, sectionIndex) => {
-        return (
-          <Fragment key={sectionIndex}>
-            {section.map((field, fieldIndex) => {
-              let sectionHeader =
-                fieldIndex === 0 && sections.length > 1
-                  ? `Section ${sectionIndex + 1} of ${sections.length}`
-                  : null;
-              return (
-                <FormCard
-                  key={field.id}
-                  field={field}
-                  readOnly={true}
-                  selectedId={selectedId}
-                  sectionHeader={sectionHeader}
-                  fieldindex={fieldIndex.toString()}
-                  sectionindex={sectionIndex.toString()}
-                  handleClickForm={handleClickForm}
-                  handleChangeForm={handleChangeForm}
-                  handleDeleteForm={handleDeleteForm}
-                  handleDuplicateForm={handleDuplicateForm}
-                  handleMoreOptions={handleMoreOptions}
-                  handleFormType={handleFormType}
-                  handleDeleteOptions={handleDeleteOptions}
-                  handleDeleteOther={handleDeleteOther}
-                  handleAddOther={handleAddOther}
-                  handleAddOption={handleAddOption}
-                  handleRequired={handleRequired}
-                  onClick={() => handleClickForm(field.id)}
-                />
-              );
-            })}
-          </Fragment>
-        );
-      })}
-    </div>
+    <Fragment>
+      <div className={styles.header}>
+        <h1>Header</h1>
+      </div>
+      <div className={styles.container}>
+        <Outlet />
+        <FormHeader
+          selectedId={selectedId}
+          handleClickForm={handleClickForm}
+          handleFormHeader={handleFormHeader}
+          {...header}
+        />
+        {sections.map((section, sectionIndex) => {
+          return (
+            <Fragment key={sectionIndex}>
+              {section.map((field, fieldIndex) => {
+                let sectionHeader =
+                  fieldIndex === 0 && sections.length > 1
+                    ? `Section ${sectionIndex + 1} of ${sections.length}`
+                    : null;
+                return (
+                  <FormCard
+                    key={field.id}
+                    field={field}
+                    readOnly={true}
+                    selectedId={selectedId}
+                    sectionHeader={sectionHeader}
+                    fieldindex={fieldIndex.toString()}
+                    sectionindex={sectionIndex.toString()}
+                    handleClickForm={handleClickForm}
+                    handleChangeForm={handleChangeForm}
+                    handleDeleteForm={handleDeleteForm}
+                    handleDuplicateForm={handleDuplicateForm}
+                    handleMoreOptions={handleMoreOptions}
+                    handleFormType={handleFormType}
+                    handleDeleteOptions={handleDeleteOptions}
+                    handleDeleteOther={handleDeleteOther}
+                    handleAddOther={handleAddOther}
+                    handleAddOption={handleAddOption}
+                    handleRequired={handleRequired}
+                    onClick={() => handleClickForm(field.id)}
+                  />
+                );
+              })}
+            </Fragment>
+          );
+        })}
+      </div>
+    </Fragment>
   );
 };
 
