@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_google_form=self.webpackChunkreact_google_form||[]).push([[2274],{2518:function(e,c,o){e.exports=o.p+"static/media/Poppins-Bold.cdb29a5d7ccf57ff05a3.ttf"}}]);

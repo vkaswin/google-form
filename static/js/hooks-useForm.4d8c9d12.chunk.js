@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkreact_google_form=self.webpackChunkreact_google_form||[]).push([[3816],{7184:function(e,n,r){r.r(n),r.d(n,{useForm:function(){return t}});var t=function(){return{register:function(e){var n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},r=n.maxLength,t=n.minLength,o=n.pattern,u=n.required,a=n.validate;return console.log({name:e,rules:{maxLength:r,minLength:t,pattern:o,required:u,validate:a}}),{ref:function(e){console.log(e)}}}}}}}]);
-//# sourceMappingURL=hooks-useForm.4d8c9d12.chunk.js.map

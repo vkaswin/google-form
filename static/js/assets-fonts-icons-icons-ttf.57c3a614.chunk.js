@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_google_form=self.webpackChunkreact_google_form||[]).push([[4474],{3981:function(e,t,c){e.exports=c.p+"static/media/icons.5a18f537f6232f6e2c21.ttf"}}]);
