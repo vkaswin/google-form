@@ -1,4 +1,10 @@
-import { ChangeEvent, ComponentProps, ReactNode, useMemo } from "react";
+import {
+  ChangeEvent,
+  ComponentProps,
+  Fragment,
+  ReactNode,
+  useMemo,
+} from "react";
 import {
   FormTypeOption,
   FormField,
@@ -20,7 +26,7 @@ import styles from "./FormCard.module.scss";
 
 type FormFieldProps = {
   selectedId: string | null;
-  readOnly: boolean;
+  isEditPage: boolean;
   field: FormField;
   sectionHeader: string | null;
   indexes: Omit<FormIndexes, "optionIndex">;
@@ -56,7 +62,7 @@ let moreOptions: FormMoreOption[] = [
 export const FormCard = ({
   field,
   selectedId,
-  readOnly,
+  isEditPage,
   indexes,
   sectionHeader,
   className,
@@ -70,90 +76,94 @@ export const FormCard = ({
     });
   }, [field.type]);
 
-  let component = useMemo<ReactNode>(() => {
-    switch (field.type) {
-      case "checkbox":
-        return (
-          <MutiOptionField
-            field={field}
-            readOnly={readOnly}
-            indexes={indexes}
-            handleFormChange={handleFormChange}
-            handleFormAction={handleFormAction}
-          />
-        );
+  let component = useMemo<ReactNode>(
+    () => {
+      switch (field.type) {
+        case "checkbox":
+          return (
+            <MutiOptionField
+              field={field}
+              isEditPage={isEditPage}
+              indexes={indexes}
+              handleFormChange={handleFormChange}
+              handleFormAction={handleFormAction}
+            />
+          );
 
-      case "dropdown":
-        return (
-          <MutiOptionField
-            field={field}
-            readOnly={readOnly}
-            indexes={indexes}
-            handleFormChange={handleFormChange}
-            handleFormAction={handleFormAction}
-          />
-        );
-      case "radio":
-        return (
-          <MutiOptionField
-            field={field}
-            readOnly={readOnly}
-            indexes={indexes}
-            handleFormChange={handleFormChange}
-            handleFormAction={handleFormAction}
-          />
-        );
-      case "input":
-        return (
-          <Input
-            placeholder="Short answer text"
-            disabled={readOnly}
-            value={field.value}
-            onChange={(e) =>
-              handleFormChange({
-                key: "value",
-                value: e.target.innerHTML,
-                type: field.type,
-                indexes,
-              })
-            }
-          />
-        );
-      case "textarea":
-        return (
-          <TextArea
-            placeholder="Long answer text"
-            disabled={readOnly}
-            onChange={(e) =>
-              handleFormChange({
-                key: "value",
-                value: e.target.value,
-                type: field.type,
-                indexes,
-              })
-            }
-          />
-        );
-      case "file":
-        return (
-          <Input
-            disabled={readOnly}
-            onChange={(e) =>
-              handleFormChange({
-                key: "value",
-                value: e.target.value,
-                type: field.type,
-                indexes,
-              })
-            }
-          />
-        );
-      case "date":
-        return <DatePicker disabled={readOnly} />;
-      default:
-        return null;
-    }
-  }, [{ ...field }]);
+        case "dropdown":
+          return (
+            <MutiOptionField
+              field={field}
+              isEditPage={isEditPage}
+              indexes={indexes}
+              handleFormChange={handleFormChange}
+              handleFormAction={handleFormAction}
+            />
+          );
+        case "radio":
+          return (
+            <MutiOptionField
+              field={field}
+              isEditPage={isEditPage}
+              indexes={indexes}
+              handleFormChange={handleFormChange}
+              handleFormAction={handleFormAction}
+            />
+          );
+        case "input":
+          return (
+            <Input
+              placeholder="Short answer text"
+              disabled={isEditPage}
+              value={field.value}
+              onChange={(e) =>
+                handleFormChange({
+                  key: "value",
+                  value: e.target.innerHTML,
+                  type: field.type,
+                  indexes,
+                })
+              }
+            />
+          );
+        case "textarea":
+          return (
+            <TextArea
+              placeholder="Long answer text"
+              disabled={isEditPage}
+              onChange={(e) =>
+                handleFormChange({
+                  key: "value",
+                  value: e.target.value,
+                  type: field.type,
+                  indexes,
+                })
+              }
+            />
+          );
+        case "file":
+          return (
+            <Input
+              disabled={isEditPage}
+              onChange={(e) =>
+                handleFormChange({
+                  key: "value",
+                  value: e.target.value,
+                  type: field.type,
+                  indexes,
+                })
+              }
+            />
+          );
+        case "date":
+          return <DatePicker disabled={isEditPage} />;
+        default:
+          return null;
+      }
+    },
+    // eslint-disable-next-line
+    [field, indexes, isEditPage]
+  );
 
   return (
     <div
@@ -167,55 +177,66 @@ export const FormCard = ({
         </div>
       )}
       <div className={styles.wrapper}>
-        <div className={styles.field_label}>
-          <TextEditor
-            as="div"
-            data-name="question"
-            data-type={field.type}
-            data-fieldindex={indexes.fieldIndex}
-            data-sectionindex={indexes.sectionIndex}
-            placeholder="Question"
-            defaultValue={field.question}
-            onInput={(e: ChangeEvent<HTMLDivElement>) =>
-              handleFormChange({
-                key: "description",
-                value: e.target.innerHTML,
-                type: "texteditor",
-                indexes,
-              })
-            }
-          />
-          {selectedId === field.id && (
-            <TypeDropDown
-              id={field.id}
-              options={formTypes}
-              indexes={indexes}
-              selectedOption={selectedOption}
-              handleFormAction={handleFormAction}
-            />
-          )}
-        </div>
-        {field.description.enabled && (
-          <div className={styles.field_description}>
-            <TextEditor
-              as="div"
-              data-name="description"
-              data-type={field.type}
-              data-fieldindex={indexes.fieldIndex}
-              data-sectionindex={indexes.sectionIndex}
-              placeholder="Description"
-              defaultValue={field.description.value}
-              onInput={(e: ChangeEvent<HTMLDivElement>) =>
-                handleFormChange({
-                  key: "description",
-                  value: e.target.innerHTML,
-                  type: field.type,
-                  indexes,
-                })
-              }
-            />
-          </div>
+        {isEditPage ? (
+          <Fragment>
+            <div className={styles.field_label}>
+              <TextEditor
+                as="div"
+                data-name="question"
+                data-type={field.type}
+                data-fieldindex={indexes.fieldIndex}
+                data-sectionindex={indexes.sectionIndex}
+                placeholder="Question"
+                defaultValue={field.question}
+                onInput={(e: ChangeEvent<HTMLDivElement>) =>
+                  handleFormChange({
+                    key: "description",
+                    value: e.target.innerHTML,
+                    type: "texteditor",
+                    indexes,
+                  })
+                }
+              />
+              {selectedId === field.id && (
+                <TypeDropDown
+                  id={field.id}
+                  options={formTypes}
+                  indexes={indexes}
+                  selectedOption={selectedOption}
+                  handleFormAction={handleFormAction}
+                />
+              )}
+            </div>
+          </Fragment>
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: field.question }}></div>
         )}
+        {field.description.enabled &&
+          (isEditPage ? (
+            <div className={styles.field_description}>
+              <TextEditor
+                as="div"
+                data-name="description"
+                data-type={field.type}
+                data-fieldindex={indexes.fieldIndex}
+                data-sectionindex={indexes.sectionIndex}
+                placeholder="Description"
+                defaultValue={field.description.value}
+                onInput={(e: ChangeEvent<HTMLDivElement>) =>
+                  handleFormChange({
+                    key: "description",
+                    value: e.target.innerHTML,
+                    type: field.type,
+                    indexes,
+                  })
+                }
+              />
+            </div>
+          ) : (
+            <div
+              dangerouslySetInnerHTML={{ __html: field.description.value }}
+            ></div>
+          ))}
         <div className={styles.field} data-type={field.type}>
           {component}
         </div>
@@ -268,10 +289,12 @@ export const FormCard = ({
           })}
         </DropDown>
         {selectedId === field.id && <div className={styles.highlight}></div>}
-        <div className={styles.drag_icon}>
-          <i className="bx-dots-horizontal-rounded"></i>
-          <i className="bx-dots-horizontal-rounded"></i>
-        </div>
+        {isEditPage && (
+          <div className={styles.drag_icon}>
+            <i className="bx-dots-horizontal-rounded"></i>
+            <i className="bx-dots-horizontal-rounded"></i>
+          </div>
+        )}
       </div>
     </div>
   );

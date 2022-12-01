@@ -10,7 +10,7 @@ import Input from "components/Input";
 import styles from "./MultiOptionField.module.scss";
 
 type MutiOptionFieldProps = {
-  readOnly: boolean;
+  isEditPage: boolean;
   field: FormField;
   indexes: Omit<FormIndexes, "optionIndex">;
   handleFormAction: HandleFormAction;
@@ -19,7 +19,7 @@ type MutiOptionFieldProps = {
 
 const MutiOptionField = ({
   field: { id, type, value, description, question, options, other, required },
-  readOnly,
+  isEditPage,
   indexes,
   handleFormChange,
   handleFormAction,
@@ -46,7 +46,6 @@ const MutiOptionField = ({
               <i className={icon}></i>
             )}
             <Input
-              data-type={type}
               value={option}
               onChange={(e) =>
                 handleFormChange({
@@ -74,12 +73,9 @@ const MutiOptionField = ({
         <div className={styles.option_field}>
           <i className={icon}></i>
           <Input
-            data-name="other"
-            data-type={type}
-            data-fieldindex={indexes.fieldIndex}
-            data-sectionindex={indexes.sectionIndex}
             placeholder="Other..."
-            disabled={readOnly}
+            disabled={isEditPage}
+            value={other.value}
             onChange={(e) =>
               handleFormChange({
                 key: "other",
@@ -88,7 +84,7 @@ const MutiOptionField = ({
                 indexes,
               })
             }
-            {...(!readOnly && { value: other.value })}
+            {...(!isEditPage && { value: other.value })}
           />
           <i
             className="bx-x"

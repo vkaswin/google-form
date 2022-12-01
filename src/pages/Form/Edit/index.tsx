@@ -1,5 +1,3 @@
-import { Fragment } from "react";
-
 import styles from "./Edit.module.scss";
 
 const EditForm = () => {

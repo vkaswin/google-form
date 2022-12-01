@@ -18,6 +18,7 @@ export type HandleFormHeader = (data: {
 export type HandleFormChange = (data: {
   key: Exclude<keyof FormField, "id">;
   value: string | boolean | number;
+  checked?: boolean;
   indexes: FormIndexes;
   type: FormType;
 }) => void;
@@ -26,7 +27,6 @@ export type HandleFormAction = (
   action: FormAction,
   indexes: FormIndexes,
   options?: {
-    event?: any;
     type?: FormType;
     theme?: FormTheme;
     option?: "description" | "shuffle";

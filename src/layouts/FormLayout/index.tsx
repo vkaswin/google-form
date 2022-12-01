@@ -1,5 +1,5 @@
-import { Fragment, useEffect, useState } from "react";
-import { Outlet, useParams } from "react-router-dom";
+import { Fragment, useCallback, useEffect, useState } from "react";
+import { Outlet, useLocation, useParams } from "react-router-dom";
 import { FormHeader } from "./FormHeader";
 import { FormCard } from "./FormCard";
 import {
@@ -18,6 +18,8 @@ const FormLayout = () => {
   const { formId } = useParams<FormParams>();
 
   const { user } = useAuth();
+
+  const { pathname } = useLocation();
 
   let [formDetail, setFormDetail] = useState<FormDetail>({
     theme: "dark",
@@ -59,7 +61,7 @@ const FormLayout = () => {
           required: true,
           options: ["Male", "Female"],
           other: {
-            enabled: false,
+            enabled: true,
             value: "",
           },
           description: {
@@ -104,109 +106,126 @@ const FormLayout = () => {
   let { header, sections, theme } = formDetail;
 
   useEffect(() => {
-    // getFormDetails();
+    getFormDetails();
+    // eslint-disable-next-line
   }, [formId]);
 
   const getFormDetails = (): void => {
-    console.log("form details", formId);
+    // console.log(formId, user, theme);
   };
 
-  const handleFormAction: HandleFormAction = (
-    action,
-    { sectionIndex, fieldIndex, optionIndex },
-    { event, type, theme, option } = {}
-  ) => {
-    let form = { ...formDetail };
-    let field = form.sections[sectionIndex][+fieldIndex];
+  const handleFormAction = useCallback<HandleFormAction>(
+    (
+      action,
+      { sectionIndex, fieldIndex, optionIndex },
+      { type, theme, option } = {}
+    ) => {
+      let form = { ...formDetail };
+      let field = form.sections[sectionIndex][+fieldIndex];
 
-    switch (action) {
-      case "focus-form":
-        setSelectedId(field.id);
-        return;
-      case "add-option":
-        if (!Array.isArray(field.options)) return;
-        field.options.push(`Option ${field.options.length + 1}`);
-        break;
-      case "other":
-        if (typeof field.other !== "object") return;
-        field.other.enabled = !field.other.enabled;
-        break;
-      case "delete-form":
-        delete form.sections[sectionIndex][fieldIndex];
-        break;
-      case "delete-option":
-        if (!optionIndex) return;
-        field.options?.splice(optionIndex, 1);
-        break;
-      case "duplicate-form":
-        field.id = crypto.randomUUID();
-        form.sections[sectionIndex].push(field);
-        break;
-      case "required":
-        field.required = !field.required;
-        break;
-      case "theme":
-        if (!theme) return;
-        form.theme = theme;
-        break;
-      case "type":
-        if (!type) return;
-        field.type = type;
-        break;
-      case "more-option":
-        switch (option) {
-          case "description":
-            field.description.enabled = !field.description.enabled;
-            break;
-          case "shuffle":
-            if (!Array.isArray(field.options)) return;
-            field.options = shuffleArray(field.options);
-            break;
-          default:
-            return;
-        }
-        break;
-      default:
-        return;
-    }
-    setFormDetail(form);
-  };
-
-  const handleFormChange: HandleFormChange = ({
-    key,
-    value,
-    indexes: { fieldIndex, sectionIndex, optionIndex },
-    type,
-  }): void => {
-    let form = { ...formDetail };
-    let field = form.sections[sectionIndex][fieldIndex];
-
-    switch (key) {
-      case "description":
-        field.description.value = value as string;
-        break;
-      case "options":
-        if (!Array.isArray(field.options) || typeof optionIndex !== "number")
+      switch (action) {
+        case "focus-form":
+          setSelectedId(field.id);
           return;
-        field.options[optionIndex] = value as string;
-        break;
-      case "other":
-        if (typeof field.other !== "object") return;
-        field.other.value = value as string;
-        break;
-      case "question":
-        field.question = value as string;
-        break;
-      case "value":
-        break;
-      default:
-        return;
-    }
+        case "add-option":
+          if (!Array.isArray(field.options)) return;
+          field.options.push(`Option ${field.options.length + 1}`);
+          break;
+        case "other":
+          if (typeof field.other !== "object") return;
+          field.other.enabled = !field.other.enabled;
+          break;
+        case "delete-form":
+          delete form.sections[sectionIndex][fieldIndex];
+          break;
+        case "delete-option":
+          if (!optionIndex) return;
+          field.options?.splice(optionIndex, 1);
+          break;
+        case "duplicate-form":
+          field.id = crypto.randomUUID();
+          form.sections[sectionIndex].push(field);
+          break;
+        case "required":
+          field.required = !field.required;
+          break;
+        case "theme":
+          if (!theme) return;
+          form.theme = theme;
+          break;
+        case "type":
+          if (!type) return;
+          field.type = type;
+          break;
+        case "more-option":
+          switch (option) {
+            case "description":
+              field.description.enabled = !field.description.enabled;
+              break;
+            case "shuffle":
+              if (!Array.isArray(field.options)) return;
+              field.options = shuffleArray(field.options);
+              break;
+            default:
+              return;
+          }
+          break;
+        default:
+          return;
+      }
+      setFormDetail(form);
+    },
+    // eslint-disable-next-line
+    []
+  );
 
-    setFormDetail(form);
-  };
+  const handleFormChange = useCallback<HandleFormChange>(
+    ({
+      key,
+      value,
+      checked,
+      indexes: { fieldIndex, sectionIndex, optionIndex },
+      type,
+    }): void => {
+      let form = { ...formDetail };
+      let field = form.sections[sectionIndex][fieldIndex];
 
-  const handleFormHeader: HandleFormHeader = ({ key, value }) => {
+      switch (key) {
+        case "description":
+          field.description.value = value as string;
+          break;
+        case "options":
+          if (!Array.isArray(field.options) || typeof optionIndex !== "number")
+            return;
+          field.options[optionIndex] = value as string;
+          break;
+        case "other":
+          if (typeof field.other !== "object") return;
+          field.other.value = value as string;
+          break;
+        case "question":
+          field.question = value as string;
+          break;
+        case "value":
+          if (type === "checkbox" || type === "radio") {
+            // console.log(value);
+          } else if (type === "file") {
+            // console.log(value);
+          } else {
+            // console.log(value);
+          }
+          break;
+        default:
+          return;
+      }
+
+      setFormDetail(form);
+    },
+    // eslint-disable-next-line
+    []
+  );
+
+  const handleFormHeader = useCallback<HandleFormHeader>(({ key, value }) => {
     let form = { ...formDetail };
     switch (key) {
       case "title":
@@ -219,7 +238,8 @@ const FormLayout = () => {
         return;
     }
     setFormDetail(form);
-  };
+    // eslint-disable-next-line
+  }, []);
 
   const handleFocusHeader = () => {
     setSelectedId(header.id);
@@ -248,7 +268,7 @@ const FormLayout = () => {
                   <FormCard
                     key={field.id}
                     field={field}
-                    readOnly={true}
+                    isEditPage={pathname.includes("edit")}
                     selectedId={selectedId}
                     sectionHeader={sectionHeader}
                     indexes={indexes}

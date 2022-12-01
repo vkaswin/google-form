@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const getUser = (): void => {
-    console.log(user);
+    console.log(user); //
   };
 
   const logout = () => {
