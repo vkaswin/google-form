@@ -21,7 +21,6 @@ export const FormHeader = ({
     <div className={`${styles.container} ${className || ""}`.trim()} {...props}>
       <TextEditor
         as="h1"
-        data-name="title"
         placeholder="Form title"
         defaultValue={title}
         onInput={(e: ChangeEvent<HTMLDivElement>) =>
@@ -31,7 +30,6 @@ export const FormHeader = ({
       <TextEditor
         placeholder="Form description"
         defaultValue={description}
-        data-name="description"
         onInput={(e: ChangeEvent<HTMLDivElement>) =>
           handleFormHeader({ key: "description", value: e.target.innerHTML })
         }

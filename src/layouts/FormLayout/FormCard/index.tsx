@@ -182,10 +182,6 @@ export const FormCard = ({
             <div className={styles.field_label}>
               <TextEditor
                 as="div"
-                data-name="question"
-                data-type={field.type}
-                data-fieldindex={indexes.fieldIndex}
-                data-sectionindex={indexes.sectionIndex}
                 placeholder="Question"
                 defaultValue={field.question}
                 onInput={(e: ChangeEvent<HTMLDivElement>) =>
@@ -216,10 +212,6 @@ export const FormCard = ({
             <div className={styles.field_description}>
               <TextEditor
                 as="div"
-                data-name="description"
-                data-type={field.type}
-                data-fieldindex={indexes.fieldIndex}
-                data-sectionindex={indexes.sectionIndex}
                 placeholder="Description"
                 defaultValue={field.description.value}
                 onInput={(e: ChangeEvent<HTMLDivElement>) =>
