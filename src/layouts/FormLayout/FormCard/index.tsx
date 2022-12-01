@@ -2,9 +2,10 @@ import { ChangeEvent, ComponentProps, ReactNode, useMemo } from "react";
 import {
   FormTypeOption,
   FormField,
-  FormTypes,
   FormMoreOption,
   FormIndexes,
+  HandleFormAction,
+  HandleFormChange,
 } from "types/Form";
 import TextArea from "components/TextArea";
 import Input from "components/Input";
@@ -22,22 +23,10 @@ type FormFieldProps = {
   readOnly: boolean;
   field: FormField;
   sectionHeader: string | null;
-} & Pick<
-  FormTypes,
-  | "handleChangeForm"
-  | "handleClickForm"
-  | "handleDeleteForm"
-  | "handleDuplicateForm"
-  | "handleMoreOptions"
-  | "handleFormType"
-  | "handleDeleteOptions"
-  | "handleDeleteOther"
-  | "handleAddOther"
-  | "handleAddOption"
-  | "handleRequired"
-> &
-  FormIndexes &
-  ComponentProps<"div">;
+  indexes: Omit<FormIndexes, "optionIndex">;
+  handleFormAction: HandleFormAction;
+  handleFormChange: HandleFormChange;
+} & ComponentProps<"div">;
 
 let formTypes: FormTypeOption[] = [
   { type: "input", icon: "bx-text", label: "Short answer" },
@@ -56,11 +45,11 @@ let formTypes: FormTypeOption[] = [
 let moreOptions: FormMoreOption[] = [
   {
     label: "Description",
-    action: "description",
+    option: "description",
   },
   {
     label: "Shuffle option order",
-    action: "shuffle",
+    option: "shuffle",
   },
 ];
 
@@ -68,21 +57,11 @@ export const FormCard = ({
   field,
   selectedId,
   readOnly,
-  fieldindex,
-  sectionindex,
+  indexes,
   sectionHeader,
   className,
-  handleClickForm,
-  handleChangeForm,
-  handleDeleteForm,
-  handleDuplicateForm,
-  handleMoreOptions,
-  handleFormType,
-  handleDeleteOptions,
-  handleDeleteOther,
-  handleAddOther,
-  handleAddOption,
-  handleRequired,
+  handleFormAction,
+  handleFormChange,
   ...props
 }: FormFieldProps) => {
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
@@ -98,13 +77,9 @@ export const FormCard = ({
           <MutiOptionField
             field={field}
             readOnly={readOnly}
-            sectionindex={sectionindex}
-            fieldindex={fieldindex}
-            handleChangeForm={handleChangeForm}
-            handleDeleteOptions={handleDeleteOptions}
-            handleDeleteOther={handleDeleteOther}
-            handleAddOther={handleAddOther}
-            handleAddOption={handleAddOption}
+            indexes={indexes}
+            handleFormChange={handleFormChange}
+            handleFormAction={handleFormAction}
           />
         );
 
@@ -113,13 +88,9 @@ export const FormCard = ({
           <MutiOptionField
             field={field}
             readOnly={readOnly}
-            sectionindex={sectionindex}
-            fieldindex={fieldindex}
-            handleChangeForm={handleChangeForm}
-            handleDeleteOptions={handleDeleteOptions}
-            handleDeleteOther={handleDeleteOther}
-            handleAddOther={handleAddOther}
-            handleAddOption={handleAddOption}
+            indexes={indexes}
+            handleFormChange={handleFormChange}
+            handleFormAction={handleFormAction}
           />
         );
       case "radio":
@@ -127,13 +98,9 @@ export const FormCard = ({
           <MutiOptionField
             field={field}
             readOnly={readOnly}
-            sectionindex={sectionindex}
-            fieldindex={fieldindex}
-            handleChangeForm={handleChangeForm}
-            handleDeleteOptions={handleDeleteOptions}
-            handleDeleteOther={handleDeleteOther}
-            handleAddOther={handleAddOther}
-            handleAddOption={handleAddOption}
+            indexes={indexes}
+            handleFormChange={handleFormChange}
+            handleFormAction={handleFormAction}
           />
         );
       case "input":
@@ -142,7 +109,14 @@ export const FormCard = ({
             placeholder="Short answer text"
             disabled={readOnly}
             value={field.value}
-            onChange={handleChangeForm}
+            onChange={(e) =>
+              handleFormChange({
+                key: "value",
+                value: e.target.innerHTML,
+                type: field.type,
+                indexes,
+              })
+            }
           />
         );
       case "textarea":
@@ -150,11 +124,30 @@ export const FormCard = ({
           <TextArea
             placeholder="Long answer text"
             disabled={readOnly}
-            onChange={handleChangeForm}
+            onChange={(e) =>
+              handleFormChange({
+                key: "value",
+                value: e.target.value,
+                type: field.type,
+                indexes,
+              })
+            }
           />
         );
       case "file":
-        return <Input disabled={readOnly} onChange={handleChangeForm} />;
+        return (
+          <Input
+            disabled={readOnly}
+            onChange={(e) =>
+              handleFormChange({
+                key: "value",
+                value: e.target.value,
+                type: field.type,
+                indexes,
+              })
+            }
+          />
+        );
       case "date":
         return <DatePicker disabled={readOnly} />;
       default:
@@ -165,7 +158,7 @@ export const FormCard = ({
   return (
     <div
       className={`${styles.container} ${className || ""}`.trim()}
-      data-section={!!sectionHeader}
+      {...(!!sectionHeader && { "data-section": true })}
       {...props}
     >
       {sectionHeader && (
@@ -179,20 +172,26 @@ export const FormCard = ({
             as="div"
             data-name="question"
             data-type={field.type}
-            data-fieldindex={fieldindex}
-            data-sectionindex={sectionindex}
+            data-fieldindex={indexes.fieldIndex}
+            data-sectionindex={indexes.sectionIndex}
             placeholder="Question"
             defaultValue={field.question}
-            onInput={(e: ChangeEvent<HTMLDivElement>) => handleChangeForm(e)}
+            onInput={(e: ChangeEvent<HTMLDivElement>) =>
+              handleFormChange({
+                key: "description",
+                value: e.target.innerHTML,
+                type: "texteditor",
+                indexes,
+              })
+            }
           />
           {selectedId === field.id && (
             <TypeDropDown
               id={field.id}
-              handleFormType={handleFormType}
               options={formTypes}
+              indexes={indexes}
               selectedOption={selectedOption}
-              sectionindex={sectionindex}
-              fieldindex={fieldindex}
+              handleFormAction={handleFormAction}
             />
           )}
         </div>
@@ -202,11 +201,18 @@ export const FormCard = ({
               as="div"
               data-name="description"
               data-type={field.type}
-              data-fieldindex={fieldindex}
-              data-sectionindex={sectionindex}
+              data-fieldindex={indexes.fieldIndex}
+              data-sectionindex={indexes.sectionIndex}
               placeholder="Description"
               defaultValue={field.description.value}
-              onInput={(e: ChangeEvent<HTMLDivElement>) => handleChangeForm(e)}
+              onInput={(e: ChangeEvent<HTMLDivElement>) =>
+                handleFormChange({
+                  key: "description",
+                  value: e.target.innerHTML,
+                  type: field.type,
+                  indexes,
+                })
+              }
             />
           </div>
         )}
@@ -217,17 +223,17 @@ export const FormCard = ({
           <i
             id={`trash-${field.id}`}
             className="bx-trash"
-            onClick={() => handleDeleteForm(sectionindex, fieldindex)}
+            onClick={() => handleFormAction("delete-form", indexes)}
           ></i>
           <ToolTip selector={`#trash-${field.id}`}>Trash</ToolTip>
           <i
             id={`duplicate-${field.id}`}
             className="bx-duplicate"
-            onClick={() => handleDuplicateForm(sectionindex, fieldindex)}
+            onClick={() => handleFormAction("duplicate-form", indexes)}
           ></i>
           <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
           <div className={styles.split}></div>
-          <div onClick={() => handleRequired(sectionindex, fieldindex)}>
+          <div onClick={() => handleFormAction("required", indexes)}>
             <span>Required</span>
           </div>
           <div id={`more-options-${field.id}`} className={styles.more_options}>
@@ -238,9 +244,9 @@ export const FormCard = ({
           selector={`#more-options-${field.id}`}
           className={styles.option_drop_down}
         >
-          {moreOptions.map(({ label, action }, index) => {
+          {moreOptions.map(({ label, option }, index) => {
             if (
-              action === "shuffle" &&
+              option === "shuffle" &&
               !(
                 field.type === "checkbox" ||
                 field.type === "dropdown" ||
@@ -253,7 +259,7 @@ export const FormCard = ({
               <DropDown.Item
                 key={index}
                 onClick={() =>
-                  handleMoreOptions(sectionindex, fieldindex, action)
+                  handleFormAction("more-option", indexes, { option })
                 }
               >
                 {label}

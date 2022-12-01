@@ -1,23 +1,23 @@
 import { Fragment } from "react";
 import DropDown from "components/DropDown";
-import { FormTypes, FormIndexes, FormTypeOption } from "types/Form";
+import { FormIndexes, FormTypeOption, HandleFormAction } from "types/Form";
 
 import styles from "./TypeDropDown.module.scss";
 
 type OptionsProps = {
   id: string;
   options: FormTypeOption[];
+  indexes: Omit<FormIndexes, "optionIndex">;
   selectedOption: FormTypeOption | undefined;
-  handleFormType: FormTypes["handleFormType"];
-} & FormIndexes;
+  handleFormAction: HandleFormAction;
+};
 
 const TypeDropDown = ({
   id,
   options,
   selectedOption,
-  fieldindex,
-  sectionindex,
-  handleFormType,
+  indexes,
+  handleFormAction,
 }: OptionsProps) => {
   return (
     <Fragment>
@@ -34,7 +34,7 @@ const TypeDropDown = ({
             <DropDown.Item
               key={`${option.label}-${id}`}
               onClick={() =>
-                handleFormType(sectionindex, fieldindex, option.type)
+                handleFormAction("type", indexes, { type: option.type })
               }
             >
               <i className={option.icon}></i>

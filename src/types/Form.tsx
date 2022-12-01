@@ -1,5 +1,3 @@
-import { ChangeEvent } from "react";
-
 export type FormDetail = {
   theme: string;
   header: FormHeader;
@@ -12,46 +10,46 @@ export type FormHeader = {
   description: string;
 };
 
-export type FormTypes = {
-  selectedId: string | null;
-  formDetail: FormDetail;
-  handleChangeForm: (
-    event:
-      | ChangeEvent<HTMLInputElement>
-      | ChangeEvent<HTMLDivElement>
-      | ChangeEvent<HTMLTextAreaElement>
-  ) => void;
-  handleClickForm: (fieldId: string) => void;
-  handleDeleteForm: (sectionindex: string, fieldindex: string) => void;
-  handleDuplicateForm: (sectionindex: string, fieldindex: string) => void;
-  handleFormHeader: (event: ChangeEvent<HTMLDivElement>) => void;
-  handleAddOther: (sectionindex: string, fieldindex: string) => void;
-  handleAddOption: (sectionindex: string, fieldindex: string) => void;
-  handleFormType: (
-    sectionindex: string,
-    fieldindex: string,
-    type: FormType
-  ) => void;
-  handleDeleteOptions: (
-    sectionindex: string,
-    fieldindex: string,
-    optionindex: string
-  ) => void;
-  handleMoreOptions: (
-    sectionindex: string,
-    fieldindex: string,
-    action: FormMoreOption["action"]
-  ) => void;
-  handleDeleteOther: (sectionindex: string, fieldindex: string) => void;
-  handleRequired: (sectionindex: string, fieldindex: string) => void;
-  handleFormTheme: (theme: FormTheme) => void;
-};
+export type HandleFormHeader = (data: {
+  key: Exclude<keyof FormHeader, "id">;
+  value: string;
+}) => void;
+
+export type HandleFormChange = (data: {
+  key: Exclude<keyof FormField, "id">;
+  value: string | boolean | number;
+  indexes: FormIndexes;
+  type: FormType;
+}) => void;
+
+export type HandleFormAction = (
+  action: FormAction,
+  indexes: FormIndexes,
+  options?: {
+    event?: any;
+    type?: FormType;
+    theme?: FormTheme;
+    option?: "description" | "shuffle";
+  }
+) => void;
+
+export type FormAction =
+  | "theme"
+  | "required"
+  | "delete-option"
+  | "type"
+  | "add-option"
+  | "other"
+  | "duplicate-form"
+  | "delete-form"
+  | "focus-form"
+  | "more-option";
 
 export type FormTheme = "dark" | "light";
 
 export type FormMoreOption = {
   label: string;
-  action: "description" | "shuffle";
+  option: "description" | "shuffle";
 };
 
 export type FormType =
@@ -61,7 +59,8 @@ export type FormType =
   | "textarea"
   | "input"
   | "date"
-  | "file";
+  | "file"
+  | "texteditor";
 
 export type FormRules = {
   required?: boolean;
@@ -109,10 +108,14 @@ export type FormTypeOption = {
 export type FormCustomAttributes = {
   type: FormType;
   name: Exclude<keyof FormField, "id">;
-} & FormIndexes;
-
-export type FormIndexes = {
+} & {
   sectionindex: string;
   fieldindex: string;
   optionindex?: string;
+};
+
+export type FormIndexes = {
+  sectionIndex: number;
+  fieldIndex: number;
+  optionIndex?: number;
 };

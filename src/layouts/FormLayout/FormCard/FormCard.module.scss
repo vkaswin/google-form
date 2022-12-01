@@ -131,3 +131,30 @@
 .option_drop_down {
   min-width: 200px;
 }
+
+@media only screen and (max-width: 768px) {
+  .container {
+    .wrapper {
+      padding: 30px 15px 0px 15px;
+    }
+    .field_label {
+      flex-direction: column;
+      gap: 15px;
+      > div {
+        width: 100%;
+      }
+    }
+    .field {
+      margin: 15px 0px 30px 0px;
+    }
+    .field[data-type="input"],
+    .field[data-type="textarea"] {
+      max-width: 100%;
+    }
+    .footer {
+      .split {
+        width: 25px;
+      }
+    }
+  }
+}

@@ -2,7 +2,13 @@ import { Fragment, useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { FormHeader } from "./FormHeader";
 import { FormCard } from "./FormCard";
-import { FormParams, FormTypes, FormCustomAttributes } from "types/Form";
+import {
+  FormParams,
+  FormDetail,
+  HandleFormAction,
+  HandleFormChange,
+  HandleFormHeader,
+} from "types/Form";
 import { useAuth } from "hooks";
 import { shuffleArray } from "helpers/index";
 
@@ -13,7 +19,7 @@ const FormLayout = () => {
 
   const { user } = useAuth();
 
-  let [formDetail, setFormDetail] = useState<FormTypes["formDetail"]>({
+  let [formDetail, setFormDetail] = useState<FormDetail>({
     theme: "dark",
     header: {
       id: crypto.randomUUID(),
@@ -95,6 +101,8 @@ const FormLayout = () => {
 
   let [selectedId, setSelectedId] = useState<string | null>(null);
 
+  let { header, sections, theme } = formDetail;
+
   useEffect(() => {
     // getFormDetails();
   }, [formId]);
@@ -103,57 +111,91 @@ const FormLayout = () => {
     console.log("form details", formId);
   };
 
-  const handleClickForm: FormTypes["handleClickForm"] = (id) => {
-    setSelectedId(id);
-  };
-
-  const handleDeleteForm: FormTypes["handleDeleteForm"] = (
-    sectionindex,
-    fieldindex
+  const handleFormAction: HandleFormAction = (
+    action,
+    { sectionIndex, fieldIndex, optionIndex },
+    { event, type, theme, option } = {}
   ) => {
     let form = { ...formDetail };
-    delete form.sections[+sectionindex][+fieldindex];
-    setFormDetail(form);
-  };
+    let field = form.sections[sectionIndex][+fieldIndex];
 
-  const handleDuplicateForm: FormTypes["handleDuplicateForm"] = (
-    sectionindex,
-    fieldindex
-  ) => {
-    let form = { ...formDetail };
-    let field = { ...form.sections[+sectionindex][+fieldindex] };
-    field.id = crypto.randomUUID();
-    form.sections[+sectionindex].push(field);
-    setFormDetail(form);
-  };
-
-  const handleChangeForm: FormTypes["handleChangeForm"] = (event): void => {
-    let { fieldindex, sectionindex, optionindex, name, type } = event?.target
-      .dataset as FormCustomAttributes;
-
-    let value =
-      "value" in event.target ? event.target.value : event.target.innerHTML;
-
-    if (!sectionindex || !fieldindex || !name || !type) return;
-
-    let form = { ...formDetail };
-    let field = form.sections[+sectionindex][+fieldindex];
-
-    switch (name) {
-      case "description":
-        field.description.value = value;
-        break;
-      case "options":
-        if (!Array.isArray(field.options) || typeof optionindex !== "string")
-          return;
-        field.options[+optionindex] = value;
+    switch (action) {
+      case "focus-form":
+        setSelectedId(field.id);
+        return;
+      case "add-option":
+        if (!Array.isArray(field.options)) return;
+        field.options.push(`Option ${field.options.length + 1}`);
         break;
       case "other":
         if (typeof field.other !== "object") return;
-        field.other.value = value;
+        field.other.enabled = !field.other.enabled;
+        break;
+      case "delete-form":
+        delete form.sections[sectionIndex][fieldIndex];
+        break;
+      case "delete-option":
+        if (!optionIndex) return;
+        field.options?.splice(optionIndex, 1);
+        break;
+      case "duplicate-form":
+        field.id = crypto.randomUUID();
+        form.sections[sectionIndex].push(field);
+        break;
+      case "required":
+        field.required = !field.required;
+        break;
+      case "theme":
+        if (!theme) return;
+        form.theme = theme;
+        break;
+      case "type":
+        if (!type) return;
+        field.type = type;
+        break;
+      case "more-option":
+        switch (option) {
+          case "description":
+            field.description.enabled = !field.description.enabled;
+            break;
+          case "shuffle":
+            if (!Array.isArray(field.options)) return;
+            field.options = shuffleArray(field.options);
+            break;
+          default:
+            return;
+        }
+        break;
+      default:
+        return;
+    }
+    setFormDetail(form);
+  };
+
+  const handleFormChange: HandleFormChange = ({
+    key,
+    value,
+    indexes: { fieldIndex, sectionIndex, optionIndex },
+    type,
+  }): void => {
+    let form = { ...formDetail };
+    let field = form.sections[sectionIndex][fieldIndex];
+
+    switch (key) {
+      case "description":
+        field.description.value = value as string;
+        break;
+      case "options":
+        if (!Array.isArray(field.options) || typeof optionIndex !== "number")
+          return;
+        field.options[optionIndex] = value as string;
+        break;
+      case "other":
+        if (typeof field.other !== "object") return;
+        field.other.value = value as string;
         break;
       case "question":
-        field.question = value;
+        field.question = value as string;
         break;
       case "value":
         break;
@@ -164,98 +206,9 @@ const FormLayout = () => {
     setFormDetail(form);
   };
 
-  const handleFormType: FormTypes["handleFormType"] = (
-    sectionindex,
-    fieldindex,
-    type
-  ) => {
+  const handleFormHeader: HandleFormHeader = ({ key, value }) => {
     let form = { ...formDetail };
-    form.sections[+sectionindex][+fieldindex].type = type;
-    setFormDetail(form);
-  };
-
-  const handleMoreOptions: FormTypes["handleMoreOptions"] = (
-    sectionindex,
-    fieldindex,
-    action
-  ) => {
-    let form = { ...formDetail };
-    let field = form.sections[+sectionindex][+fieldindex];
-
-    switch (action) {
-      case "description":
-        field.description.enabled = !field.description.enabled;
-        break;
-      case "shuffle":
-        if (!Array.isArray(field.options)) return;
-        field.options = shuffleArray(field.options);
-        break;
-      default:
-        return;
-    }
-
-    setFormDetail(form);
-  };
-
-  const handleDeleteOptions: FormTypes["handleDeleteOptions"] = (
-    sectionindex,
-    fieldindex,
-    optionindex
-  ) => {
-    let form = { ...formDetail };
-    form.sections[+sectionindex][+fieldindex].options?.splice(+optionindex, 1);
-    setFormDetail(form);
-  };
-
-  const handleAddOther: FormTypes["handleAddOther"] = (
-    sectionindex,
-    fieldindex
-  ) => {
-    let form = { ...formDetail };
-    let field = form.sections[+sectionindex][+fieldindex];
-    if (typeof field.other !== "object") return;
-    field.other.enabled = true;
-    setFormDetail(form);
-  };
-
-  const handleAddOption: FormTypes["handleAddOption"] = (
-    sectionindex,
-    fieldindex
-  ) => {
-    let form = { ...formDetail };
-    let field = form.sections[+sectionindex][+fieldindex];
-    if (!Array.isArray(field.options)) return;
-    field.options.push(`Option ${field.options.length + 1}`);
-    setFormDetail(form);
-  };
-
-  const handleDeleteOther: FormTypes["handleDeleteOther"] = (
-    sectionindex,
-    fieldindex
-  ) => {
-    let form = { ...formDetail };
-    let field = form.sections[+sectionindex][+fieldindex];
-    if (typeof field.other !== "object") return;
-    field.other.enabled = false;
-    setFormDetail(form);
-  };
-
-  const handleRequired: FormTypes["handleRequired"] = (
-    sectionindex,
-    fieldindex
-  ) => {
-    console.log(sectionindex, fieldindex);
-  };
-
-  const handleFormTheme: FormTypes["handleFormTheme"] = (theme) => {
-    console.log(theme);
-  };
-
-  const handleFormHeader: FormTypes["handleFormHeader"] = (event) => {
-    let form = { ...formDetail };
-    let { name } = event?.target.dataset;
-    let value = event.target.innerHTML;
-    switch (name) {
+    switch (key) {
       case "title":
         form.header.title = value;
         break;
@@ -268,20 +221,19 @@ const FormLayout = () => {
     setFormDetail(form);
   };
 
-  let { header, sections, theme } = formDetail;
+  const handleFocusHeader = () => {
+    setSelectedId(header.id);
+  };
 
   return (
     <Fragment>
-      <div className={styles.header}>
-        <h1>Header</h1>
-      </div>
+      <Outlet />
       <div className={styles.container}>
-        <Outlet />
         <FormHeader
+          field={header}
           selectedId={selectedId}
-          handleClickForm={handleClickForm}
           handleFormHeader={handleFormHeader}
-          {...header}
+          onClick={handleFocusHeader}
         />
         {sections.map((section, sectionIndex) => {
           return (
@@ -291,6 +243,7 @@ const FormLayout = () => {
                   fieldIndex === 0 && sections.length > 1
                     ? `Section ${sectionIndex + 1} of ${sections.length}`
                     : null;
+                let indexes = { fieldIndex, sectionIndex };
                 return (
                   <FormCard
                     key={field.id}
@@ -298,20 +251,10 @@ const FormLayout = () => {
                     readOnly={true}
                     selectedId={selectedId}
                     sectionHeader={sectionHeader}
-                    fieldindex={fieldIndex.toString()}
-                    sectionindex={sectionIndex.toString()}
-                    handleClickForm={handleClickForm}
-                    handleChangeForm={handleChangeForm}
-                    handleDeleteForm={handleDeleteForm}
-                    handleDuplicateForm={handleDuplicateForm}
-                    handleMoreOptions={handleMoreOptions}
-                    handleFormType={handleFormType}
-                    handleDeleteOptions={handleDeleteOptions}
-                    handleDeleteOther={handleDeleteOther}
-                    handleAddOther={handleAddOther}
-                    handleAddOption={handleAddOption}
-                    handleRequired={handleRequired}
-                    onClick={() => handleClickForm(field.id)}
+                    indexes={indexes}
+                    handleFormChange={handleFormChange}
+                    handleFormAction={handleFormAction}
+                    onClick={() => handleFormAction("focus-form", indexes)}
                   />
                 );
               })}

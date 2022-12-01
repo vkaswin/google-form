@@ -1,40 +1,39 @@
-import { ChangeEvent } from "react";
-import { FormTypes } from "types/Form";
+import { ChangeEvent, ComponentProps } from "react";
+import { HandleFormHeader, FormDetail } from "types/Form";
 import TextEditor from "components/TextEditor";
 
 import styles from "./FormHeader.module.scss";
 
 export type FormHeaderProps = {
+  field: FormDetail["header"];
   selectedId: string | null;
-  handleClickForm: FormTypes["handleClickForm"];
-  handleFormHeader: FormTypes["handleFormHeader"];
-} & FormTypes["formDetail"]["header"];
+  handleFormHeader: HandleFormHeader;
+} & ComponentProps<"div">;
 
 export const FormHeader = ({
-  id,
-  title,
-  description,
+  field: { id, title, description },
+  className,
   selectedId,
-  handleClickForm,
   handleFormHeader,
+  ...props
 }: FormHeaderProps) => {
   return (
-    <div className={styles.container} onClick={() => handleClickForm(id)}>
+    <div className={`${styles.container} ${className || ""}`.trim()} {...props}>
       <TextEditor
         as="h1"
         data-name="title"
         placeholder="Form title"
         defaultValue={title}
-        onInput={(event: ChangeEvent<HTMLDivElement>) =>
-          handleFormHeader(event)
+        onInput={(e: ChangeEvent<HTMLDivElement>) =>
+          handleFormHeader({ key: "title", value: e.target.innerHTML })
         }
       />
       <TextEditor
         placeholder="Form description"
         defaultValue={description}
         data-name="description"
-        onInput={(event: ChangeEvent<HTMLDivElement>) =>
-          handleFormHeader(event)
+        onInput={(e: ChangeEvent<HTMLDivElement>) =>
+          handleFormHeader({ key: "description", value: e.target.innerHTML })
         }
       />
       <div className={styles.indicator}></div>

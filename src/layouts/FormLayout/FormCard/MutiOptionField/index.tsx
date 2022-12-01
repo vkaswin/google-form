@@ -1,5 +1,10 @@
 import { useMemo } from "react";
-import { FormTypes, FormField, FormIndexes } from "types/Form";
+import {
+  FormField,
+  FormIndexes,
+  HandleFormAction,
+  HandleFormChange,
+} from "types/Form";
 import Input from "components/Input";
 
 import styles from "./MultiOptionField.module.scss";
@@ -7,26 +12,17 @@ import styles from "./MultiOptionField.module.scss";
 type MutiOptionFieldProps = {
   readOnly: boolean;
   field: FormField;
-} & Pick<
-  FormTypes,
-  | "handleChangeForm"
-  | "handleDeleteOptions"
-  | "handleDeleteOther"
-  | "handleAddOther"
-  | "handleAddOption"
-> &
-  FormIndexes;
+  indexes: Omit<FormIndexes, "optionIndex">;
+  handleFormAction: HandleFormAction;
+  handleFormChange: HandleFormChange;
+};
 
 const MutiOptionField = ({
   field: { id, type, value, description, question, options, other, required },
   readOnly,
-  fieldindex,
-  sectionindex,
-  handleChangeForm,
-  handleDeleteOptions,
-  handleDeleteOther,
-  handleAddOther,
-  handleAddOption,
+  indexes,
+  handleFormChange,
+  handleFormAction,
 }: MutiOptionFieldProps) => {
   let icon = useMemo<string>(() => {
     switch (type) {
@@ -50,19 +46,25 @@ const MutiOptionField = ({
               <i className={icon}></i>
             )}
             <Input
-              data-name="options"
               data-type={type}
-              data-fieldindex={fieldindex}
-              data-sectionindex={sectionindex}
-              data-optionindex={index}
               value={option}
-              onChange={handleChangeForm}
+              onChange={(e) =>
+                handleFormChange({
+                  key: "options",
+                  value: e.target.value,
+                  type,
+                  indexes: { ...indexes, optionIndex: index },
+                })
+              }
             />
             <i
               className="bx-x"
               style={{ visibility: index === 0 ? "hidden" : "visible" }}
               onClick={() =>
-                handleDeleteOptions(sectionindex, fieldindex, index.toString())
+                handleFormAction("delete-option", {
+                  ...indexes,
+                  optionIndex: index,
+                })
               }
             ></i>
           </div>
@@ -74,16 +76,23 @@ const MutiOptionField = ({
           <Input
             data-name="other"
             data-type={type}
-            data-fieldindex={fieldindex}
-            data-sectionindex={sectionindex}
+            data-fieldindex={indexes.fieldIndex}
+            data-sectionindex={indexes.sectionIndex}
             placeholder="Other..."
             disabled={readOnly}
-            onChange={handleChangeForm}
+            onChange={(e) =>
+              handleFormChange({
+                key: "other",
+                value: e.target.value,
+                type,
+                indexes,
+              })
+            }
             {...(!readOnly && { value: other.value })}
           />
           <i
             className="bx-x"
-            onClick={() => handleDeleteOther(sectionindex, fieldindex)}
+            onClick={() => handleFormAction("other", indexes)}
           ></i>
         </div>
       )}
@@ -94,13 +103,13 @@ const MutiOptionField = ({
           <i className={icon}></i>
         )}
         <div className={styles.add_option}>
-          <div onClick={() => handleAddOption(sectionindex, fieldindex)}>
+          <div onClick={() => handleFormAction("add-option", indexes)}>
             <span>Add Option</span>
           </div>
           {type !== "dropdown" && other && !other.enabled && (
             <div
               className={styles.other_option}
-              onClick={() => handleAddOther(sectionindex, fieldindex)}
+              onClick={() => handleFormAction("other", indexes)}
             >
               <span>or </span>
               <span>add "Other"</span>

@@ -1,10 +1,14 @@
 import { Fragment } from "react";
 
+import styles from "./Edit.module.scss";
+
 const EditForm = () => {
   return (
-    <Fragment>
-      <span>Edit Form</span>
-    </Fragment>
+    <div className={styles.header}>
+      <div className={styles.title}>
+        <span>Google Form</span>
+      </div>
+    </div>
   );
 };
 
