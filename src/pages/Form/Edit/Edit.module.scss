@@ -11,18 +11,3 @@
   border-bottom: 1px solid #dadce0;
   z-index: 12;
 }
-
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  max-width: 768px;
-  margin: 0px auto;
-  padding: 15px 0px;
-}
-
-@media only screen and (max-width: 768px) {
-  .container {
-    padding: 15px;
-  }
-}
