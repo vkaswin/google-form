@@ -1,27 +1,23 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
-import { Outlet, useLocation, useParams } from "react-router-dom";
-import { FormHeader } from "./FormHeader";
-import { FormCard } from "./FormCard";
 import {
-  FormParams,
-  FormDetail,
-  HandleFormAction,
-  HandleFormChange,
-  HandleFormHeader,
-} from "types/Form";
-import { useAuth } from "hooks";
-import { shuffleArray } from "helpers/index";
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import { FormContextType, FormParams } from "types/Form";
+import { shuffleArray } from "helpers";
+import { useParams, Outlet } from "react-router-dom";
+import { useAuth } from "./useAuth";
 
-import styles from "./FormLayout.module.scss";
+const FormContext = createContext({} as FormContextType);
 
-const FormLayout = () => {
-  const { formId } = useParams<FormParams>();
+export const FormProvider = () => {
+  let { user } = useAuth();
 
-  const { user } = useAuth();
+  let { formId } = useParams<FormParams>();
 
-  const { pathname } = useLocation();
-
-  let [formDetail, setFormDetail] = useState<FormDetail>({
+  let [formDetail, setFormDetail] = useState<FormContextType["formDetail"]>({
     theme: "dark",
     header: {
       id: crypto.randomUUID(),
@@ -101,7 +97,8 @@ const FormLayout = () => {
     ],
   });
 
-  let [selectedId, setSelectedId] = useState<string | null>(null);
+  let [selectedId, setSelectedId] =
+    useState<FormContextType["selectedId"]>(null);
 
   let { header, sections, theme } = formDetail;
 
@@ -114,7 +111,7 @@ const FormLayout = () => {
     // console.log(formId, user, theme);
   };
 
-  const handleFormAction = useCallback<HandleFormAction>(
+  const handleFormAction = useCallback<FormContextType["handleFormAction"]>(
     (
       action,
       { sectionIndex, fieldIndex, optionIndex },
@@ -179,7 +176,7 @@ const FormLayout = () => {
     []
   );
 
-  const handleFormChange = useCallback<HandleFormChange>(
+  const handleFormChange = useCallback<FormContextType["handleFormChange"]>(
     ({
       key,
       value,
@@ -225,65 +222,45 @@ const FormLayout = () => {
     []
   );
 
-  const handleFormHeader = useCallback<HandleFormHeader>(({ key, value }) => {
-    let form = { ...formDetail };
-    switch (key) {
-      case "title":
-        form.header.title = value;
-        break;
-      case "description":
-        form.header.description = value;
-        break;
-      default:
-        return;
-    }
-    setFormDetail(form);
-    // eslint-disable-next-line
-  }, []);
+  const handleFormHeader = useCallback<FormContextType["handleFormHeader"]>(
+    ({ key, value }) => {
+      let form = { ...formDetail };
+      switch (key) {
+        case "title":
+          form.header.title = value;
+          break;
+        case "description":
+          form.header.description = value;
+          break;
+        default:
+          return;
+      }
+      setFormDetail(form);
+      // eslint-disable-next-line
+    },
+    []
+  );
 
   const handleFocusHeader = () => {
     setSelectedId(header.id);
   };
 
+  let context: FormContextType = {
+    formDetail,
+    selectedId,
+    handleFormChange,
+    handleFormAction,
+    handleFormHeader,
+    handleFocusHeader,
+  };
+
   return (
-    <Fragment>
+    <FormContext.Provider value={context}>
       <Outlet />
-      <div className={styles.container}>
-        <FormHeader
-          field={header}
-          selectedId={selectedId}
-          handleFormHeader={handleFormHeader}
-          onClick={handleFocusHeader}
-        />
-        {sections.map((section, sectionIndex) => {
-          return (
-            <Fragment key={sectionIndex}>
-              {section.map((field, fieldIndex) => {
-                let sectionHeader =
-                  fieldIndex === 0 && sections.length > 1
-                    ? `Section ${sectionIndex + 1} of ${sections.length}`
-                    : null;
-                let indexes = { fieldIndex, sectionIndex };
-                return (
-                  <FormCard
-                    key={field.id}
-                    field={field}
-                    isEditPage={pathname.includes("edit")}
-                    selectedId={selectedId}
-                    sectionHeader={sectionHeader}
-                    indexes={indexes}
-                    handleFormChange={handleFormChange}
-                    handleFormAction={handleFormAction}
-                    onClick={() => handleFormAction("focus-form", indexes)}
-                  />
-                );
-              })}
-            </Fragment>
-          );
-        })}
-      </div>
-    </Fragment>
+    </FormContext.Provider>
   );
 };
 
-export default FormLayout;
+export const useForm = (): FormContextType => {
+  return useContext(FormContext);
+};

@@ -1,3 +1,12 @@
+export type FormContextType = {
+  formDetail: FormDetail;
+  selectedId: string | null;
+  handleFormAction: HandleFormAction;
+  handleFormChange: HandleFormChange;
+  handleFormHeader: HandleFormHeader;
+  handleFocusHeader: () => void;
+};
+
 export type FormDetail = {
   theme: string;
   header: FormHeader;
