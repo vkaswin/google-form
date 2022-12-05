@@ -1,3 +1,5 @@
+import { ChangeEvent } from "react";
+
 export type FormDetail = {
   theme: string;
   header: FormHeader;
@@ -15,13 +17,15 @@ export type HandleFormHeader = (data: {
   value: string;
 }) => void;
 
-export type HandleFormChange = (data: {
-  key: Exclude<keyof FormField, "id">;
-  value: string | boolean | number;
-  checked?: boolean;
-  indexes: FormIndexes;
-  type: FormType;
-}) => void;
+export type HandleFormChange = (
+  event: any,
+  options: {
+    type: FormType;
+    indexes: FormIndexes;
+  }
+) => void;
+
+export type FormKeyNames = Exclude<keyof FormField, "id">;
 
 export type HandleFormAction = (
   action: FormAction,

@@ -114,14 +114,13 @@ export const FormCard = ({
           return (
             <Input
               placeholder="Short answer text"
+              name="value"
               disabled={isEditPage}
               value={field.value}
               onChange={(e) =>
-                handleFormChange({
-                  key: "value",
-                  value: e.target.innerHTML,
-                  type: field.type,
+                handleFormChange(e, {
                   indexes,
+                  type: field.type,
                 })
               }
             />
@@ -130,13 +129,12 @@ export const FormCard = ({
           return (
             <TextArea
               placeholder="Long answer text"
+              name="value"
               disabled={isEditPage}
               onChange={(e) =>
-                handleFormChange({
-                  key: "value",
-                  value: e.target.value,
-                  type: field.type,
+                handleFormChange(e, {
                   indexes,
+                  type: field.type,
                 })
               }
             />
@@ -145,12 +143,11 @@ export const FormCard = ({
           return (
             <Input
               disabled={isEditPage}
+              name="value"
               onChange={(e) =>
-                handleFormChange({
-                  key: "value",
-                  value: e.target.value,
-                  type: field.type,
+                handleFormChange(e, {
                   indexes,
+                  type: field.type,
                 })
               }
             />
@@ -183,13 +180,12 @@ export const FormCard = ({
               <TextEditor
                 as="div"
                 placeholder="Question"
+                name="description"
                 defaultValue={field.question}
-                onInput={(e: ChangeEvent<HTMLDivElement>) =>
-                  handleFormChange({
-                    key: "description",
-                    value: e.target.innerHTML,
-                    type: "texteditor",
+                onInput={(e: any) =>
+                  handleFormChange(e, {
                     indexes,
+                    type: "texteditor",
                   })
                 }
               />
@@ -213,13 +209,12 @@ export const FormCard = ({
               <TextEditor
                 as="div"
                 placeholder="Description"
+                name="description"
                 defaultValue={field.description.value}
-                onInput={(e: ChangeEvent<HTMLDivElement>) =>
-                  handleFormChange({
-                    key: "description",
-                    value: e.target.innerHTML,
-                    type: field.type,
+                onInput={(e: any) =>
+                  handleFormChange(e, {
                     indexes,
+                    type: field.type,
                   })
                 }
               />

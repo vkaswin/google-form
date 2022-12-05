@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState, ChangeEvent } from "react";
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import { FormHeader } from "./FormHeader";
 import { FormCard } from "./FormCard";
@@ -8,6 +8,7 @@ import {
   HandleFormAction,
   HandleFormChange,
   HandleFormHeader,
+  FormField,
 } from "types/Form";
 import { useAuth } from "hooks";
 import { shuffleArray } from "helpers/index";
@@ -180,31 +181,33 @@ const FormLayout = () => {
   );
 
   const handleFormChange = useCallback<HandleFormChange>(
-    ({
-      key,
-      value,
-      checked,
-      indexes: { fieldIndex, sectionIndex, optionIndex },
-      type,
-    }): void => {
+    (
+      event,
+      { type, indexes: { fieldIndex, sectionIndex, optionIndex } }
+    ): void => {
+      let {
+        target: { value, name, innerHTML },
+      } = event as ChangeEvent<
+        HTMLInputElement & { name: Exclude<keyof FormField, "id"> }
+      >;
       let form = { ...formDetail };
       let field = form.sections[sectionIndex][fieldIndex];
 
-      switch (key) {
+      switch (name) {
         case "description":
-          field.description.value = value as string;
+          field.description.value = innerHTML;
           break;
         case "options":
           if (!Array.isArray(field.options) || typeof optionIndex !== "number")
             return;
-          field.options[optionIndex] = value as string;
+          field.options[optionIndex] = value;
           break;
         case "other":
           if (typeof field.other !== "object") return;
-          field.other.value = value as string;
+          field.other.value = value;
           break;
         case "question":
-          field.question = value as string;
+          field.question = innerHTML;
           break;
         case "value":
           if (type === "checkbox" || type === "radio") {

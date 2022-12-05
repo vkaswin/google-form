@@ -47,10 +47,9 @@ const MutiOptionField = ({
             )}
             <Input
               value={option}
+              name="options"
               onChange={(e) =>
-                handleFormChange({
-                  key: "options",
-                  value: e.target.value,
+                handleFormChange(e, {
                   type,
                   indexes: { ...indexes, optionIndex: index },
                 })
@@ -74,12 +73,11 @@ const MutiOptionField = ({
           <i className={icon}></i>
           <Input
             placeholder="Other..."
+            name="other"
             disabled={isEditPage}
             value={other.value}
             onChange={(e) =>
-              handleFormChange({
-                key: "other",
-                value: e.target.value,
+              handleFormChange(e, {
                 type,
                 indexes,
               })
