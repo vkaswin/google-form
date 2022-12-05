@@ -7,8 +7,8 @@ import {
   FormDetail,
   HandleFormAction,
   HandleFormChange,
-  HandleFormHeader,
-  FormField,
+  FormHeaderKeys,
+  FormKeys,
 } from "types/Form";
 import { useAuth } from "hooks";
 import { shuffleArray } from "helpers/index";
@@ -183,14 +183,34 @@ const FormLayout = () => {
   const handleFormChange = useCallback<HandleFormChange>(
     (
       event,
-      { type, indexes: { fieldIndex, sectionIndex, optionIndex } }
+      { type, indexes: { fieldIndex, sectionIndex, optionIndex } = {} }
     ): void => {
       let {
         target: { value, name, innerHTML },
       } = event as ChangeEvent<
-        HTMLInputElement & { name: Exclude<keyof FormField, "id"> }
+        HTMLInputElement & {
+          name: FormKeys | "title";
+        }
       >;
       let form = { ...formDetail };
+
+      if (type === "header") {
+        let key = event.target.getAttribute("name");
+        switch (key as FormHeaderKeys) {
+          case "title":
+            form.header.title = innerHTML;
+            break;
+          case "description":
+            form.header.description = innerHTML;
+            break;
+          default:
+            return;
+        }
+        return;
+      }
+
+      if (!sectionIndex || !fieldIndex) return;
+
       let field = form.sections[sectionIndex][fieldIndex];
 
       switch (name) {
@@ -228,26 +248,6 @@ const FormLayout = () => {
     []
   );
 
-  const handleFormHeader = useCallback<HandleFormHeader>(({ key, value }) => {
-    let form = { ...formDetail };
-    switch (key) {
-      case "title":
-        form.header.title = value;
-        break;
-      case "description":
-        form.header.description = value;
-        break;
-      default:
-        return;
-    }
-    setFormDetail(form);
-    // eslint-disable-next-line
-  }, []);
-
-  const handleFocusHeader = () => {
-    setSelectedId(header.id);
-  };
-
   return (
     <Fragment>
       <Outlet />
@@ -255,8 +255,8 @@ const FormLayout = () => {
         <FormHeader
           field={header}
           selectedId={selectedId}
-          handleFormHeader={handleFormHeader}
-          onClick={handleFocusHeader}
+          onClick={() => setSelectedId(header.id)}
+          handleFormChange={handleFormChange}
         />
         {sections.map((section, sectionIndex) => {
           return (

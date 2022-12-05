@@ -1,5 +1,3 @@
-import { ChangeEvent } from "react";
-
 export type FormDetail = {
   theme: string;
   header: FormHeader;
@@ -20,12 +18,10 @@ export type HandleFormHeader = (data: {
 export type HandleFormChange = (
   event: any,
   options: {
-    type: FormType;
-    indexes: FormIndexes;
+    type: FormType | "header";
+    indexes?: FormIndexes;
   }
 ) => void;
-
-export type FormKeyNames = Exclude<keyof FormField, "id">;
 
 export type HandleFormAction = (
   action: FormAction,
@@ -99,6 +95,10 @@ export type FormField = {
   };
 };
 
+export type FormKeys = Exclude<keyof FormField, "id"> | "header";
+
+export type FormHeaderKeys = Exclude<keyof FormHeader, "id">;
+
 export type FormParams = {
   formId: string;
 };
@@ -107,15 +107,6 @@ export type FormTypeOption = {
   label: string;
   icon: string;
   type: FormType;
-};
-
-export type FormCustomAttributes = {
-  type: FormType;
-  name: Exclude<keyof FormField, "id">;
-} & {
-  sectionindex: string;
-  fieldindex: string;
-  optionindex?: string;
 };
 
 export type FormIndexes = {
