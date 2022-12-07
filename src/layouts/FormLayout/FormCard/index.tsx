@@ -170,41 +170,34 @@ export const FormCard = ({
         </div>
       )}
       <div className={styles.wrapper}>
-        {formPage.isEdit ? (
-          <Fragment>
-            <div className={styles.field_label}>
-              <TextEditor
-                as="div"
-                placeholder="Question"
-                name="description"
-                defaultValue={field.question}
-                onInput={(e: any) =>
-                  handleFormChange(e, {
-                    indexes,
-                    type: "texteditor",
-                  })
-                }
+        <Fragment>
+          <div className={styles.field_label}>
+            <TextEditor
+              as="div"
+              placeholder="Question"
+              name="description"
+              defaultValue={`${field.question} ${
+                field.required ? `<span class=${styles.asterisk}>*</span>` : ""
+              }`}
+              disabled={!formPage.isEdit}
+              onInput={(e: any) =>
+                handleFormChange(e, {
+                  indexes,
+                  type: "texteditor",
+                })
+              }
+            />
+            {selectedId === field.id && (
+              <TypeDropDown
+                id={field.id}
+                options={formTypes}
+                indexes={indexes}
+                selectedOption={selectedOption}
+                handleFormAction={handleFormAction}
               />
-              {selectedId === field.id && (
-                <TypeDropDown
-                  id={field.id}
-                  options={formTypes}
-                  indexes={indexes}
-                  selectedOption={selectedOption}
-                  handleFormAction={handleFormAction}
-                />
-              )}
-            </div>
-          </Fragment>
-        ) : (
-          <div
-            dangerouslySetInnerHTML={{
-              __html: `${field.question} ${
-                field.required && `<span class=${styles.asterisk}>*</span>`
-              }`,
-            }}
-          ></div>
-        )}
+            )}
+          </div>
+        </Fragment>
         {field.description.enabled &&
           (formPage.isEdit ? (
             <div className={styles.field_description}>
@@ -213,6 +206,7 @@ export const FormCard = ({
                 placeholder="Description"
                 name="description"
                 defaultValue={field.description.value}
+                disabled={!formPage.isEdit}
                 onInput={(e: any) =>
                   handleFormChange(e, {
                     indexes,

@@ -343,6 +343,7 @@ const FormLayout = () => {
         <FormHeader
           field={header}
           selectedId={selectedId}
+          disabled={!formPage.isEdit}
           onClick={() => setSelectedId(header.id)}
           handleFormChange={handleFormChange}
         />
@@ -367,7 +368,9 @@ const FormLayout = () => {
                     indexes={indexes}
                     handleFormChange={handleFormChange}
                     handleFormAction={handleFormAction}
-                    onClick={() => handleFormAction("focus-form", indexes)}
+                    {...(formPage.isEdit && {
+                      onClick: () => handleFormAction("focus-form", indexes),
+                    })}
                   />
                 );
               })}

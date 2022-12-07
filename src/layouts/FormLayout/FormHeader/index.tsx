@@ -7,6 +7,7 @@ import styles from "./FormHeader.module.scss";
 export type FormHeaderProps = {
   field: FormDetail["header"];
   selectedId: string | null;
+  disabled: boolean;
   handleFormChange: HandleFormChange;
 } & ComponentProps<"div">;
 
@@ -14,6 +15,7 @@ export const FormHeader = ({
   field: { id, title, description },
   className,
   selectedId,
+  disabled,
   handleFormChange,
   ...props
 }: FormHeaderProps) => {
@@ -24,12 +26,14 @@ export const FormHeader = ({
         placeholder="Form title"
         name="title"
         defaultValue={title}
+        disabled={disabled}
         onInput={(e: any) => handleFormChange(e, { type: "header" })}
       />
       <TextEditor
         placeholder="Form description"
         name="description"
         defaultValue={description}
+        disabled={disabled}
         onInput={(e: any) => handleFormChange(e, { type: "header" })}
       />
       <div className={styles.indicator}></div>
