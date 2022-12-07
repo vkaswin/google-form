@@ -44,7 +44,8 @@ const FormLayout = () => {
           question: "Loreum Ipsum",
           type: "date",
           value: "Loreum Ispum",
-          required: true,
+          required: false,
+          error: false,
           description: {
             enabled: false,
             value: "",
@@ -57,6 +58,7 @@ const FormLayout = () => {
           value:
             "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
           required: true,
+          error: false,
           description: {
             enabled: false,
             value: "",
@@ -68,6 +70,7 @@ const FormLayout = () => {
           type: "radio",
           value: "Male",
           required: true,
+          error: true,
           options: ["Male", "Female"],
           other: {
             enabled: true,
@@ -84,6 +87,7 @@ const FormLayout = () => {
           type: "checkbox",
           value: "Basketball",
           required: true,
+          error: false,
           options: ["Football", "Basketball", "Cricket"],
           other: {
             enabled: false,
@@ -100,6 +104,7 @@ const FormLayout = () => {
           type: "dropdown",
           value: "Chennai",
           required: true,
+          error: false,
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
           description: {
             enabled: false,
@@ -114,6 +119,7 @@ const FormLayout = () => {
           type: "date",
           value: "Loreum Ispum",
           required: true,
+          error: false,
           description: {
             enabled: false,
             value: "",
@@ -126,6 +132,7 @@ const FormLayout = () => {
           value:
             "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
           required: true,
+          error: false,
           description: {
             enabled: false,
             value: "",
@@ -137,39 +144,12 @@ const FormLayout = () => {
           type: "radio",
           value: "Male",
           required: true,
+          error: false,
           options: ["Male", "Female"],
           other: {
             enabled: true,
             value: "",
           },
-          description: {
-            enabled: false,
-            value: "",
-          },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Hobbies",
-          type: "checkbox",
-          value: "Basketball",
-          required: true,
-          options: ["Football", "Basketball", "Cricket"],
-          other: {
-            enabled: false,
-            value: "",
-          },
-          description: {
-            enabled: false,
-            value: "",
-          },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Location",
-          type: "dropdown",
-          value: "Chennai",
-          required: true,
-          options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
           description: {
             enabled: false,
             value: "",
@@ -373,7 +353,7 @@ const FormLayout = () => {
             <Fragment key={sectionIndex}>
               {section.map((field, fieldIndex) => {
                 let sectionHeader =
-                  fieldIndex === 0 && sections.length > 1
+                  fieldIndex === 0 && sections.length > 1 && !formPage.isFill
                     ? `Section ${sectionIndex + 1} of ${sections.length}`
                     : null;
                 let indexes = { fieldIndex, sectionIndex };

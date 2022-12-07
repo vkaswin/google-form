@@ -91,27 +91,29 @@ const MutiOptionField = ({
           ></i>
         </div>
       )}
-      <div className={styles.wrapper}>
-        {type === "dropdown" ? (
-          <span>{options && options.length + 1}.</span>
-        ) : (
-          <i className={icon}></i>
-        )}
-        <div className={styles.add_option}>
-          <div onClick={() => handleFormAction("add-option", indexes)}>
-            <span>Add Option</span>
-          </div>
-          {type !== "dropdown" && other && !other.enabled && (
-            <div
-              className={styles.other_option}
-              onClick={() => handleFormAction("other", indexes)}
-            >
-              <span>or </span>
-              <span>add "Other"</span>
-            </div>
+      {formPage.isEdit && (
+        <div className={styles.wrapper}>
+          {type === "dropdown" ? (
+            <span>{options && options.length + 1}.</span>
+          ) : (
+            <i className={icon}></i>
           )}
+          <div className={styles.add_option}>
+            <div onClick={() => handleFormAction("add-option", indexes)}>
+              <span>Add Option</span>
+            </div>
+            {type !== "dropdown" && other && !other.enabled && (
+              <div
+                className={styles.other_option}
+                onClick={() => handleFormAction("other", indexes)}
+              >
+                <span>or </span>
+                <span>add "Other"</span>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

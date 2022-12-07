@@ -160,6 +160,7 @@ export const FormCard = ({
   return (
     <div
       className={`${styles.container} ${className || ""}`.trim()}
+      data-error={field.error}
       {...(!!sectionHeader && { "data-section": true })}
       {...props}
     >
@@ -196,7 +197,13 @@ export const FormCard = ({
             </div>
           </Fragment>
         ) : (
-          <div dangerouslySetInnerHTML={{ __html: field.question }}></div>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: `${field.question} ${
+                field.required && `<span class=${styles.asterisk}>*</span>`
+              }`,
+            }}
+          ></div>
         )}
         {field.description.enabled &&
           (formPage.isEdit ? (
@@ -222,55 +229,70 @@ export const FormCard = ({
         <div className={styles.field} data-type={field.type}>
           {component}
         </div>
-        <div className={styles.footer}>
-          <i
-            id={`trash-${field.id}`}
-            className="bx-trash"
-            onClick={() => handleFormAction("delete-form", indexes)}
-          ></i>
-          <ToolTip selector={`#trash-${field.id}`}>Trash</ToolTip>
-          <i
-            id={`duplicate-${field.id}`}
-            className="bx-duplicate"
-            onClick={() => handleFormAction("duplicate-form", indexes)}
-          ></i>
-          <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
-          <div className={styles.split}></div>
-          <div onClick={() => handleFormAction("required", indexes)}>
-            <span>Required</span>
+        {field.error && (
+          <div className={styles.error_msg}>
+            <i className="bx-error-circle"></i>
+            <span>This is a required field</span>
           </div>
-          <div id={`more-options-${field.id}`} className={styles.more_options}>
-            <i className="bx-dots-vertical-rounded"></i>
-          </div>
-        </div>
-        <DropDown
-          selector={`#more-options-${field.id}`}
-          className={styles.option_drop_down}
-        >
-          {moreOptions.map(({ label, option }, index) => {
-            if (
-              option === "shuffle" &&
-              !(
-                field.type === "checkbox" ||
-                field.type === "dropdown" ||
-                field.type === "radio"
-              )
-            )
-              return null;
-
-            return (
-              <DropDown.Item
-                key={index}
-                onClick={() =>
-                  handleFormAction("more-option", indexes, { option })
-                }
+        )}
+        {formPage.isEdit && (
+          <Fragment>
+            <div className={styles.footer}>
+              <i
+                id={`trash-${field.id}`}
+                className="bx-trash"
+                onClick={() => handleFormAction("delete-form", indexes)}
+              ></i>
+              <ToolTip selector={`#trash-${field.id}`}>Trash</ToolTip>
+              <i
+                id={`duplicate-${field.id}`}
+                className="bx-duplicate"
+                onClick={() => handleFormAction("duplicate-form", indexes)}
+              ></i>
+              <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
+              <div className={styles.split}></div>
+              <div onClick={() => handleFormAction("required", indexes)}>
+                <span>Required</span>
+              </div>
+              <div
+                id={`more-options-${field.id}`}
+                className={styles.more_options}
               >
-                {label}
-              </DropDown.Item>
-            );
-          })}
-        </DropDown>
-        {selectedId === field.id && <div className={styles.highlight}></div>}
+                <i className="bx-dots-vertical-rounded"></i>
+              </div>
+            </div>
+            <DropDown
+              selector={`#more-options-${field.id}`}
+              className={styles.option_drop_down}
+            >
+              {moreOptions.map(({ label, option }, index) => {
+                if (
+                  option === "shuffle" &&
+                  !(
+                    field.type === "checkbox" ||
+                    field.type === "dropdown" ||
+                    field.type === "radio"
+                  )
+                )
+                  return null;
+
+                return (
+                  <DropDown.Item
+                    key={index}
+                    onClick={() =>
+                      handleFormAction("more-option", indexes, { option })
+                    }
+                  >
+                    {label}
+                  </DropDown.Item>
+                );
+              })}
+            </DropDown>
+          </Fragment>
+        )}
+        {formPage.isEdit && selectedId === field.id && (
+          <div className={styles.highlight}></div>
+        )}
         {formPage.isEdit && (
           <div className={styles.drag_icon}>
             <i className="bx-dots-horizontal-rounded"></i>

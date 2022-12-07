@@ -120,6 +120,28 @@
     border-radius: 8px 8px 0px 0px;
     z-index: 1;
   }
+  .error_msg {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #da3025;
+    margin-bottom: 15px;
+    i {
+      font-size: 24px;
+    }
+    span {
+      font-size: 14px;
+    }
+  }
+  .asterisk {
+    display: inline-block;
+    margin-left: 5px;
+    color: #da3025;
+  }
+}
+
+.container[data-error="true"] {
+  border: 1px solid #da3025;
 }
 
 .container[data-section] {
@@ -158,3 +180,5 @@
     }
   }
 }
+
+// astrik - #DC443B

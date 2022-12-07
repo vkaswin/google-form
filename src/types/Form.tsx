@@ -88,6 +88,7 @@ export type FormField = {
     value: string;
   };
   required?: boolean;
+  error?: boolean;
   options?: string[];
   other?: {
     enabled: boolean;

@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 15px;
   max-width: 768px;
+  padding: 15px;
   margin: 0px auto;
   .fill_cta {
     display: flex;
@@ -41,7 +42,7 @@
 .footer {
   display: flex;
   justify-content: center;
-  margin: 20px 0px;
+  margin: 15px 0px;
   span {
     color: #6c6a70;
     font-size: 24px;
