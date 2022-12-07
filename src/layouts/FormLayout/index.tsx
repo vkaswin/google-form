@@ -1,4 +1,11 @@
-import { Fragment, useCallback, useEffect, useState, ChangeEvent } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useState,
+  ChangeEvent,
+  useMemo,
+} from "react";
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import { FormHeader } from "./FormHeader";
 import { FormCard } from "./FormCard";
@@ -9,6 +16,7 @@ import {
   HandleFormChange,
   FormHeaderKeys,
   FormKeys,
+  FormPages,
 } from "types/Form";
 import { useAuth } from "hooks";
 import { shuffleArray } from "helpers/index";
@@ -99,12 +107,91 @@ const FormLayout = () => {
           },
         },
       ],
+      [
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "date",
+          value: "Loreum Ispum",
+          required: true,
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "file",
+          value:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+          required: true,
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Gender",
+          type: "radio",
+          value: "Male",
+          required: true,
+          options: ["Male", "Female"],
+          other: {
+            enabled: true,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Hobbies",
+          type: "checkbox",
+          value: "Basketball",
+          required: true,
+          options: ["Football", "Basketball", "Cricket"],
+          other: {
+            enabled: false,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Location",
+          type: "dropdown",
+          value: "Chennai",
+          required: true,
+          options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+      ],
     ],
   });
 
   let [selectedId, setSelectedId] = useState<string | null>(null);
 
+  let [activeSection, setActiveSection] = useState<number>(0);
+
   let { header, sections, theme } = formDetail;
+
+  const formPage = useMemo<FormPages>(() => {
+    return {
+      isPreview: pathname.includes("preview"),
+      isEdit: pathname.includes("edit"),
+      isFill: pathname.includes("fill"),
+    };
+  }, [pathname]);
 
   useEffect(() => {
     getFormDetails();
@@ -248,6 +335,27 @@ const FormLayout = () => {
     []
   );
 
+  const handleFormNavigate = (type: "back" | "next"): void => {
+    switch (type) {
+      case "next":
+        setActiveSection((section) => {
+          return section + 1;
+        });
+        break;
+      case "back":
+        setActiveSection((section) => {
+          return section - 1;
+        });
+        break;
+      default:
+        return;
+    }
+  };
+
+  const handleFormSubmit = () => {
+    console.log("submit");
+  };
+
   return (
     <Fragment>
       <Outlet />
@@ -259,6 +367,8 @@ const FormLayout = () => {
           handleFormChange={handleFormChange}
         />
         {sections.map((section, sectionIndex) => {
+          if (!(formPage.isFill ? sectionIndex === activeSection : true))
+            return;
           return (
             <Fragment key={sectionIndex}>
               {section.map((field, fieldIndex) => {
@@ -271,7 +381,7 @@ const FormLayout = () => {
                   <FormCard
                     key={field.id}
                     field={field}
-                    isEditPage={pathname.includes("edit")}
+                    formPage={formPage}
                     selectedId={selectedId}
                     sectionHeader={sectionHeader}
                     indexes={indexes}
@@ -284,6 +394,41 @@ const FormLayout = () => {
             </Fragment>
           );
         })}
+        {formPage.isFill && (
+          <div className={styles.fill_cta}>
+            <div>
+              {activeSection > 0 && (
+                <button
+                  className={styles.btn_navigate}
+                  onClick={() => handleFormNavigate("back")}
+                >
+                  Back
+                </button>
+              )}
+
+              {activeSection < sections.length - 1 && (
+                <button
+                  className={styles.btn_navigate}
+                  onClick={() => handleFormNavigate("next")}
+                >
+                  Next
+                </button>
+              )}
+              {activeSection === sections.length - 1 && (
+                <button
+                  className={styles.btn_submit}
+                  onClick={handleFormSubmit}
+                >
+                  Submit
+                </button>
+              )}
+            </div>
+            <button className={styles.btn_clear}>Clear Form</button>
+          </div>
+        )}
+      </div>
+      <div className={styles.footer}>
+        <span>Google Forms</span>
       </div>
     </Fragment>
   );

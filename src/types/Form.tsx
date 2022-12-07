@@ -114,3 +114,9 @@ export type FormIndexes = {
   fieldIndex: number;
   optionIndex?: number;
 };
+
+export type FormPages = {
+  isEdit: boolean;
+  isPreview: boolean;
+  isFill: boolean;
+};

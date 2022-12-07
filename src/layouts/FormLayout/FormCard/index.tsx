@@ -1,10 +1,4 @@
-import {
-  ChangeEvent,
-  ComponentProps,
-  Fragment,
-  ReactNode,
-  useMemo,
-} from "react";
+import { ComponentProps, Fragment, ReactNode, useMemo } from "react";
 import {
   FormTypeOption,
   FormField,
@@ -12,6 +6,7 @@ import {
   FormIndexes,
   HandleFormAction,
   HandleFormChange,
+  FormPages,
 } from "types/Form";
 import TextArea from "components/TextArea";
 import Input from "components/Input";
@@ -24,11 +19,11 @@ import TypeDropDown from "./TypeDropDown";
 
 import styles from "./FormCard.module.scss";
 
-type FormFieldProps = {
+type FormCardProps = {
   selectedId: string | null;
-  isEditPage: boolean;
   field: FormField;
   sectionHeader: string | null;
+  formPage: FormPages;
   indexes: Omit<FormIndexes, "optionIndex">;
   handleFormAction: HandleFormAction;
   handleFormChange: HandleFormChange;
@@ -62,14 +57,14 @@ let moreOptions: FormMoreOption[] = [
 export const FormCard = ({
   field,
   selectedId,
-  isEditPage,
   indexes,
   sectionHeader,
+  formPage,
   className,
   handleFormAction,
   handleFormChange,
   ...props
-}: FormFieldProps) => {
+}: FormCardProps) => {
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
     return formTypes.find((option) => {
       return option.type === field.type;
@@ -83,7 +78,7 @@ export const FormCard = ({
           return (
             <MutiOptionField
               field={field}
-              isEditPage={isEditPage}
+              formPage={formPage}
               indexes={indexes}
               handleFormChange={handleFormChange}
               handleFormAction={handleFormAction}
@@ -94,7 +89,7 @@ export const FormCard = ({
           return (
             <MutiOptionField
               field={field}
-              isEditPage={isEditPage}
+              formPage={formPage}
               indexes={indexes}
               handleFormChange={handleFormChange}
               handleFormAction={handleFormAction}
@@ -104,7 +99,7 @@ export const FormCard = ({
           return (
             <MutiOptionField
               field={field}
-              isEditPage={isEditPage}
+              formPage={formPage}
               indexes={indexes}
               handleFormChange={handleFormChange}
               handleFormAction={handleFormAction}
@@ -115,7 +110,7 @@ export const FormCard = ({
             <Input
               placeholder="Short answer text"
               name="value"
-              disabled={isEditPage}
+              disabled={formPage.isEdit}
               value={field.value}
               onChange={(e) =>
                 handleFormChange(e, {
@@ -130,7 +125,7 @@ export const FormCard = ({
             <TextArea
               placeholder="Long answer text"
               name="value"
-              disabled={isEditPage}
+              disabled={formPage.isEdit}
               onChange={(e) =>
                 handleFormChange(e, {
                   indexes,
@@ -142,7 +137,7 @@ export const FormCard = ({
         case "file":
           return (
             <Input
-              disabled={isEditPage}
+              disabled={formPage.isEdit}
               name="value"
               onChange={(e) =>
                 handleFormChange(e, {
@@ -153,13 +148,13 @@ export const FormCard = ({
             />
           );
         case "date":
-          return <DatePicker disabled={isEditPage} />;
+          return <DatePicker disabled={formPage.isEdit} />;
         default:
           return null;
       }
     },
     // eslint-disable-next-line
-    [field, indexes, isEditPage]
+    [field, indexes, formPage]
   );
 
   return (
@@ -174,7 +169,7 @@ export const FormCard = ({
         </div>
       )}
       <div className={styles.wrapper}>
-        {isEditPage ? (
+        {formPage.isEdit ? (
           <Fragment>
             <div className={styles.field_label}>
               <TextEditor
@@ -204,7 +199,7 @@ export const FormCard = ({
           <div dangerouslySetInnerHTML={{ __html: field.question }}></div>
         )}
         {field.description.enabled &&
-          (isEditPage ? (
+          (formPage.isEdit ? (
             <div className={styles.field_description}>
               <TextEditor
                 as="div"
@@ -276,7 +271,7 @@ export const FormCard = ({
           })}
         </DropDown>
         {selectedId === field.id && <div className={styles.highlight}></div>}
-        {isEditPage && (
+        {formPage.isEdit && (
           <div className={styles.drag_icon}>
             <i className="bx-dots-horizontal-rounded"></i>
             <i className="bx-dots-horizontal-rounded"></i>

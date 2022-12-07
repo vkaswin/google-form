@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import {
   FormField,
   FormIndexes,
+  FormPages,
   HandleFormAction,
   HandleFormChange,
 } from "types/Form";
@@ -10,8 +11,8 @@ import Input from "components/Input";
 import styles from "./MultiOptionField.module.scss";
 
 type MutiOptionFieldProps = {
-  isEditPage: boolean;
   field: FormField;
+  formPage: FormPages;
   indexes: Omit<FormIndexes, "optionIndex">;
   handleFormAction: HandleFormAction;
   handleFormChange: HandleFormChange;
@@ -19,7 +20,7 @@ type MutiOptionFieldProps = {
 
 const MutiOptionField = ({
   field: { id, type, value, description, question, options, other, required },
-  isEditPage,
+  formPage,
   indexes,
   handleFormChange,
   handleFormAction,
@@ -74,7 +75,7 @@ const MutiOptionField = ({
           <Input
             placeholder="Other..."
             name="other"
-            disabled={isEditPage}
+            disabled={formPage.isEdit}
             value={other.value}
             onChange={(e) =>
               handleFormChange(e, {
@@ -82,7 +83,7 @@ const MutiOptionField = ({
                 indexes,
               })
             }
-            {...(!isEditPage && { value: other.value })}
+            {...(!formPage.isEdit && { value: other.value })}
           />
           <i
             className="bx-x"

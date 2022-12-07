@@ -4,7 +4,48 @@
   gap: 15px;
   max-width: 768px;
   margin: 0px auto;
-  padding: 15px 0px;
+  .fill_cta {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    > div {
+      display: flex;
+      gap: 15px;
+    }
+    button {
+      padding: 0px 15px;
+      height: 36px;
+      min-width: 100px;
+      color: #6b3db7;
+    }
+    .btn_submit {
+      background-color: #7349bd;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+      border-radius: 4px;
+      border: 1px solid #7349bd;
+      color: white;
+    }
+    .btn_navigate {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+      background-color: #fff;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+    }
+    .btn_clear {
+      background-color: transparent;
+      border: none;
+    }
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0px;
+  span {
+    color: #6c6a70;
+    font-size: 24px;
+  }
 }
 
 @media only screen and (max-width: 768px) {

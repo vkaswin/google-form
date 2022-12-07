@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 
-const ViewForm = () => {
+const Fill = () => {
   return <Fragment></Fragment>;
 };
 
-export default ViewForm;
+export default Fill;

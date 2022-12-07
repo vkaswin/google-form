@@ -3,9 +3,10 @@ import AuthLayout from "layouts/AuthLayout";
 import FormLayout from "layouts/FormLayout";
 import Login from "pages/Auth/Login";
 import Register from "pages/Auth/Register";
-import EditForm from "pages/Form/Edit";
-import ViewForm from "pages/Form/View";
+import Edit from "pages/Form/Edit";
 import PageNotFound from "pages/404";
+import Fill from "pages/Form/Fill";
+import Preview from "pages/Form/Preview";
 
 export const router = createHashRouter([
   {
@@ -24,8 +25,9 @@ export const router = createHashRouter([
     path: "/form",
     element: <FormLayout />,
     children: [
-      { path: ":id/edit", element: <EditForm /> },
-      { path: ":id/fill", element: <ViewForm /> },
+      { path: ":id/edit", element: <Edit /> },
+      { path: ":id/preview", element: <Preview /> },
+      { path: ":id/fill", element: <Fill /> },
     ],
   },
   {
