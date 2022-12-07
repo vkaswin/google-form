@@ -92,6 +92,7 @@ export type FormField = {
   options?: string[];
   other?: {
     enabled: boolean;
+    checked: boolean;
     value: string;
   };
 };

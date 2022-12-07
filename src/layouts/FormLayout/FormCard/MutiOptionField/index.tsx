@@ -67,46 +67,99 @@ const MutiOptionField = ({
 
   return (
     <div className={styles.container}>
-      {options?.map((option, index) => {
-        return (
-          <div className={styles.option_field} key={index}>
-            {formPage.isEdit ? (
-              <Fragment>
-                {type === "dropdown" ? (
-                  <span>{index + 1}.</span>
-                ) : (
-                  <i className={icon}></i>
-                )}
-                <Input
-                  value={option}
-                  name="options"
-                  onChange={(e) =>
-                    handleFormChange(e, {
-                      type,
-                      indexes: { ...indexes, optionIndex: index },
-                    })
-                  }
-                />
-                <i
-                  className="bx-x"
-                  style={{ visibility: index === 0 ? "hidden" : "visible" }}
-                  onClick={() =>
-                    handleFormAction("delete-option", {
-                      ...indexes,
-                      optionIndex: index,
-                    })
-                  }
-                ></i>
-              </Fragment>
-            ) : (
-              <Fragment>{field}</Fragment>
-            )}
-          </div>
-        );
-      })}
+      {formPage.isEdit &&
+        options?.map((option, index) => {
+          return (
+            <div className={styles.option_field} key={index}>
+              {type === "dropdown" ? (
+                <span>{index + 1}.</span>
+              ) : (
+                <i className={icon}></i>
+              )}
+              <Input
+                value={option}
+                name="options"
+                onChange={(e) =>
+                  handleFormChange(e, {
+                    type,
+                    indexes: { ...indexes, optionIndex: index },
+                  })
+                }
+              />
+              <i
+                className="bx-x"
+                style={{ visibility: index === 0 ? "hidden" : "visible" }}
+                onClick={() =>
+                  handleFormAction("delete-option", {
+                    ...indexes,
+                    optionIndex: index,
+                  })
+                }
+              ></i>
+            </div>
+          );
+        })}
+      {!formPage.isEdit &&
+        type === "checkbox" &&
+        options?.map((option, index) => {
+          return (
+            <CheckBox
+              key={index}
+              id={id + index}
+              name="value"
+              label={option}
+              value={option}
+              checked={Array.isArray(value) && value.includes(option)}
+              onChange={(e) =>
+                handleFormChange(e, {
+                  type,
+                  indexes,
+                })
+              }
+            />
+          );
+        })}
+      {!formPage.isEdit &&
+        type === "radio" &&
+        options?.map((option, index) => {
+          return (
+            <Radio
+              key={index}
+              id={id + index}
+              name="value"
+              label={option}
+              value={option}
+              radioGroup={id}
+              checked={value === option}
+              onChange={(e) =>
+                handleFormChange(e, {
+                  type,
+                  indexes,
+                })
+              }
+            />
+          );
+        })}
+      {!formPage.isEdit && type === "dropdown" && <Fragment>DropDown</Fragment>}
       {other?.enabled && (
         <div className={styles.option_field}>
-          {formPage.isEdit ? <i className={icon}></i> : otherField}
+          {formPage.isEdit && <i className={icon}></i>}
+          {!formPage.isEdit && type === "checkbox" && (
+            <CheckBox
+              label="Other"
+              checked={other.checked}
+              onChange={(e) => handleFormChange(e, { type, indexes })}
+            />
+          )}
+          {!formPage.isEdit && type === "radio" && (
+            <Radio
+              name="other"
+              label="Other"
+              radioGroup={id}
+              checked={other.checked}
+              onChange={(e) => handleFormChange(e, { type, indexes })}
+            />
+          )}
           <Input
             placeholder="Other..."
             name="other"

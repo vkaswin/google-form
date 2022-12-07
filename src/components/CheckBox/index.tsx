@@ -1,15 +1,16 @@
-import React from "react";
+import React, { ComponentProps } from "react";
 
 import styles from "./CheckBox.module.scss";
 
 type CheckBoxProps = {
-  onChange?: () => void;
-};
+  label?: string;
+} & ComponentProps<"input">;
 
-const CheckBox = ({ onChange = () => {} }: CheckBoxProps) => {
+const CheckBox = ({ label = "", id = "", ...props }: CheckBoxProps) => {
   return (
-    <div>
-      <span>CheckBox</span>
+    <div className={styles.field}>
+      <input type="checkbox" {...(id.length > 0 && { id })} {...props} />
+      {label.length > 0 && <label htmlFor={id}>{label}</label>}
     </div>
   );
 };

@@ -74,6 +74,7 @@ const FormLayout = () => {
           options: ["Male", "Female"],
           other: {
             enabled: true,
+            checked: false,
             value: "",
           },
           description: {
@@ -85,12 +86,13 @@ const FormLayout = () => {
           id: crypto.randomUUID(),
           question: "Hobbies",
           type: "checkbox",
-          value: "Basketball",
+          value: ["Basketball"],
           required: true,
           error: false,
           options: ["Football", "Basketball", "Cricket"],
           other: {
             enabled: false,
+            checked: false,
             value: "",
           },
           description: {
@@ -148,6 +150,7 @@ const FormLayout = () => {
           options: ["Male", "Female"],
           other: {
             enabled: true,
+            checked: false,
             value: "",
           },
           description: {
@@ -253,7 +256,7 @@ const FormLayout = () => {
       { type, indexes: { fieldIndex, sectionIndex, optionIndex } = {} }
     ): void => {
       let {
-        target: { value, name, innerHTML },
+        target: { value, name, innerHTML, checked },
       } = event as ChangeEvent<
         HTMLInputElement & {
           name: FormKeys | "title";
@@ -276,7 +279,8 @@ const FormLayout = () => {
         return;
       }
 
-      if (!sectionIndex || !fieldIndex) return;
+      if (typeof sectionIndex !== "number" || typeof fieldIndex !== "number")
+        return;
 
       let field = form.sections[sectionIndex][fieldIndex];
 
@@ -291,18 +295,32 @@ const FormLayout = () => {
           break;
         case "other":
           if (typeof field.other !== "object") return;
-          field.other.value = value;
+          if (type === "checkbox" || type === "radio") {
+            field.other.checked = checked;
+          } else {
+            field.other.value = value;
+          }
           break;
         case "question":
           field.question = innerHTML;
           break;
         case "value":
-          if (type === "checkbox" || type === "radio") {
-            // console.log(value);
-          } else if (type === "file") {
-            // console.log(value);
-          } else {
-            // console.log(value);
+          switch (type) {
+            case "checkbox":
+              if (!Array.isArray(field.value)) return;
+              if (checked) {
+                field.value.push(value);
+              } else {
+                let index = field.value.indexOf(value);
+                if (index === -1) return;
+                field.value.splice(index, 1);
+              }
+              break;
+            case "radio":
+              field.value = value;
+              break;
+            default:
+              return;
           }
           break;
         default:
