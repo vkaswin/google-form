@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { Fragment, ReactNode, useMemo } from "react";
 import {
   FormField,
   FormIndexes,
@@ -7,6 +7,9 @@ import {
   HandleFormChange,
 } from "types/Form";
 import Input from "components/Input";
+import Radio from "components/Radio";
+import CheckBox from "components/CheckBox";
+import Select from "components/Select";
 
 import styles from "./MultiOptionField.module.scss";
 
@@ -36,47 +39,78 @@ const MutiOptionField = ({
     }
   }, [type]);
 
+  let field = useMemo<ReactNode>(() => {
+    if (formPage.isEdit) return null;
+
+    switch (type) {
+      case "checkbox":
+        return <CheckBox />;
+      case "radio":
+        return <Radio />;
+      case "dropdown":
+        return <Select />;
+      default:
+        return null;
+    }
+  }, [formPage]);
+
+  const otherField = useMemo<ReactNode>(() => {
+    switch (type) {
+      case "checkbox":
+        return <CheckBox />;
+      case "radio":
+        return <Radio />;
+      default:
+        return null;
+    }
+  }, [formPage]);
+
   return (
     <div className={styles.container}>
       {options?.map((option, index) => {
         return (
           <div className={styles.option_field} key={index}>
-            {type === "dropdown" ? (
-              <span>{index + 1}.</span>
+            {formPage.isEdit ? (
+              <Fragment>
+                {type === "dropdown" ? (
+                  <span>{index + 1}.</span>
+                ) : (
+                  <i className={icon}></i>
+                )}
+                <Input
+                  value={option}
+                  name="options"
+                  onChange={(e) =>
+                    handleFormChange(e, {
+                      type,
+                      indexes: { ...indexes, optionIndex: index },
+                    })
+                  }
+                />
+                <i
+                  className="bx-x"
+                  style={{ visibility: index === 0 ? "hidden" : "visible" }}
+                  onClick={() =>
+                    handleFormAction("delete-option", {
+                      ...indexes,
+                      optionIndex: index,
+                    })
+                  }
+                ></i>
+              </Fragment>
             ) : (
-              <i className={icon}></i>
+              <Fragment>{field}</Fragment>
             )}
-            <Input
-              value={option}
-              name="options"
-              onChange={(e) =>
-                handleFormChange(e, {
-                  type,
-                  indexes: { ...indexes, optionIndex: index },
-                })
-              }
-            />
-            <i
-              className="bx-x"
-              style={{ visibility: index === 0 ? "hidden" : "visible" }}
-              onClick={() =>
-                handleFormAction("delete-option", {
-                  ...indexes,
-                  optionIndex: index,
-                })
-              }
-            ></i>
           </div>
         );
       })}
       {other?.enabled && (
         <div className={styles.option_field}>
-          <i className={icon}></i>
+          {formPage.isEdit ? <i className={icon}></i> : otherField}
           <Input
             placeholder="Other..."
             name="other"
             disabled={formPage.isEdit}
-            value={other.value}
             onChange={(e) =>
               handleFormChange(e, {
                 type,
@@ -85,10 +119,12 @@ const MutiOptionField = ({
             }
             {...(!formPage.isEdit && { value: other.value })}
           />
-          <i
-            className="bx-x"
-            onClick={() => handleFormAction("other", indexes)}
-          ></i>
+          {formPage.isEdit && (
+            <i
+              className="bx-x"
+              onClick={() => handleFormAction("other", indexes)}
+            ></i>
+          )}
         </div>
       )}
       {formPage.isEdit && (

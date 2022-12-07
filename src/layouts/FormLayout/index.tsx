@@ -42,7 +42,7 @@ const FormLayout = () => {
         {
           id: crypto.randomUUID(),
           question: "Loreum Ipsum",
-          type: "date",
+          type: "input",
           value: "Loreum Ispum",
           required: false,
           error: false,
@@ -332,6 +332,18 @@ const FormLayout = () => {
     }
   };
 
+  const handleFormReset = () => {
+    let form = { ...formDetail };
+    form.sections.forEach((section) => {
+      section.forEach((field) => {
+        field.value = "";
+        field.error = false;
+      });
+    });
+    setFormDetail(form);
+    setActiveSection(0);
+  };
+
   const handleFormSubmit = () => {
     console.log("submit");
   };
@@ -406,7 +418,9 @@ const FormLayout = () => {
                 </button>
               )}
             </div>
-            <button className={styles.btn_clear}>Clear Form</button>
+            <button className={styles.btn_clear} onClick={handleFormReset}>
+              Clear Form
+            </button>
           </div>
         )}
       </div>
