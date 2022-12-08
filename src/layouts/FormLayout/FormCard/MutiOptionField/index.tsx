@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import {
   FormField,
   FormIndexes,
@@ -124,6 +124,8 @@ const MutiOptionField = ({
           {formPage.isEdit && <i className={icon}></i>}
           {!formPage.isEdit && type === "checkbox" && (
             <CheckBox
+              id="checkbox-other-option"
+              placeholder="Enter here"
               label="Other"
               checked={other.checked}
               onChange={(e) =>
@@ -139,6 +141,7 @@ const MutiOptionField = ({
           )}
           {!formPage.isEdit && type === "radio" && (
             <Radio
+              id="radio-other-option"
               name={id}
               label="Other"
               checked={other.checked}
@@ -154,7 +157,7 @@ const MutiOptionField = ({
             />
           )}
           <Input
-            placeholder="Other..."
+            placeholder={formPage.isEdit ? "Other..." : "Enter here"}
             disabled={formPage.isEdit}
             value={!formPage.isEdit ? other.value : ""}
             onChange={(e) =>

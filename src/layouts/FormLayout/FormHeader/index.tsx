@@ -24,20 +24,18 @@ export const FormHeader = ({
       <TextEditor
         as="h1"
         placeholder="Form title"
-        name="title"
         defaultValue={title}
         disabled={disabled}
         onInput={(e: ChangeEvent<HTMLDivElement>) =>
           handleFormChange({
             type: "header",
-            key: "description",
+            key: "title",
             value: e.target.innerHTML,
           })
         }
       />
       <TextEditor
         placeholder="Form description"
-        name="description"
         defaultValue={description}
         disabled={disabled}
         onInput={(e: ChangeEvent<HTMLDivElement>) =>

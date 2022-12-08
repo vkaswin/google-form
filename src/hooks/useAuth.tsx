@@ -4,12 +4,15 @@ import {
   useContext,
   useEffect,
   useState,
+  Dispatch,
+  SetStateAction,
 } from "react";
 import { User } from "types/User";
+import { cookies } from "helpers";
 
 type AuthContextType = {
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  setUser: Dispatch<SetStateAction<User | null>>;
   logout: () => void;
 };
 
@@ -21,13 +24,18 @@ const AuthContext = createContext({} as AuthContextType);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   let [user, setUser] = useState<User | null>(null);
+  let cookie = cookies();
 
-  useEffect(() => {
-    // getUser();
-  }, []);
+  useEffect(
+    () => {
+      getUser();
+    }, // eslint-disable-next-line
+    []
+  );
 
   const getUser = (): void => {
-    console.log(user); //
+    let token = cookie.get("auth_token");
+    if (!token) return;
   };
 
   const logout = () => {

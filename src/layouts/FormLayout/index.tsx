@@ -1,11 +1,4 @@
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useState,
-  ChangeEvent,
-  useMemo,
-} from "react";
+import { Fragment, useCallback, useEffect, useState, useMemo } from "react";
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import { FormHeader } from "./FormHeader";
 import { FormCard } from "./FormCard";
@@ -89,7 +82,7 @@ const FormLayout = () => {
           error: false,
           options: ["Football", "Basketball", "Cricket"],
           other: {
-            enabled: false,
+            enabled: true,
             checked: false,
             value: "",
           },
@@ -164,7 +157,7 @@ const FormLayout = () => {
 
   let [activeSection, setActiveSection] = useState<number>(0);
 
-  let { header, sections, theme } = formDetail;
+  let { header, sections } = formDetail;
 
   const formPage = useMemo<FormPages>(() => {
     return {
@@ -180,7 +173,10 @@ const FormLayout = () => {
   }, [formId]);
 
   const getFormDetails = (): void => {
-    // console.log(formId, user, theme);
+    try {
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleFormAction = useCallback<HandleFormAction>(
@@ -256,6 +252,7 @@ const FormLayout = () => {
       checked,
       indexes: { fieldIndex, sectionIndex, optionIndex } = {},
     }): void => {
+      console.log(key, value);
       let form = { ...formDetail };
 
       if (type === "header") {
@@ -354,7 +351,15 @@ const FormLayout = () => {
     let form = { ...formDetail };
     form.sections.forEach((section) => {
       section.forEach((field) => {
-        field.value = "";
+        if (Array.isArray(field.value)) {
+          field.value = [];
+        } else {
+          field.value = "";
+        }
+        if (typeof field.other === "object") {
+          field.other.checked = false;
+          field.other.value = "";
+        }
         field.error = false;
       });
     });
@@ -363,7 +368,7 @@ const FormLayout = () => {
   };
 
   const handleFormSubmit = () => {
-    // console.log("submit");
+    console.log(user);
   };
 
   return (
@@ -379,7 +384,7 @@ const FormLayout = () => {
         />
         {sections.map((section, sectionIndex) => {
           if (!(formPage.isFill ? sectionIndex === activeSection : true))
-            return;
+            return null;
           return (
             <Fragment key={sectionIndex}>
               {section.map((field, fieldIndex) => {

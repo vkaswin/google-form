@@ -4,7 +4,7 @@ import styles from "./Select.module.scss";
 
 const Select = () => {
   return (
-    <div>
+    <div className={styles.field}>
       <span>Select</span>
     </div>
   );

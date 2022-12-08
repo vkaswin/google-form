@@ -115,7 +115,6 @@ export const FormCard = ({
           return (
             <Input
               placeholder="Short answer text"
-              name="value"
               disabled={formPage.isEdit}
               value={field.value}
               onChange={(e) =>
@@ -132,7 +131,6 @@ export const FormCard = ({
           return (
             <TextArea
               placeholder="Long answer text"
-              name="value"
               disabled={formPage.isEdit}
               onChange={(e) =>
                 handleFormChange({
