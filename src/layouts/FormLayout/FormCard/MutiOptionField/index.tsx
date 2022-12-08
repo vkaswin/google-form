@@ -21,6 +21,8 @@ type MutiOptionFieldProps = {
   handleFormChange: HandleFormChange;
 };
 
+type DropDownOption = { label: string; value: string };
+
 const MutiOptionField = ({
   field: { id, type, value, description, question, options, other, required },
   formPage,
@@ -38,6 +40,15 @@ const MutiOptionField = ({
         return "";
     }
   }, [type]);
+
+  let dropdownOptions = useMemo<DropDownOption[] | undefined>(() => {
+    if (type !== "dropdown") return;
+
+    return options?.map((option) => {
+      return { label: option, value: option };
+    });
+  }, [type]);
+
   return (
     <div className={styles.container}>
       {formPage.isEdit &&
@@ -118,7 +129,16 @@ const MutiOptionField = ({
             />
           );
         })}
-      {!formPage.isEdit && type === "dropdown" && <Select />}
+      {!formPage.isEdit && type === "dropdown" && (
+        <Select
+          size="auto"
+          options={dropdownOptions}
+          value={typeof value === "string" ? value : ""}
+          onChange={(value) =>
+            handleFormChange({ indexes, type, value, key: "value" })
+          }
+        />
+      )}
       {other?.enabled && (
         <div className={styles.option_field}>
           {formPage.isEdit && <i className={icon}></i>}

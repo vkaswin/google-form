@@ -1,6 +1,142 @@
-.field {
+.custom_select {
+  width: 100%;
+  border: 1px solid;
+  padding: 7px 10px 7px 15px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  border: 1px solid #eeeeee !important;
+  position: relative;
+  outline: none;
+  margin-top: 5px;
+  cursor: pointer;
+  .select_value {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    i {
+      font-size: 16px;
+      color: #0d0e0e;
+      font-weight: normal;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+  }
+  .placeHolder {
+    color: #535454;
+  }
 }
 
 // selected - #E8F0FE
 // selectedHover - #F7FAFE
 // hover - #EEEEEE
+
+.enter[data-popper-placement^="left"],
+.exit[data-popper-placement^="left"] {
+  .select_options {
+    animation-name: left;
+  }
+}
+.enter[data-popper-placement^="right"],
+.exit[data-popper-placement^="right"] {
+  .select_options {
+    animation-name: right;
+  }
+}
+.enter[data-popper-placement^="top"],
+.exit[data-popper-placement^="top"] {
+  .select_options {
+    animation-name: top;
+  }
+}
+.enter[data-popper-placement^="bottom"],
+.exit[data-popper-placement^="bottom"] {
+  .select_options {
+    animation-name: bottom;
+  }
+}
+
+.enter {
+  .select_options {
+    animation: 250ms ease-in-out forwards;
+  }
+}
+
+.exit {
+  .select_options {
+    animation: 250ms ease-in-out forwards reverse;
+  }
+}
+
+.options_container {
+  z-index: 10;
+  .select_options {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #ffffff;
+    border-radius: 4px;
+    filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.15));
+    .options {
+      padding: 7px 15px;
+      color: #000000;
+      cursor: pointer;
+    }
+    .options:hover {
+      background-color: rgba(26, 39, 201, 0.05);
+    }
+    &::-webkit-scrollbar {
+      width: 7px;
+    }
+    &::-webkit-scrollbar-track {
+      background: white;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: lightgray;
+      border-radius: 10px;
+    }
+  }
+}
+
+@keyframes bottom {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+@keyframes right {
+  0% {
+    opacity: 0;
+    transform: translateX(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+}
+
+@keyframes left {
+  0% {
+    opacity: 0;
+    transform: translateX(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+}
+
+@keyframes top {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}

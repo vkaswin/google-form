@@ -317,7 +317,7 @@ const FormLayout = () => {
               }
               break;
             default:
-              return;
+              field.value = value;
           }
           break;
         default:

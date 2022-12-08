@@ -17,7 +17,7 @@ import styles from "./DropDown.module.scss";
 type DropDownProps = {
   selector: string;
   children?: ReactNode;
-  size?: "auto" | null;
+  size?: "auto";
 } & ComponentProps<"div">;
 
 type DropDownContextType = {
@@ -30,7 +30,7 @@ const DropDown = ({
   className,
   selector,
   children,
-  size = null,
+  size,
   ...props
 }: DropDownProps) => {
   let [referenceElement, setReferenceElement] = useState<HTMLElement | null>(
