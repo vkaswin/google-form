@@ -15,13 +15,13 @@ export type HandleFormHeader = (data: {
   value: string;
 }) => void;
 
-export type HandleFormChange = (
-  event: any,
-  options: {
-    type: FormType | "header";
-    indexes?: FormIndexes;
-  }
-) => void;
+export type HandleFormChange = (data: {
+  key: FormKeys | "title";
+  value: string;
+  type: FormType | "header";
+  checked?: boolean;
+  indexes?: FormIndexes;
+}) => void;
 
 export type HandleFormAction = (
   action: FormAction,
@@ -98,8 +98,6 @@ export type FormField = {
 };
 
 export type FormKeys = Exclude<keyof FormField, "id"> | "header";
-
-export type FormHeaderKeys = Exclude<keyof FormHeader, "id">;
 
 export type FormParams = {
   formId: string;

@@ -1,4 +1,10 @@
-import { ComponentProps, Fragment, ReactNode, useMemo } from "react";
+import {
+  ChangeEvent,
+  ComponentProps,
+  Fragment,
+  ReactNode,
+  useMemo,
+} from "react";
 import {
   FormTypeOption,
   FormField,
@@ -113,9 +119,11 @@ export const FormCard = ({
               disabled={formPage.isEdit}
               value={field.value}
               onChange={(e) =>
-                handleFormChange(e, {
+                handleFormChange({
                   indexes,
                   type: field.type,
+                  key: "value",
+                  value: e.target.value,
                 })
               }
             />
@@ -127,26 +135,17 @@ export const FormCard = ({
               name="value"
               disabled={formPage.isEdit}
               onChange={(e) =>
-                handleFormChange(e, {
+                handleFormChange({
                   indexes,
                   type: field.type,
+                  key: "value",
+                  value: e.target.value,
                 })
               }
             />
           );
         case "file":
-          return (
-            <Input
-              disabled={formPage.isEdit}
-              name="value"
-              onChange={(e) =>
-                handleFormChange(e, {
-                  indexes,
-                  type: field.type,
-                })
-              }
-            />
-          );
+          return <div>File Input</div>;
         case "date":
           return <DatePicker disabled={formPage.isEdit} />;
         default:
@@ -154,13 +153,13 @@ export const FormCard = ({
       }
     },
     // eslint-disable-next-line
-    [field, indexes, formPage]
+    [indexes, formPage]
   );
 
   return (
     <div
       className={`${styles.container} ${className || ""}`.trim()}
-      data-error={field.error}
+      {...(!formPage.isEdit && { "data-error": field.error })}
       {...(!!sectionHeader && { "data-section": true })}
       {...props}
     >
@@ -175,15 +174,18 @@ export const FormCard = ({
             <TextEditor
               as="div"
               placeholder="Question"
-              name="description"
               defaultValue={`${field.question} ${
-                field.required ? `<span class=${styles.asterisk}>*</span>` : ""
+                !formPage.isEdit && field.required
+                  ? `<span class=${styles.asterisk}>*</span>`
+                  : ""
               }`}
               disabled={!formPage.isEdit}
-              onInput={(e: any) =>
-                handleFormChange(e, {
+              onInput={(e: ChangeEvent<HTMLDivElement>) =>
+                handleFormChange({
                   indexes,
                   type: "texteditor",
+                  key: "question",
+                  value: e.target.innerHTML,
                 })
               }
             />
@@ -204,13 +206,14 @@ export const FormCard = ({
               <TextEditor
                 as="div"
                 placeholder="Description"
-                name="description"
                 defaultValue={field.description.value}
                 disabled={!formPage.isEdit}
-                onInput={(e: any) =>
-                  handleFormChange(e, {
+                onInput={(e: ChangeEvent<HTMLDivElement>) =>
+                  handleFormChange({
                     indexes,
                     type: field.type,
+                    key: "description",
+                    value: e.target.innerHTML,
                   })
                 }
               />
@@ -223,7 +226,7 @@ export const FormCard = ({
         <div className={styles.field} data-type={field.type}>
           {component}
         </div>
-        {field.error && (
+        {!formPage.isEdit && field.error && (
           <div className={styles.error_msg}>
             <i className="bx-error-circle"></i>
             <span>This is a required field</span>

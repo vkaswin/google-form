@@ -38,33 +38,6 @@ const MutiOptionField = ({
         return "";
     }
   }, [type]);
-
-  let field = useMemo<ReactNode>(() => {
-    if (formPage.isEdit) return null;
-
-    switch (type) {
-      case "checkbox":
-        return <CheckBox />;
-      case "radio":
-        return <Radio />;
-      case "dropdown":
-        return <Select />;
-      default:
-        return null;
-    }
-  }, [formPage]);
-
-  const otherField = useMemo<ReactNode>(() => {
-    switch (type) {
-      case "checkbox":
-        return <CheckBox />;
-      case "radio":
-        return <Radio />;
-      default:
-        return null;
-    }
-  }, [formPage]);
-
   return (
     <div className={styles.container}>
       {formPage.isEdit &&
@@ -78,11 +51,12 @@ const MutiOptionField = ({
               )}
               <Input
                 value={option}
-                name="options"
                 onChange={(e) =>
-                  handleFormChange(e, {
+                  handleFormChange({
                     type,
                     indexes: { ...indexes, optionIndex: index },
+                    key: "options",
+                    value: e.target.value,
                   })
                 }
               />
@@ -106,14 +80,16 @@ const MutiOptionField = ({
             <CheckBox
               key={index}
               id={id + index}
-              name="value"
               label={option}
               value={option}
               checked={Array.isArray(value) && value.includes(option)}
               onChange={(e) =>
-                handleFormChange(e, {
+                handleFormChange({
                   type,
                   indexes,
+                  key: "value",
+                  value: e.target.value,
+                  checked: e.target.checked,
                 })
               }
             />
@@ -126,21 +102,23 @@ const MutiOptionField = ({
             <Radio
               key={index}
               id={id + index}
-              name="value"
+              name={id}
               label={option}
               value={option}
-              radioGroup={id}
               checked={value === option}
               onChange={(e) =>
-                handleFormChange(e, {
+                handleFormChange({
                   type,
                   indexes,
+                  key: "value",
+                  value: e.target.value,
+                  checked: e.target.checked,
                 })
               }
             />
           );
         })}
-      {!formPage.isEdit && type === "dropdown" && <Fragment>DropDown</Fragment>}
+      {!formPage.isEdit && type === "dropdown" && <Select />}
       {other?.enabled && (
         <div className={styles.option_field}>
           {formPage.isEdit && <i className={icon}></i>}
@@ -148,29 +126,45 @@ const MutiOptionField = ({
             <CheckBox
               label="Other"
               checked={other.checked}
-              onChange={(e) => handleFormChange(e, { type, indexes })}
+              onChange={(e) =>
+                handleFormChange({
+                  type,
+                  indexes,
+                  key: "other",
+                  value: e.target.value,
+                  checked: e.target.checked,
+                })
+              }
             />
           )}
           {!formPage.isEdit && type === "radio" && (
             <Radio
-              name="other"
+              name={id}
               label="Other"
-              radioGroup={id}
               checked={other.checked}
-              onChange={(e) => handleFormChange(e, { type, indexes })}
+              onChange={(e) =>
+                handleFormChange({
+                  type,
+                  indexes,
+                  key: "other",
+                  value: e.target.value,
+                  checked: e.target.checked,
+                })
+              }
             />
           )}
           <Input
             placeholder="Other..."
-            name="other"
             disabled={formPage.isEdit}
+            value={!formPage.isEdit ? other.value : ""}
             onChange={(e) =>
-              handleFormChange(e, {
-                type,
+              handleFormChange({
                 indexes,
+                key: "other",
+                type: "input",
+                value: e.target.value,
               })
             }
-            {...(!formPage.isEdit && { value: other.value })}
           />
           {formPage.isEdit && (
             <i

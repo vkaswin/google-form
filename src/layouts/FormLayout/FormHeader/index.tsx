@@ -1,4 +1,4 @@
-import { ComponentProps } from "react";
+import { ChangeEvent, ComponentProps } from "react";
 import { FormDetail, HandleFormChange } from "types/Form";
 import TextEditor from "components/TextEditor";
 
@@ -27,14 +27,26 @@ export const FormHeader = ({
         name="title"
         defaultValue={title}
         disabled={disabled}
-        onInput={(e: any) => handleFormChange(e, { type: "header" })}
+        onInput={(e: ChangeEvent<HTMLDivElement>) =>
+          handleFormChange({
+            type: "header",
+            key: "description",
+            value: e.target.innerHTML,
+          })
+        }
       />
       <TextEditor
         placeholder="Form description"
         name="description"
         defaultValue={description}
         disabled={disabled}
-        onInput={(e: any) => handleFormChange(e, { type: "header" })}
+        onInput={(e: ChangeEvent<HTMLDivElement>) =>
+          handleFormChange({
+            type: "header",
+            key: "description",
+            value: e.target.innerHTML,
+          })
+        }
       />
       <div className={styles.indicator}></div>
       {selectedId === id && <div className={styles.highlight}></div>}

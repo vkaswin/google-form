@@ -14,8 +14,6 @@ import {
   FormDetail,
   HandleFormAction,
   HandleFormChange,
-  FormHeaderKeys,
-  FormKeys,
   FormPages,
 } from "types/Form";
 import { useAuth } from "hooks";
@@ -251,27 +249,22 @@ const FormLayout = () => {
   );
 
   const handleFormChange = useCallback<HandleFormChange>(
-    (
-      event,
-      { type, indexes: { fieldIndex, sectionIndex, optionIndex } = {} }
-    ): void => {
-      let {
-        target: { value, name, innerHTML, checked },
-      } = event as ChangeEvent<
-        HTMLInputElement & {
-          name: FormKeys | "title";
-        }
-      >;
+    ({
+      key,
+      value,
+      type,
+      checked,
+      indexes: { fieldIndex, sectionIndex, optionIndex } = {},
+    }): void => {
       let form = { ...formDetail };
 
       if (type === "header") {
-        let key = event.target.getAttribute("name");
-        switch (key as FormHeaderKeys) {
+        switch (key) {
           case "title":
-            form.header.title = innerHTML;
+            form.header.title = value;
             break;
           case "description":
-            form.header.description = innerHTML;
+            form.header.description = value;
             break;
           default:
             return;
@@ -284,9 +277,9 @@ const FormLayout = () => {
 
       let field = form.sections[sectionIndex][fieldIndex];
 
-      switch (name) {
+      switch (key) {
         case "description":
-          field.description.value = innerHTML;
+          field.description.value = value;
           break;
         case "options":
           if (!Array.isArray(field.options) || typeof optionIndex !== "number")
@@ -296,13 +289,16 @@ const FormLayout = () => {
         case "other":
           if (typeof field.other !== "object") return;
           if (type === "checkbox" || type === "radio") {
-            field.other.checked = checked;
+            field.other.checked = !!checked;
+            if (type === "radio") {
+              field.value = "";
+            }
           } else {
             field.other.value = value;
           }
           break;
         case "question":
-          field.question = innerHTML;
+          field.question = value;
           break;
         case "value":
           switch (type) {
@@ -318,6 +314,10 @@ const FormLayout = () => {
               break;
             case "radio":
               field.value = value;
+              if (typeof field.other === "object") {
+                field.other.value = "";
+                field.other.checked = false;
+              }
               break;
             default:
               return;
@@ -363,7 +363,7 @@ const FormLayout = () => {
   };
 
   const handleFormSubmit = () => {
-    console.log("submit");
+    // console.log("submit");
   };
 
   return (
