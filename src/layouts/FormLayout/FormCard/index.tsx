@@ -28,7 +28,6 @@ import styles from "./FormCard.module.scss";
 type FormCardProps = {
   selectedId: string | null;
   field: FormField;
-  sectionHeader: string | null;
   formPage: FormPages;
   indexes: Omit<FormIndexes, "optionIndex">;
   handleFormAction: HandleFormAction;
@@ -60,11 +59,10 @@ let moreOptions: FormMoreOption[] = [
   },
 ];
 
-export const FormCard = ({
+const FormCard = ({
   field,
   selectedId,
   indexes,
-  sectionHeader,
   formPage,
   className,
   handleFormAction,
@@ -158,14 +156,8 @@ export const FormCard = ({
     <div
       className={`${styles.container} ${className || ""}`.trim()}
       {...(!formPage.isEdit && { "data-error": field.error })}
-      {...(!!sectionHeader && { "data-section": true })}
       {...props}
     >
-      {sectionHeader && (
-        <div className={styles.section}>
-          <span>{sectionHeader}</span>
-        </div>
-      )}
       <div className={styles.wrapper}>
         <Fragment>
           <div className={styles.field_label}>
@@ -298,3 +290,5 @@ export const FormCard = ({
     </div>
   );
 };
+
+export default FormCard;

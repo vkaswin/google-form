@@ -1,24 +1,19 @@
 export type FormDetail = {
   theme: string;
-  header: FormHeader;
-  sections: FormField[][];
+  sections: FormSection[];
 };
 
-export type FormHeader = {
+export type FormSection = {
   id: string;
   title: string;
   description: string;
+  fields: FormField[];
 };
 
-export type HandleFormHeader = (data: {
-  key: Exclude<keyof FormHeader, "id">;
-  value: string;
-}) => void;
-
 export type HandleFormChange = (data: {
-  key: FormKeys | "title";
+  key: FormKeys;
   value: string;
-  type: FormType | "header";
+  type: FormType;
   checked?: boolean;
   indexes?: FormIndexes;
 }) => void;
@@ -32,6 +27,12 @@ export type HandleFormAction = (
     option?: "description" | "shuffle";
   }
 ) => void;
+
+export type HandleFormSection = (data: {
+  key: "title" | "description";
+  value: string;
+  sectionIndex: number;
+}) => void;
 
 export type FormAction =
   | "theme"

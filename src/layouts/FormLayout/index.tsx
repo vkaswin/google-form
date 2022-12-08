@@ -1,14 +1,15 @@
 import { Fragment, useCallback, useEffect, useState, useMemo } from "react";
 import { Outlet, useLocation, useParams } from "react-router-dom";
-import { FormHeader } from "./FormHeader";
-import { FormCard } from "./FormCard";
 import {
+  FormPages,
   FormParams,
   FormDetail,
   HandleFormAction,
   HandleFormChange,
-  FormPages,
+  HandleFormSection,
 } from "types/Form";
+import FormCard from "./FormCard";
+import FormSection from "./FormSection";
 import { useAuth } from "hooks";
 import { shuffleArray } from "helpers/index";
 
@@ -23,133 +24,169 @@ const FormLayout = () => {
 
   let [formDetail, setFormDetail] = useState<FormDetail>({
     theme: "dark",
-    header: {
-      id: crypto.randomUUID(),
-      description: "Loreum Ispum",
-      title: "Google Form",
-    },
     sections: [
-      [
-        {
-          id: crypto.randomUUID(),
-          question: "Loreum Ipsum",
-          type: "input",
-          value: "Loreum Ispum",
-          required: false,
-          error: false,
-          description: {
-            enabled: false,
-            value: "",
+      {
+        id: crypto.randomUUID(),
+        title: "Loreum Ispum",
+        description: "Loreum Ispum",
+        fields: [
+          {
+            id: crypto.randomUUID(),
+            question: "Loreum Ipsum",
+            type: "input",
+            value: "Loreum Ispum",
+            required: false,
+            error: false,
+            description: {
+              enabled: false,
+              value: "",
+            },
           },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Loreum Ipsum",
-          type: "file",
-          value:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-          required: true,
-          error: false,
-          description: {
-            enabled: false,
-            value: "",
+          {
+            id: crypto.randomUUID(),
+            question: "Loreum Ipsum",
+            type: "file",
+            value:
+              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+            required: true,
+            error: false,
+            description: {
+              enabled: false,
+              value: "",
+            },
           },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Gender",
-          type: "radio",
-          value: "Male",
-          required: true,
-          error: true,
-          options: ["Male", "Female"],
-          other: {
-            enabled: true,
-            checked: false,
-            value: "",
+          {
+            id: crypto.randomUUID(),
+            question: "Gender",
+            type: "radio",
+            value: "Male",
+            required: true,
+            error: true,
+            options: ["Male", "Female"],
+            other: {
+              enabled: true,
+              checked: false,
+              value: "",
+            },
+            description: {
+              enabled: false,
+              value: "",
+            },
           },
-          description: {
-            enabled: false,
-            value: "",
+          {
+            id: crypto.randomUUID(),
+            question: "Hobbies",
+            type: "checkbox",
+            value: ["Basketball"],
+            required: true,
+            error: false,
+            options: ["Football", "Basketball", "Cricket"],
+            other: {
+              enabled: true,
+              checked: false,
+              value: "",
+            },
+            description: {
+              enabled: false,
+              value: "",
+            },
           },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Hobbies",
-          type: "checkbox",
-          value: ["Basketball"],
-          required: true,
-          error: false,
-          options: ["Football", "Basketball", "Cricket"],
-          other: {
-            enabled: true,
-            checked: false,
-            value: "",
+          {
+            id: crypto.randomUUID(),
+            question: "Location",
+            type: "dropdown",
+            value: "Chennai",
+            required: true,
+            error: false,
+            options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
+            description: {
+              enabled: false,
+              value: "",
+            },
           },
-          description: {
-            enabled: false,
-            value: "",
+        ],
+      },
+      {
+        id: crypto.randomUUID(),
+        title: "Loreum Ispum",
+        description: "Loreum Ispum",
+        fields: [
+          {
+            id: crypto.randomUUID(),
+            question: "Loreum Ipsum",
+            type: "input",
+            value: "Loreum Ispum",
+            required: false,
+            error: false,
+            description: {
+              enabled: false,
+              value: "",
+            },
           },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Location",
-          type: "dropdown",
-          value: "Chennai",
-          required: true,
-          error: false,
-          options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
-          description: {
-            enabled: false,
-            value: "",
+          {
+            id: crypto.randomUUID(),
+            question: "Loreum Ipsum",
+            type: "file",
+            value:
+              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+            required: true,
+            error: false,
+            description: {
+              enabled: false,
+              value: "",
+            },
           },
-        },
-      ],
-      [
-        {
-          id: crypto.randomUUID(),
-          question: "Loreum Ipsum",
-          type: "date",
-          value: "Loreum Ispum",
-          required: true,
-          error: false,
-          description: {
-            enabled: false,
-            value: "",
+          {
+            id: crypto.randomUUID(),
+            question: "Gender",
+            type: "radio",
+            value: "Male",
+            required: true,
+            error: true,
+            options: ["Male", "Female"],
+            other: {
+              enabled: true,
+              checked: false,
+              value: "",
+            },
+            description: {
+              enabled: false,
+              value: "",
+            },
           },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Loreum Ipsum",
-          type: "file",
-          value:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-          required: true,
-          error: false,
-          description: {
-            enabled: false,
-            value: "",
+          {
+            id: crypto.randomUUID(),
+            question: "Hobbies",
+            type: "checkbox",
+            value: ["Basketball"],
+            required: true,
+            error: false,
+            options: ["Football", "Basketball", "Cricket"],
+            other: {
+              enabled: true,
+              checked: false,
+              value: "",
+            },
+            description: {
+              enabled: false,
+              value: "",
+            },
           },
-        },
-        {
-          id: crypto.randomUUID(),
-          question: "Gender",
-          type: "radio",
-          value: "Male",
-          required: true,
-          error: false,
-          options: ["Male", "Female"],
-          other: {
-            enabled: true,
-            checked: false,
-            value: "",
+          {
+            id: crypto.randomUUID(),
+            question: "Location",
+            type: "dropdown",
+            value: "Chennai",
+            required: true,
+            error: false,
+            options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
+            description: {
+              enabled: false,
+              value: "",
+            },
           },
-          description: {
-            enabled: false,
-            value: "",
-          },
-        },
-      ],
+        ],
+      },
     ],
   });
 
@@ -157,7 +194,7 @@ const FormLayout = () => {
 
   let [activeSection, setActiveSection] = useState<number>(0);
 
-  let { header, sections } = formDetail;
+  let { sections } = formDetail;
 
   const formPage = useMemo<FormPages>(() => {
     return {
@@ -186,7 +223,7 @@ const FormLayout = () => {
       { type, theme, option } = {}
     ) => {
       let form = { ...formDetail };
-      let field = form.sections[sectionIndex][+fieldIndex];
+      let field = form.sections[sectionIndex].fields[+fieldIndex];
 
       switch (action) {
         case "focus-form":
@@ -201,7 +238,7 @@ const FormLayout = () => {
           field.other.enabled = !field.other.enabled;
           break;
         case "delete-form":
-          delete form.sections[sectionIndex][fieldIndex];
+          delete form.sections[sectionIndex].fields[fieldIndex];
           break;
         case "delete-option":
           if (!optionIndex) return;
@@ -209,7 +246,7 @@ const FormLayout = () => {
           break;
         case "duplicate-form":
           field.id = crypto.randomUUID();
-          form.sections[sectionIndex].push(field);
+          form.sections[sectionIndex].fields.push(field);
           break;
         case "required":
           field.required = !field.required;
@@ -252,27 +289,12 @@ const FormLayout = () => {
       checked,
       indexes: { fieldIndex, sectionIndex, optionIndex } = {},
     }): void => {
-      console.log(key, value);
       let form = { ...formDetail };
-
-      if (type === "header") {
-        switch (key) {
-          case "title":
-            form.header.title = value;
-            break;
-          case "description":
-            form.header.description = value;
-            break;
-          default:
-            return;
-        }
-        return;
-      }
 
       if (typeof sectionIndex !== "number" || typeof fieldIndex !== "number")
         return;
 
-      let field = form.sections[sectionIndex][fieldIndex];
+      let field = form.sections[sectionIndex].fields[fieldIndex];
 
       switch (key) {
         case "description":
@@ -350,7 +372,7 @@ const FormLayout = () => {
   const handleFormReset = () => {
     let form = { ...formDetail };
     form.sections.forEach((section) => {
-      section.forEach((field) => {
+      section.fields.forEach((field) => {
         if (Array.isArray(field.value)) {
           field.value = [];
         } else {
@@ -367,6 +389,26 @@ const FormLayout = () => {
     setActiveSection(0);
   };
 
+  const handleFormSection: HandleFormSection = ({
+    key,
+    value,
+    sectionIndex,
+  }) => {
+    console.log(key, value, sectionIndex);
+    let form = { ...formDetail };
+    let section = form.sections[sectionIndex];
+    switch (key) {
+      case "title":
+        section.title = value;
+        break;
+      case "description":
+        section.description = value;
+        break;
+      default:
+        break;
+    }
+  };
+
   const handleFormSubmit = () => {
     console.log(user);
   };
@@ -375,23 +417,39 @@ const FormLayout = () => {
     <Fragment>
       <Outlet />
       <div className={styles.container}>
-        <FormHeader
+        {/* <FormHeader
           field={header}
           selectedId={selectedId}
           disabled={!formPage.isEdit}
           onClick={() => setSelectedId(header.id)}
           handleFormChange={handleFormChange}
-        />
-        {sections.map((section, sectionIndex) => {
+        /> */}
+        {sections.map(({ id, title, description, fields }, sectionIndex) => {
           if (!(formPage.isFill ? sectionIndex === activeSection : true))
             return null;
+
+          let sectionHeader =
+            sections.length > 1 && !formPage.isFill
+              ? `Section ${sectionIndex + 1} of ${sections.length}`
+              : undefined;
+
           return (
             <Fragment key={sectionIndex}>
-              {section.map((field, fieldIndex) => {
-                let sectionHeader =
-                  fieldIndex === 0 && sections.length > 1 && !formPage.isFill
-                    ? `Section ${sectionIndex + 1} of ${sections.length}`
-                    : null;
+              <FormSection
+                id={id}
+                title={title}
+                formPage={formPage}
+                selectedId={selectedId}
+                description={description}
+                disabled={!formPage.isEdit}
+                sectionIndex={sectionIndex}
+                sectionHeader={sectionHeader}
+                handleFormSection={handleFormSection}
+                {...(formPage.isEdit && {
+                  onClick: () => setSelectedId(id),
+                })}
+              />
+              {fields.map((field, fieldIndex) => {
                 let indexes = { fieldIndex, sectionIndex };
                 return (
                   <FormCard
@@ -399,7 +457,6 @@ const FormLayout = () => {
                     field={field}
                     formPage={formPage}
                     selectedId={selectedId}
-                    sectionHeader={sectionHeader}
                     indexes={indexes}
                     handleFormChange={handleFormChange}
                     handleFormAction={handleFormAction}

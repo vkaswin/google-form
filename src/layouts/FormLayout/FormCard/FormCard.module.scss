@@ -13,18 +13,6 @@
       display: block;
     }
   }
-  .section {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    background-color: var(--primary-color);
-    height: 55px;
-    border-radius: 8px 8px 0px 0px;
-    color: white;
-    padding: 0px 15px;
-    font-size: 18px;
-    z-index: 3;
-  }
   .wrapper {
     padding: 30px 25px 0px 25px;
   }
@@ -142,12 +130,6 @@
 
 .container[data-error="true"] {
   border: 1px solid #da3025;
-}
-
-.container[data-section] {
-  .highlight {
-    height: 98%;
-  }
 }
 
 .option_drop_down {
