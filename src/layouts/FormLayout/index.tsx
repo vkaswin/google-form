@@ -223,7 +223,7 @@ const FormLayout = () => {
       { type, theme, option } = {}
     ) => {
       let form = { ...formDetail };
-      let field = form.sections[sectionIndex].fields[+fieldIndex];
+      let field = form.sections[sectionIndex].fields[fieldIndex];
 
       switch (action) {
         case "focus-form":
@@ -394,7 +394,6 @@ const FormLayout = () => {
     value,
     sectionIndex,
   }) => {
-    console.log(key, value, sectionIndex);
     let form = { ...formDetail };
     let section = form.sections[sectionIndex];
     switch (key) {

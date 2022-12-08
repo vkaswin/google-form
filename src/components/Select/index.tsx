@@ -79,8 +79,6 @@ const Select = <T,>({
     });
   };
 
-  console.log(state);
-
   return (
     <Fragment>
       <div

@@ -22,6 +22,7 @@ import DropDown from "components/DropDown";
 import ToolTip from "components/ToolTip";
 import MutiOptionField from "./MutiOptionField";
 import TypeDropDown from "./TypeDropDown";
+import { debounce } from "helpers/index";
 
 import styles from "./FormCard.module.scss";
 
@@ -114,30 +115,35 @@ const FormCard = ({
             <Input
               placeholder="Short answer text"
               disabled={formPage.isEdit}
-              value={field.value}
-              onChange={(e) =>
-                handleFormChange({
-                  indexes,
-                  type: field.type,
-                  key: "value",
-                  value: e.target.value,
-                })
-              }
+              defaultValue={field.value}
+              onChange={debounce(
+                (e) =>
+                  handleFormChange({
+                    indexes,
+                    type: field.type,
+                    key: "value",
+                    value: e.target.value,
+                  }),
+                500
+              )}
             />
           );
         case "textarea":
           return (
             <TextArea
               placeholder="Long answer text"
+              defaultValue={field.value}
               disabled={formPage.isEdit}
-              onChange={(e) =>
-                handleFormChange({
-                  indexes,
-                  type: field.type,
-                  key: "value",
-                  value: e.target.value,
-                })
-              }
+              onChange={debounce(
+                (e) =>
+                  handleFormChange({
+                    indexes,
+                    type: field.type,
+                    key: "value",
+                    value: e.target.value,
+                  }),
+                500
+              )}
             />
           );
         case "file":
@@ -170,14 +176,16 @@ const FormCard = ({
                   : ""
               }`}
               disabled={!formPage.isEdit}
-              onInput={(e: ChangeEvent<HTMLDivElement>) =>
-                handleFormChange({
-                  indexes,
-                  type: "texteditor",
-                  key: "question",
-                  value: e.target.innerHTML,
-                })
-              }
+              onInput={debounce<ChangeEvent<HTMLDivElement>>(
+                (e) =>
+                  handleFormChange({
+                    indexes,
+                    type: "texteditor",
+                    key: "question",
+                    value: e.target.innerHTML,
+                  }),
+                500
+              )}
             />
             {selectedId === field.id && (
               <TypeDropDown
@@ -198,14 +206,16 @@ const FormCard = ({
                 placeholder="Description"
                 defaultValue={field.description.value}
                 disabled={!formPage.isEdit}
-                onInput={(e: ChangeEvent<HTMLDivElement>) =>
-                  handleFormChange({
-                    indexes,
-                    type: field.type,
-                    key: "description",
-                    value: e.target.innerHTML,
-                  })
-                }
+                onInput={debounce<ChangeEvent<HTMLDivElement>>(
+                  (e) =>
+                    handleFormChange({
+                      indexes,
+                      type: field.type,
+                      key: "description",
+                      value: e.target.innerHTML,
+                    }),
+                  500
+                )}
               />
             </div>
           ) : (

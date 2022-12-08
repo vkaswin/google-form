@@ -1,10 +1,11 @@
-import { ChangeEvent, ComponentProps, Fragment } from "react";
+import { ChangeEvent, ComponentProps } from "react";
 import {
   FormPages,
   FormSection as FormSectionType,
   HandleFormSection,
 } from "types/Form";
 import TextEditor from "components/TextEditor";
+import { debounce } from "helpers/index";
 
 import styles from "./FormSection.module.scss";
 
@@ -45,25 +46,29 @@ const FormSection = ({
           placeholder="Form title"
           defaultValue={title}
           disabled={disabled}
-          onInput={(e: ChangeEvent<HTMLDivElement>) =>
-            handleFormSection({
-              sectionIndex,
-              key: "title",
-              value: e.target.innerHTML,
-            })
-          }
+          onInput={debounce<ChangeEvent<HTMLDivElement>>(
+            (e) =>
+              handleFormSection({
+                sectionIndex,
+                key: "title",
+                value: e.target.innerHTML,
+              }),
+            500
+          )}
         />
         <TextEditor
           placeholder="Form description"
           defaultValue={description}
           disabled={disabled}
-          onInput={(e: ChangeEvent<HTMLDivElement>) =>
-            handleFormSection({
-              sectionIndex,
-              key: "description",
-              value: e.target.innerHTML,
-            })
-          }
+          onInput={debounce<ChangeEvent<HTMLDivElement>>(
+            (e) =>
+              handleFormSection({
+                sectionIndex,
+                key: "description",
+                value: e.target.innerHTML,
+              }),
+            500
+          )}
         />
         <div className={styles.indicator}></div>
         {selectedId === id && <div className={styles.highlight}></div>}

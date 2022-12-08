@@ -67,3 +67,16 @@ export const shuffleArray = <T,>(array: T[]): T[] | undefined => {
   }
   return arr;
 };
+
+export const debounce = <T,>(
+  fn: (args: T) => void,
+  delay: number
+): ((args: T) => void) => {
+  let timeoutId: any;
+  return (...args) => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      fn(...args);
+    }, delay);
+  };
+};

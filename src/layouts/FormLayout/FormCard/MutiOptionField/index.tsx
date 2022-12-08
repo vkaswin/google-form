@@ -10,6 +10,7 @@ import Input from "components/Input";
 import Radio from "components/Radio";
 import CheckBox from "components/CheckBox";
 import Select from "components/Select";
+import { debounce } from "helpers/index";
 
 import styles from "./MultiOptionField.module.scss";
 
@@ -61,15 +62,17 @@ const MutiOptionField = ({
                 <i className={icon}></i>
               )}
               <Input
-                value={option}
-                onChange={(e) =>
-                  handleFormChange({
-                    type,
-                    indexes: { ...indexes, optionIndex: index },
-                    key: "options",
-                    value: e.target.value,
-                  })
-                }
+                defaultValue={option}
+                onChange={debounce(
+                  (e) =>
+                    handleFormChange({
+                      indexes: { ...indexes, optionIndex: index },
+                      type: type,
+                      key: "options",
+                      value: e.target.value,
+                    }),
+                  500
+                )}
               />
               <i
                 className="bx-x"
@@ -179,15 +182,17 @@ const MutiOptionField = ({
           <Input
             placeholder={formPage.isEdit ? "Other..." : "Enter here"}
             disabled={formPage.isEdit}
-            value={!formPage.isEdit ? other.value : ""}
-            onChange={(e) =>
-              handleFormChange({
-                indexes,
-                key: "other",
-                type: "input",
-                value: e.target.value,
-              })
-            }
+            defaultValue={!formPage.isEdit ? other.value : ""}
+            onChange={debounce(
+              (e) =>
+                handleFormChange({
+                  indexes,
+                  type: "input",
+                  key: "other",
+                  value: e.target.value,
+                }),
+              500
+            )}
           />
           {formPage.isEdit && (
             <i
