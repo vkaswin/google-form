@@ -48,7 +48,7 @@ const MutiOptionField = ({
     return options?.map((option) => {
       return { label: option, value: option };
     });
-  }, [type]);
+  }, [type, options]);
 
   return (
     <div className={styles.container}>

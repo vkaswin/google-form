@@ -28,6 +28,8 @@ export type HandleFormAction = (
   }
 ) => void;
 
+export type HandleFormError = (field: FormField) => void;
+
 export type HandleFormSection = (data: {
   key: "title" | "description";
   value: string;

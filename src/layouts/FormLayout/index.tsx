@@ -7,6 +7,7 @@ import {
   HandleFormAction,
   HandleFormChange,
   HandleFormSection,
+  HandleFormError,
 } from "types/Form";
 import FormField from "./FormField";
 import FormSection from "./FormSection";
@@ -275,8 +276,7 @@ const FormLayout = () => {
           }
           break;
         case "blur":
-          if (!field.required) return;
-          field.error = field.value.length === 0;
+          handleFormError(field);
           break;
         default:
           return;
@@ -286,6 +286,11 @@ const FormLayout = () => {
     // eslint-disable-next-line
     []
   );
+
+  const handleFormError: HandleFormError = (field) => {
+    if (!field.required) return;
+    field.error = field.value.length === 0;
+  };
 
   const handleFormChange = useCallback<HandleFormChange>(
     ({
@@ -353,10 +358,7 @@ const FormLayout = () => {
           return;
       }
 
-      if (field.required) {
-        field.error = field.value.length === 0;
-      }
-
+      handleFormError(field);
       setFormDetail(form);
     },
     // eslint-disable-next-line
@@ -400,24 +402,24 @@ const FormLayout = () => {
     setActiveSection(0);
   };
 
-  const handleFormSection: HandleFormSection = ({
-    key,
-    value,
-    sectionIndex,
-  }) => {
-    let form = { ...formDetail };
-    let section = form.sections[sectionIndex];
-    switch (key) {
-      case "title":
-        section.title = value;
-        break;
-      case "description":
-        section.description = value;
-        break;
-      default:
-        return;
-    }
-  };
+  const handleFormSection: HandleFormSection = useCallback(
+    ({ key, value, sectionIndex }) => {
+      let form = { ...formDetail };
+      let section = form.sections[sectionIndex];
+      switch (key) {
+        case "title":
+          section.title = value;
+          break;
+        case "description":
+          section.description = value;
+          break;
+        default:
+          return;
+      }
+    },
+    // eslint-disable-next-line
+    []
+  );
 
   const handleFormSubmit = () => {
     console.log(user);
