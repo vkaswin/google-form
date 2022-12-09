@@ -7,7 +7,7 @@ import {
 } from "react";
 import {
   FormTypeOption,
-  FormField,
+  FormField as FormFieldType,
   FormMoreOption,
   FormIndexes,
   HandleFormAction,
@@ -25,10 +25,11 @@ import TypeDropDown from "./TypeDropDown";
 import { debounce } from "helpers/index";
 
 import styles from "./FormCard.module.scss";
+import Switch from "components/Switch";
 
 type FormCardProps = {
   selectedId: string | null;
-  field: FormField;
+  field: FormFieldType;
   formPage: FormPages;
   indexes: Omit<FormIndexes, "optionIndex">;
   handleFormAction: HandleFormAction;
@@ -60,7 +61,7 @@ let moreOptions: FormMoreOption[] = [
   },
 ];
 
-const FormCard = ({
+const FormField = ({
   field,
   selectedId,
   indexes,
@@ -232,7 +233,7 @@ const FormCard = ({
             <span>This is a required field</span>
           </div>
         )}
-        {formPage.isEdit && (
+        {formPage.isEdit && selectedId === field.id && (
           <Fragment>
             <div className={styles.footer}>
               <i
@@ -248,9 +249,12 @@ const FormCard = ({
               ></i>
               <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
               <div className={styles.split}></div>
-              <div onClick={() => handleFormAction("required", indexes)}>
-                <span>Required</span>
-              </div>
+              <Switch
+                id={field.id}
+                label="Required"
+                checked={field.required}
+                onChange={() => handleFormAction("required", indexes)}
+              />
               <div
                 id={`more-options-${field.id}`}
                 className={styles.more_options}
@@ -301,4 +305,4 @@ const FormCard = ({
   );
 };
 
-export default FormCard;
+export default FormField;

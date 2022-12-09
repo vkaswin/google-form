@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { ComponentProps, Fragment, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { clickOutside } from "helpers";
@@ -19,7 +19,7 @@ type SelectProps<T> = {
   disabled?: boolean;
   options?: SelectOption<T>[];
   onChange?: (value: T) => void;
-};
+} & Omit<ComponentProps<"div">, "onChange" | "placeholder" | "disabled">;
 
 const Select = <T,>({
   label,
@@ -29,6 +29,7 @@ const Select = <T,>({
   size,
   options = [],
   onChange,
+  ...props
 }: SelectProps<T>) => {
   let [isOpen, setIsOpen] = useState(false);
   let [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(
@@ -84,6 +85,7 @@ const Select = <T,>({
       <div
         ref={setReferenceElement}
         style={{ pointerEvents: !!disabled ? "none" : "all" }}
+        {...props}
       >
         <label>{label}</label>
         <div

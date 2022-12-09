@@ -2,12 +2,15 @@ import { ComponentProps } from "react";
 
 import styles from "./Switch.module.scss";
 
-type SwitchProps = {} & ComponentProps<"div">;
+type SwitchProps = {
+  label?: string;
+} & ComponentProps<"input">;
 
-const Switch = ({ ...props }: SwitchProps) => {
+const Switch = ({ id, label = "", className, ...props }: SwitchProps) => {
   return (
-    <div {...props}>
-      <span>Switch</span>
+    <div className={`${styles.field} ${className || ""}`.trim()}>
+      {label.length > 0 && <label htmlFor={id}>{label}</label>}
+      <input id={id} type="checkbox" {...props} />
     </div>
   );
 };

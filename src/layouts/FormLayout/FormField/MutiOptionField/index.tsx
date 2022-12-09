@@ -134,6 +134,7 @@ const MutiOptionField = ({
         })}
       {!formPage.isEdit && type === "dropdown" && (
         <Select
+          className={styles.select_field}
           size="auto"
           options={dropdownOptions}
           value={typeof value === "string" ? value : ""}

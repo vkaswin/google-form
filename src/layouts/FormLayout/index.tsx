@@ -8,7 +8,7 @@ import {
   HandleFormChange,
   HandleFormSection,
 } from "types/Form";
-import FormCard from "./FormCard";
+import FormField from "./FormField";
 import FormSection from "./FormSection";
 import { useAuth } from "hooks";
 import { shuffleArray } from "helpers/index";
@@ -451,7 +451,7 @@ const FormLayout = () => {
               {fields.map((field, fieldIndex) => {
                 let indexes = { fieldIndex, sectionIndex };
                 return (
-                  <FormCard
+                  <FormField
                     key={field.id}
                     field={field}
                     formPage={formPage}

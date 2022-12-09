@@ -1,0 +1,41 @@
+.field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  input {
+    appearance: none;
+    background: #b9b9b9;
+    border: none;
+    width: 37px;
+    height: 14px;
+    border-radius: 20px;
+    outline: none;
+    position: relative;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+    &::before {
+      content: "";
+      position: absolute;
+      top: -4px;
+      left: 0px;
+      background-color: #fff;
+      box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 1px -1px,
+        rgba(0, 0, 0, 0.14) 0px 1px 1px 0px, rgba(0, 0, 0, 0.12) 0px 1px 3px 0px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      transition: left 0.2s ease, background-color 0.2s ease;
+    }
+    &:checked {
+      background: #e1d8f1;
+    }
+    &:checked::before {
+      left: calc(100% - 20px);
+      background-color: var(--primary-color);
+    }
+  }
+  label {
+    user-select: none;
+    margin: 0px;
+  }
+}
