@@ -4,6 +4,7 @@ import {
   Fragment,
   ReactNode,
   useMemo,
+  FocusEvent,
 } from "react";
 import {
   FormTypeOption,
@@ -21,11 +22,12 @@ import DatePicker from "components/DatePicker";
 import DropDown from "components/DropDown";
 import ToolTip from "components/ToolTip";
 import MutiOptionField from "./MutiOptionField";
-import TypeDropDown from "./TypeDropDown";
+import FormType from "./FormType";
+import Switch from "components/Switch";
+
 import { debounce } from "helpers/index";
 
 import styles from "./FormCard.module.scss";
-import Switch from "components/Switch";
 
 type FormCardProps = {
   selectedId: string | null;
@@ -67,6 +69,7 @@ const FormField = ({
   indexes,
   formPage,
   className,
+  onBlur,
   handleFormAction,
   handleFormChange,
   ...props
@@ -159,9 +162,15 @@ const FormField = ({
     [indexes, formPage]
   );
 
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    handleFormAction("blur", indexes, { type: field.type });
+    if (typeof onBlur === "function") onBlur(event);
+  };
+
   return (
     <div
       className={`${styles.container} ${className || ""}`.trim()}
+      onBlur={handleBlur}
       {...(!formPage.isEdit && { "data-error": field.error })}
       {...props}
     >
@@ -189,7 +198,7 @@ const FormField = ({
               )}
             />
             {selectedId === field.id && (
-              <TypeDropDown
+              <FormType
                 id={field.id}
                 options={formTypes}
                 indexes={indexes}

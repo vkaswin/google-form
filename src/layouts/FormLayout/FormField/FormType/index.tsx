@@ -2,9 +2,9 @@ import { Fragment } from "react";
 import DropDown from "components/DropDown";
 import { FormIndexes, FormTypeOption, HandleFormAction } from "types/Form";
 
-import styles from "./TypeDropDown.module.scss";
+import styles from "./FormType.module.scss";
 
-type OptionsProps = {
+type FormTypeProps = {
   id: string;
   options: FormTypeOption[];
   indexes: Omit<FormIndexes, "optionIndex">;
@@ -12,13 +12,13 @@ type OptionsProps = {
   handleFormAction: HandleFormAction;
 };
 
-const TypeDropDown = ({
+const FormType = ({
   id,
   options,
   selectedOption,
   indexes,
   handleFormAction,
-}: OptionsProps) => {
+}: FormTypeProps) => {
   return (
     <Fragment>
       <div id={`option-${id}`} className={styles.wrapper}>
@@ -47,4 +47,4 @@ const TypeDropDown = ({
   );
 };
 
-export default TypeDropDown;
+export default FormType;

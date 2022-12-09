@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
 import {
   FormField,
   FormIndexes,
@@ -144,64 +144,69 @@ const MutiOptionField = ({
         />
       )}
       {other?.enabled && (
-        <div className={styles.option_field}>
-          {formPage.isEdit && <i className={icon}></i>}
-          {!formPage.isEdit && type === "checkbox" && (
-            <CheckBox
-              id="checkbox-other-option"
-              placeholder="Enter here"
-              label="Other"
-              checked={other.checked}
-              onChange={(e) =>
-                handleFormChange({
-                  type,
-                  indexes,
-                  key: "other",
-                  value: e.target.value,
-                  checked: e.target.checked,
-                })
-              }
-            />
-          )}
-          {!formPage.isEdit && type === "radio" && (
-            <Radio
-              id="radio-other-option"
-              name={id}
-              label="Other"
-              checked={other.checked}
-              onChange={(e) =>
-                handleFormChange({
-                  type,
-                  indexes,
-                  key: "other",
-                  value: e.target.value,
-                  checked: e.target.checked,
-                })
-              }
-            />
-          )}
-          <Input
-            placeholder={formPage.isEdit ? "Other..." : "Enter here"}
-            disabled={formPage.isEdit}
-            defaultValue={!formPage.isEdit ? other.value : ""}
-            onChange={debounce(
-              (e) =>
-                handleFormChange({
-                  indexes,
-                  type: "input",
-                  key: "other",
-                  value: e.target.value,
-                }),
-              500
+        <Fragment>
+          <div className={styles.option_field}>
+            {formPage.isEdit && <i className={icon}></i>}
+            {!formPage.isEdit && type === "checkbox" && (
+              <CheckBox
+                id="checkbox-other-option"
+                placeholder="Enter here"
+                label="Other"
+                checked={other.checked}
+                onChange={(e) =>
+                  handleFormChange({
+                    type,
+                    indexes,
+                    key: "other",
+                    value: e.target.value,
+                    checked: e.target.checked,
+                  })
+                }
+              />
             )}
-          />
-          {formPage.isEdit && (
-            <i
-              className="bx-x"
-              onClick={() => handleFormAction("other", indexes)}
-            ></i>
+            {!formPage.isEdit && type === "radio" && (
+              <Radio
+                id="radio-other-option"
+                name={id}
+                label="Other"
+                checked={other.checked}
+                onChange={(e) =>
+                  handleFormChange({
+                    type,
+                    indexes,
+                    key: "other",
+                    value: e.target.value,
+                    checked: e.target.checked,
+                  })
+                }
+              />
+            )}
+            <Input
+              placeholder={formPage.isEdit ? "Other..." : "Enter here"}
+              disabled={formPage.isEdit}
+              defaultValue={!formPage.isEdit ? other.value : ""}
+              onChange={debounce(
+                (e) =>
+                  handleFormChange({
+                    indexes,
+                    type: "input",
+                    key: "other",
+                    value: e.target.value,
+                  }),
+                500
+              )}
+            />
+            {formPage.isEdit && (
+              <i
+                className="bx-x"
+                onClick={() => handleFormAction("other", indexes)}
+              ></i>
+            )}
+          </div>
+          {other.error && (
+            <span className={styles.error_msg}>Other field is Required</span>
           )}
-        </div>
+        </Fragment>
       )}
       {formPage.isEdit && (
         <div className={styles.wrapper}>

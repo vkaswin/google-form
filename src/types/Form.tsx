@@ -44,7 +44,8 @@ export type FormAction =
   | "duplicate-form"
   | "delete-form"
   | "focus-form"
-  | "more-option";
+  | "more-option"
+  | "blur";
 
 export type FormTheme = "dark" | "light";
 
@@ -63,22 +64,6 @@ export type FormType =
   | "file"
   | "texteditor";
 
-export type FormRules = {
-  required?: boolean;
-  pattern?: RegExp;
-  minLength?: number;
-  maxLength?: number;
-  validate?: () => boolean;
-};
-
-export type FormErrorText = {
-  required?: string;
-  pattern?: string;
-  minLength?: string;
-  maxLegth?: string;
-  validate?: string;
-};
-
 export type FormField = {
   id: string;
   question: string;
@@ -95,6 +80,7 @@ export type FormField = {
     enabled: boolean;
     checked: boolean;
     value: string;
+    error: boolean;
   };
 };
 

@@ -73,6 +73,10 @@
   .select_field {
     max-width: 75%;
   }
+  .error_msg {
+    color: #da3025;
+    font-size: 14px;
+  }
 }
 
 @media only screen and (max-width: 768px) {

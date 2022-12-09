@@ -34,8 +34,8 @@ const FormLayout = () => {
             id: crypto.randomUUID(),
             question: "Loreum Ipsum",
             type: "input",
-            value: "Loreum Ispum",
-            required: false,
+            value: "",
+            required: true,
             error: false,
             description: {
               enabled: false,
@@ -46,8 +46,7 @@ const FormLayout = () => {
             id: crypto.randomUUID(),
             question: "Loreum Ipsum",
             type: "file",
-            value:
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+            value: "",
             required: true,
             error: false,
             description: {
@@ -59,13 +58,14 @@ const FormLayout = () => {
             id: crypto.randomUUID(),
             question: "Gender",
             type: "radio",
-            value: "Male",
+            value: "",
             required: true,
-            error: true,
+            error: false,
             options: ["Male", "Female"],
             other: {
               enabled: true,
               checked: false,
+              error: false,
               value: "",
             },
             description: {
@@ -77,13 +77,14 @@ const FormLayout = () => {
             id: crypto.randomUUID(),
             question: "Hobbies",
             type: "checkbox",
-            value: ["Basketball"],
+            value: [],
             required: true,
             error: false,
             options: ["Football", "Basketball", "Cricket"],
             other: {
               enabled: true,
               checked: false,
+              error: false,
               value: "",
             },
             description: {
@@ -95,7 +96,7 @@ const FormLayout = () => {
             id: crypto.randomUUID(),
             question: "Location",
             type: "dropdown",
-            value: "Chennai",
+            value: "",
             required: true,
             error: false,
             options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
@@ -115,7 +116,7 @@ const FormLayout = () => {
             id: crypto.randomUUID(),
             question: "Loreum Ipsum",
             type: "input",
-            value: "Loreum Ispum",
+            value: "",
             required: false,
             error: false,
             description: {
@@ -127,8 +128,7 @@ const FormLayout = () => {
             id: crypto.randomUUID(),
             question: "Loreum Ipsum",
             type: "file",
-            value:
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+            value: "",
             required: true,
             error: false,
             description: {
@@ -140,13 +140,14 @@ const FormLayout = () => {
             id: crypto.randomUUID(),
             question: "Gender",
             type: "radio",
-            value: "Male",
+            value: "",
             required: true,
             error: true,
             options: ["Male", "Female"],
             other: {
               enabled: true,
               checked: false,
+              error: false,
               value: "",
             },
             description: {
@@ -158,13 +159,14 @@ const FormLayout = () => {
             id: crypto.randomUUID(),
             question: "Hobbies",
             type: "checkbox",
-            value: ["Basketball"],
+            value: [],
             required: true,
             error: false,
             options: ["Football", "Basketball", "Cricket"],
             other: {
               enabled: true,
               checked: false,
+              error: false,
               value: "",
             },
             description: {
@@ -176,7 +178,7 @@ const FormLayout = () => {
             id: crypto.randomUUID(),
             question: "Location",
             type: "dropdown",
-            value: "Chennai",
+            value: "",
             required: true,
             error: false,
             options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
@@ -272,6 +274,10 @@ const FormLayout = () => {
               return;
           }
           break;
+        case "blur":
+          if (!field.required) return;
+          field.error = field.value.length === 0;
+          break;
         default:
           return;
       }
@@ -340,10 +346,15 @@ const FormLayout = () => {
               break;
             default:
               field.value = value;
+              break;
           }
           break;
         default:
           return;
+      }
+
+      if (field.required) {
+        field.error = field.value.length === 0;
       }
 
       setFormDetail(form);
@@ -404,7 +415,7 @@ const FormLayout = () => {
         section.description = value;
         break;
       default:
-        break;
+        return;
     }
   };
 
@@ -416,13 +427,6 @@ const FormLayout = () => {
     <Fragment>
       <Outlet />
       <div className={styles.container}>
-        {/* <FormHeader
-          field={header}
-          selectedId={selectedId}
-          disabled={!formPage.isEdit}
-          onClick={() => setSelectedId(header.id)}
-          handleFormChange={handleFormChange}
-        /> */}
         {sections.map(({ id, title, description, fields }, sectionIndex) => {
           if (!(formPage.isFill ? sectionIndex === activeSection : true))
             return null;
@@ -454,6 +458,7 @@ const FormLayout = () => {
                   <FormField
                     key={field.id}
                     field={field}
+                    tabIndex={-1}
                     formPage={formPage}
                     selectedId={selectedId}
                     indexes={indexes}
