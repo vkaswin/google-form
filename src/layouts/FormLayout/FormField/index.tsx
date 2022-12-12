@@ -31,6 +31,7 @@ type FormCardProps = {
   selectedId: string | null;
   field: FormFieldType;
   formPage: FormPages;
+  draggableId: string | number;
   indexes: Omit<FormIndexes, "optionIndex">;
   handleFormAction: HandleFormAction;
   handleFormChange: HandleFormChange;
@@ -67,12 +68,12 @@ const FormField = ({
   indexes,
   formPage,
   className,
+  draggableId,
   onBlur,
   handleFormAction,
   handleFormChange,
   ...props
 }: FormCardProps) => {
-  console.log("render");
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
     return formTypes.find((option) => {
       return option.type === field.type;
@@ -164,8 +165,9 @@ const FormField = ({
 
   return (
     <div
-      className={`${styles.container} ${className || ""}`.trim()}
       onBlur={handleBlur}
+      data-draggable-id={draggableId}
+      className={`${styles.container} ${className || ""}`.trim()}
       {...(!formPage.isEdit && { "data-error": field.error })}
       {...props}
     >

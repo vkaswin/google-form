@@ -33,9 +33,11 @@ const FormSection = ({
 }: FormSectionProps) => {
   return formPage.isEdit ? (
     <div>
-      <div className={styles.section}>
-        <span>{sectionHeader}</span>
-      </div>
+      {sectionHeader.length > 0 && (
+        <div className={styles.section}>
+          <span>{sectionHeader}</span>
+        </div>
+      )}
       <div
         className={`${styles.container} ${className || ""}`.trim()}
         {...props}
