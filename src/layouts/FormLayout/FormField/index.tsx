@@ -25,8 +25,6 @@ import MutiOptionField from "./MutiOptionField";
 import FormType from "./FormType";
 import Switch from "components/Switch";
 
-import { debounce } from "helpers/index";
-
 import styles from "./FormCard.module.scss";
 
 type FormCardProps = {
@@ -74,6 +72,7 @@ const FormField = ({
   handleFormChange,
   ...props
 }: FormCardProps) => {
+  console.log("render");
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
     return formTypes.find((option) => {
       return option.type === field.type;
@@ -120,16 +119,14 @@ const FormField = ({
               placeholder="Short answer text"
               disabled={formPage.isEdit}
               defaultValue={field.value}
-              onChange={debounce(
-                (e) =>
-                  handleFormChange({
-                    indexes,
-                    type: field.type,
-                    key: "value",
-                    value: e.target.value,
-                  }),
-                500
-              )}
+              onChange={(e) =>
+                handleFormChange({
+                  indexes,
+                  type: field.type,
+                  key: "value",
+                  value: e.target.value,
+                })
+              }
             />
           );
         case "textarea":
@@ -138,16 +135,14 @@ const FormField = ({
               placeholder="Long answer text"
               defaultValue={field.value}
               disabled={formPage.isEdit}
-              onChange={debounce(
-                (e) =>
-                  handleFormChange({
-                    indexes,
-                    type: field.type,
-                    key: "value",
-                    value: e.target.value,
-                  }),
-                500
-              )}
+              onChange={(e) =>
+                handleFormChange({
+                  indexes,
+                  type: field.type,
+                  key: "value",
+                  value: e.target.value,
+                })
+              }
             />
           );
         case "file":
@@ -186,16 +181,14 @@ const FormField = ({
                   : ""
               }`}
               disabled={!formPage.isEdit}
-              onInput={debounce<ChangeEvent<HTMLDivElement>>(
-                (e) =>
-                  handleFormChange({
-                    indexes,
-                    type: "texteditor",
-                    key: "question",
-                    value: e.target.innerHTML,
-                  }),
-                500
-              )}
+              onInput={(e: ChangeEvent<HTMLDivElement>) =>
+                handleFormChange({
+                  indexes,
+                  type: "texteditor",
+                  key: "question",
+                  value: e.target.innerHTML,
+                })
+              }
             />
             {selectedId === field.id && (
               <FormType
@@ -216,16 +209,14 @@ const FormField = ({
                 placeholder="Description"
                 defaultValue={field.description.value}
                 disabled={!formPage.isEdit}
-                onInput={debounce<ChangeEvent<HTMLDivElement>>(
-                  (e) =>
-                    handleFormChange({
-                      indexes,
-                      type: field.type,
-                      key: "description",
-                      value: e.target.innerHTML,
-                    }),
-                  500
-                )}
+                onInput={(e: ChangeEvent<HTMLDivElement>) =>
+                  handleFormChange({
+                    indexes,
+                    type: field.type,
+                    key: "description",
+                    value: e.target.innerHTML,
+                  })
+                }
               />
             </div>
           ) : (

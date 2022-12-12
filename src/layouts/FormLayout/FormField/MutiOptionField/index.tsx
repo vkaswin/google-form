@@ -10,7 +10,6 @@ import Input from "components/Input";
 import Radio from "components/Radio";
 import CheckBox from "components/CheckBox";
 import Select from "components/Select";
-import { debounce } from "helpers/index";
 
 import styles from "./MultiOptionField.module.scss";
 
@@ -63,16 +62,14 @@ const MutiOptionField = ({
               )}
               <Input
                 defaultValue={option}
-                onChange={debounce(
-                  (e) =>
-                    handleFormChange({
-                      indexes: { ...indexes, optionIndex: index },
-                      type: type,
-                      key: "options",
-                      value: e.target.value,
-                    }),
-                  500
-                )}
+                onChange={(e) =>
+                  handleFormChange({
+                    indexes: { ...indexes, optionIndex: index },
+                    type: type,
+                    key: "options",
+                    value: e.target.value,
+                  })
+                }
               />
               <i
                 className="bx-x"
@@ -185,16 +182,14 @@ const MutiOptionField = ({
               placeholder={formPage.isEdit ? "Other..." : "Enter here"}
               disabled={formPage.isEdit}
               defaultValue={!formPage.isEdit ? other.value : ""}
-              onChange={debounce(
-                (e) =>
-                  handleFormChange({
-                    indexes,
-                    type: "input",
-                    key: "other",
-                    value: e.target.value,
-                  }),
-                500
-              )}
+              onChange={(e) =>
+                handleFormChange({
+                  indexes,
+                  type: "input",
+                  key: "other",
+                  value: e.target.value,
+                })
+              }
             />
             {formPage.isEdit && (
               <i

@@ -5,6 +5,11 @@
   max-width: 768px;
   padding: 15px;
   margin: 0px auto;
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
   .fill_cta {
     display: flex;
     justify-content: space-between;

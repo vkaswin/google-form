@@ -1,4 +1,12 @@
-import { Fragment, useCallback, useEffect, useState, useMemo } from "react";
+import {
+  Fragment,
+  DragEvent,
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+} from "react";
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import {
   FormPages,
@@ -8,6 +16,7 @@ import {
   HandleFormChange,
   HandleFormSection,
   HandleFormError,
+  FormIndexes,
 } from "types/Form";
 import FormField from "./FormField";
 import FormSection from "./FormSection";
@@ -196,6 +205,10 @@ const FormLayout = () => {
   let [selectedId, setSelectedId] = useState<string | null>(null);
 
   let [activeSection, setActiveSection] = useState<number>(0);
+
+  let dragRef = useRef<HTMLDivElement | null>(null);
+
+  let dragIndexes = useRef<FormIndexes | null>(null);
 
   let { sections } = formDetail;
 
@@ -416,6 +429,7 @@ const FormLayout = () => {
         default:
           return;
       }
+      setFormDetail(form);
     },
     // eslint-disable-next-line
     []
@@ -423,6 +437,55 @@ const FormLayout = () => {
 
   const handleFormSubmit = () => {
     console.log(user);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    console.log("drop", e);
+    if (!dragRef.current) return;
+    (e.target as HTMLDivElement).append(dragRef.current);
+  };
+
+  const handleDragStart = (
+    e: DragEvent<HTMLDivElement>,
+    indexes: FormIndexes
+  ) => {
+    dragRef.current = e.target as HTMLDivElement;
+    dragIndexes.current = indexes;
+    setTimeout(() => {
+      if (!dragRef.current) return;
+      dragRef.current.style.opacity = "0";
+    }, 0);
+  };
+
+  const handleDragEnter = (
+    e: DragEvent<HTMLDivElement>,
+    indexes: FormIndexes
+  ) => {
+    if (
+      !dragRef.current ||
+      !dragIndexes.current ||
+      e.target === dragRef.current
+    )
+      return;
+    console.log(dragIndexes.current, dragRef.current);
+    let form = { ...formDetail };
+    let source = form.sections[dragIndexes.current.sectionIndex];
+    let destination = form.sections[indexes.sectionIndex];
+    source.fields.splice(
+      dragIndexes.current.fieldIndex,
+      0,
+      destination.fields.splice(indexes.fieldIndex, 1)[0]
+    );
+    setFormDetail(form);
+  };
+
+  const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
+    if (!dragRef.current || !dragIndexes.current) return;
+    dragRef.current.style.opacity = "1";
+    setTimeout(() => {
+      dragRef.current = null;
+      dragIndexes.current = null;
+    }, 0);
   };
 
   return (
@@ -454,24 +517,35 @@ const FormLayout = () => {
                   onClick: () => setSelectedId(id),
                 })}
               />
-              {fields.map((field, fieldIndex) => {
-                let indexes = { fieldIndex, sectionIndex };
-                return (
-                  <FormField
-                    key={field.id}
-                    field={field}
-                    tabIndex={-1}
-                    formPage={formPage}
-                    selectedId={selectedId}
-                    indexes={indexes}
-                    handleFormChange={handleFormChange}
-                    handleFormAction={handleFormAction}
-                    {...(formPage.isEdit && {
-                      onClick: () => handleFormAction("focus-form", indexes),
-                    })}
-                  />
-                );
-              })}
+              <div
+                className={styles.wrapper}
+                onDragEnter={(e) =>
+                  handleDragEnter(e, { sectionIndex, fieldIndex: 0 })
+                }
+              >
+                {fields.map((field, fieldIndex) => {
+                  let indexes = { fieldIndex, sectionIndex };
+                  return (
+                    <FormField
+                      key={field.id}
+                      field={field}
+                      tabIndex={-1}
+                      draggable={false}
+                      formPage={formPage}
+                      selectedId={selectedId}
+                      indexes={indexes}
+                      handleFormChange={handleFormChange}
+                      handleFormAction={handleFormAction}
+                      onDragStart={(e) => handleDragStart(e, indexes)}
+                      onDragEnter={(e) => handleDragEnter(e, indexes)}
+                      onDragEnd={handleDragEnd}
+                      {...(formPage.isEdit && {
+                        onClick: () => handleFormAction("focus-form", indexes),
+                      })}
+                    />
+                  );
+                })}
+              </div>
             </Fragment>
           );
         })}
