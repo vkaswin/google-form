@@ -22,6 +22,7 @@ import FormField from "./FormField";
 import FormSection from "./FormSection";
 import { useAuth } from "hooks";
 import { shuffleArray } from "helpers/index";
+import { formData } from "./formData";
 
 import styles from "./FormLayout.module.scss";
 
@@ -50,177 +51,7 @@ const FormLayout = () => {
 
   let dragRef = useRef<FormDragValue>(initialDragRef);
 
-  let [formDetail, setFormDetail] = useState<FormDetail>({
-    theme: "dark",
-    sections: [
-      {
-        id: crypto.randomUUID(),
-        title: "Loreum Ispum",
-        description: "Loreum Ispum",
-        fields: [
-          {
-            id: crypto.randomUUID(),
-            question: "Loreum Ipsum",
-            type: "input",
-            value: "",
-            required: true,
-            error: false,
-            description: {
-              enabled: false,
-              value: "",
-            },
-          },
-          {
-            id: crypto.randomUUID(),
-            question: "Loreum Ipsum",
-            type: "file",
-            value: "",
-            required: true,
-            error: false,
-            description: {
-              enabled: false,
-              value: "",
-            },
-          },
-          {
-            id: crypto.randomUUID(),
-            question: "Gender",
-            type: "radio",
-            value: "",
-            required: true,
-            error: false,
-            options: ["Male", "Female"],
-            other: {
-              enabled: true,
-              checked: false,
-              error: false,
-              value: "",
-            },
-            description: {
-              enabled: false,
-              value: "",
-            },
-          },
-          {
-            id: crypto.randomUUID(),
-            question: "Hobbies",
-            type: "checkbox",
-            value: [],
-            required: true,
-            error: false,
-            options: ["Football", "Basketball", "Cricket"],
-            other: {
-              enabled: true,
-              checked: false,
-              error: false,
-              value: "",
-            },
-            description: {
-              enabled: false,
-              value: "",
-            },
-          },
-          {
-            id: crypto.randomUUID(),
-            question: "Location",
-            type: "dropdown",
-            value: "",
-            required: true,
-            error: false,
-            options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
-            description: {
-              enabled: false,
-              value: "",
-            },
-          },
-        ],
-      },
-      {
-        id: crypto.randomUUID(),
-        title: "Loreum Ispum",
-        description: "Loreum Ispum",
-        fields: [
-          {
-            id: crypto.randomUUID(),
-            question: "Loreum Ipsum",
-            type: "input",
-            value: "",
-            required: false,
-            error: false,
-            description: {
-              enabled: true,
-              value: "",
-            },
-          },
-          {
-            id: crypto.randomUUID(),
-            question: "Loreum Ipsum",
-            type: "file",
-            value: "",
-            required: true,
-            error: false,
-            description: {
-              enabled: false,
-              value: "",
-            },
-          },
-          {
-            id: crypto.randomUUID(),
-            question: "Gender",
-            type: "radio",
-            value: "",
-            required: true,
-            error: true,
-            options: ["Male", "Female"],
-            other: {
-              enabled: true,
-              checked: false,
-              error: false,
-              value: "",
-            },
-            description: {
-              enabled: false,
-              value: "",
-            },
-          },
-          {
-            id: crypto.randomUUID(),
-            question: "Hobbies",
-            type: "checkbox",
-            value: [],
-            required: true,
-            error: false,
-            options: ["Football", "Basketball", "Cricket"],
-            other: {
-              enabled: true,
-              checked: false,
-              error: false,
-              value: "",
-            },
-            description: {
-              enabled: false,
-              value: "",
-            },
-          },
-          {
-            id: crypto.randomUUID(),
-            question: "Location",
-            type: "dropdown",
-            value: "",
-            required: true,
-            error: false,
-            options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
-            description: {
-              enabled: false,
-              value: "",
-            },
-          },
-        ],
-      },
-    ],
-  });
-
-  let { sections } = formDetail;
+  let [formDetail, setFormDetail] = useState<FormDetail | null>(formData);
 
   const formPage = useMemo<FormPages>(() => {
     return {
@@ -248,6 +79,8 @@ const FormLayout = () => {
       { sectionIndex, fieldIndex, optionIndex },
       { type, theme, option } = {}
     ) => {
+      if (!formDetail) return;
+
       let form = { ...formDetail };
       let field = form.sections[sectionIndex].fields[fieldIndex];
 
@@ -323,11 +156,14 @@ const FormLayout = () => {
       checked,
       indexes: { fieldIndex, sectionIndex, optionIndex } = {},
     }): void => {
-      let form = { ...formDetail };
-
-      if (typeof sectionIndex !== "number" || typeof fieldIndex !== "number")
+      if (
+        !formDetail ||
+        typeof sectionIndex !== "number" ||
+        typeof fieldIndex !== "number"
+      )
         return;
 
+      let form = { ...formDetail };
       let field = form.sections[sectionIndex].fields[fieldIndex];
 
       switch (key) {
@@ -406,6 +242,8 @@ const FormLayout = () => {
   };
 
   const handleFormReset = () => {
+    if (!formDetail) return;
+
     let form = { ...formDetail };
     form.sections.forEach((section) => {
       section.fields.forEach((field) => {
@@ -427,6 +265,8 @@ const FormLayout = () => {
 
   const handleFormSection: HandleFormSection = useCallback(
     ({ key, value, sectionIndex }) => {
+      if (!formDetail) return;
+
       let form = { ...formDetail };
       let section = form.sections[sectionIndex];
       switch (key) {
@@ -504,6 +344,7 @@ const FormLayout = () => {
     let { source, destination } = dragRef.current;
 
     if (
+      !formDetail ||
       typeof source.draggableId !== "number" ||
       typeof source.droppableId !== "number" ||
       typeof destination.draggableId !== "number" ||
@@ -524,6 +365,8 @@ const FormLayout = () => {
     // By default, data/elements cannot be dropped in other elements. To allow a drop, we must prevent the default handling of the element
     e.preventDefault();
   };
+
+  let { sections = [] } = formDetail || {};
 
   return (
     <Fragment>

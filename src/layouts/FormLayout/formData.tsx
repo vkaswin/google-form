@@ -1,0 +1,171 @@
+import { FormDetail } from "types/Form";
+
+export const formData: FormDetail = {
+  theme: "dark",
+  sections: [
+    {
+      id: crypto.randomUUID(),
+      title: "Loreum Ispum",
+      description: "Loreum Ispum",
+      fields: [
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "input",
+          value: "",
+          required: true,
+          error: false,
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "file",
+          value: "",
+          required: true,
+          error: false,
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Gender",
+          type: "radio",
+          value: "",
+          required: true,
+          error: false,
+          options: ["Male", "Female"],
+          other: {
+            enabled: true,
+            checked: false,
+            error: false,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Hobbies",
+          type: "checkbox",
+          value: [],
+          required: true,
+          error: false,
+          options: ["Football", "Basketball", "Cricket"],
+          other: {
+            enabled: true,
+            checked: false,
+            error: false,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Location",
+          type: "dropdown",
+          value: "",
+          required: true,
+          error: false,
+          options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+      ],
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Loreum Ispum",
+      description: "Loreum Ispum",
+      fields: [
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "input",
+          value: "",
+          required: false,
+          error: false,
+          description: {
+            enabled: true,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "file",
+          value: "",
+          required: true,
+          error: false,
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Gender",
+          type: "radio",
+          value: "",
+          required: true,
+          error: true,
+          options: ["Male", "Female"],
+          other: {
+            enabled: true,
+            checked: false,
+            error: false,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Hobbies",
+          type: "checkbox",
+          value: [],
+          required: true,
+          error: false,
+          options: ["Football", "Basketball", "Cricket"],
+          other: {
+            enabled: true,
+            checked: false,
+            error: false,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Location",
+          type: "dropdown",
+          value: "",
+          required: true,
+          error: false,
+          options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
+          description: {
+            enabled: false,
+            value: "",
+          },
+        },
+      ],
+    },
+  ],
+};
