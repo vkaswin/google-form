@@ -1,4 +1,3 @@
-import { clickOutside } from "helpers/index";
 import {
   ElementType,
   useRef,
@@ -16,6 +15,56 @@ type TextEditorOwnProps<E extends ElementType> = {
 
 type TextEditorProps<E extends ElementType> = TextEditorOwnProps<E> &
   Omit<ComponentProps<E>, keyof TextEditorOwnProps<E>>;
+
+type ToolBarActions =
+  | "bold"
+  | "italic"
+  | "underline"
+  | "strikethrough"
+  | "link"
+  | "eraser"
+  | "undo"
+  | "redo";
+
+type ToolBar = {
+  icon: string;
+  action: ToolBarActions;
+};
+
+let toolbar: ToolBar[] = [
+  {
+    icon: "bx-bold",
+    action: "bold",
+  },
+  {
+    icon: "bx-italic",
+    action: "italic",
+  },
+  {
+    icon: "bx-underline",
+    action: "underline",
+  },
+  {
+    icon: "bx-link-alt",
+    action: "link",
+  },
+  {
+    icon: "bx-strikethrough",
+    action: "strikethrough",
+  },
+  {
+    icon: "bx-eraser",
+    action: "eraser",
+  },
+  {
+    icon: "bx-undo",
+    action: "undo",
+  },
+  {
+    icon: "bx-redo",
+    action: "redo",
+  },
+];
 
 const TextEditor = <E extends ElementType = "div">({
   as,
@@ -40,26 +89,86 @@ const TextEditor = <E extends ElementType = "div">({
     editorRef.current?.classList.remove(styles.blur);
     editorRef.current?.classList.add(styles.focus);
     toolBarRef.current?.classList.add(styles.show);
+  };
+
+  const handleBlur = () => {
     if (editorRef.current) {
-      clickOutside({
-        ref: editorRef.current,
-        onClose: () => {
-          editorRef.current?.classList.remove(styles.focus);
-          editorRef.current?.classList.add(styles.blur);
-          toolBarRef.current?.classList.remove(styles.show);
-        },
-      });
+      editorRef.current.classList.remove(styles.focus);
+      editorRef.current.classList.add(styles.blur);
+    }
+    if (toolBarRef.current) {
+      toolBarRef.current.classList.remove(styles.show);
     }
   };
 
-  const Component = as || "div";
+  const handleToolBar = (action: ToolBarActions) => {
+    let selection = window.getSelection();
+
+    if (!selection) return;
+
+    let selectedElement = selection
+      .getRangeAt(0)
+      .commonAncestorContainer.cloneNode();
+
+    selection.deleteFromDocument();
+    let element: HTMLElement | null = null;
+    switch (action) {
+      case "bold":
+        element = document.createElement("b");
+        element.textContent = selectedElement.textContent;
+        break;
+
+      case "italic":
+        element = document.createElement("i");
+        element.textContent = selectedElement.textContent;
+        break;
+
+      case "underline":
+        element = document.createElement("u");
+        element.textContent = selectedElement.textContent;
+        break;
+
+      case "strikethrough":
+        element = document.createElement("s");
+        element.textContent = selectedElement.textContent;
+        break;
+
+      case "link":
+        break;
+
+      default:
+        return;
+    }
+
+    if (!element) return;
+
+    selection.getRangeAt(0).insertNode(element);
+    clearSelection();
+  };
+
+  const clearSelection = () => {
+    let selection = window.getSelection();
+    if (selection?.empty) {
+      selection.empty();
+    } else if (selection?.removeAllRanges) {
+      selection.removeAllRanges();
+    }
+  };
+
+  let Component = as || "div";
 
   return (
     <Fragment>
       {disabled ? (
         <div dangerouslySetInnerHTML={{ __html: defaultValue }}></div>
       ) : (
-        <div ref={editorRef} className={styles.container} onFocus={handleFocus}>
+        <div
+          tabIndex={-1}
+          ref={editorRef}
+          className={styles.container}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        >
           <Component
             ref={inputRef}
             className={styles.editor}
@@ -68,30 +177,13 @@ const TextEditor = <E extends ElementType = "div">({
             {...props}
           />
           <ul ref={toolBarRef} className={styles.toolbar}>
-            <li>
-              <i className="bx-bold"></i>
-            </li>
-            <li>
-              <i className="bx-italic"></i>
-            </li>
-            <li>
-              <i className="bx-underline"></i>
-            </li>
-            <li>
-              <i className="bx-link-alt"></i>
-            </li>
-            <li>
-              <i className="bx-strikethrough"></i>
-            </li>
-            <li>
-              <i className="bx-eraser"></i>
-            </li>
-            <li>
-              <i className="bx-undo"></i>
-            </li>
-            <li>
-              <i className="bx-redo"></i>
-            </li>
+            {toolbar.map(({ icon, action }, index) => {
+              return (
+                <li key={index} onClick={() => handleToolBar(action)}>
+                  <i className={icon}></i>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

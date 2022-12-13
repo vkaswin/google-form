@@ -1,6 +1,7 @@
 import {
   Fragment,
   DragEvent,
+  TouchEvent,
   useCallback,
   useEffect,
   useState,
@@ -301,12 +302,12 @@ const FormLayout = () => {
     };
     setTimeout(() => {
       if (!dragElement) return;
-      dragElement.style.opacity = "0";
+      dragElement.style.visibility = "hidden";
     }, 0);
   };
 
   const handleDragEnter = <T,>(
-    event: DragEvent<T>,
+    event: DragEvent<T> | TouchEvent<T>,
     droppableId: number,
     draggableId: number
   ) => {
@@ -321,7 +322,7 @@ const FormLayout = () => {
   };
 
   const handleDragLeave = <T,>(
-    event: DragEvent<T>,
+    event: DragEvent<T> | TouchEvent<T>,
     droppableId: number,
     draggableId: number
   ) => {
@@ -332,7 +333,7 @@ const FormLayout = () => {
     let { dragElement } = dragRef.current;
 
     if (dragElement) {
-      dragElement.style.opacity = "1";
+      dragElement.style.visibility = "visible";
     }
 
     setTimeout(() => {
@@ -435,6 +436,9 @@ const FormLayout = () => {
                           onClick: () =>
                             handleFormAction("focus-form", indexes),
                         })}
+                        {...(formPage.isFill && {
+                          onBlur: () => handleFormAction("blur", indexes),
+                        })}
                       />
                     );
                   })
@@ -490,20 +494,3 @@ const FormLayout = () => {
 };
 
 export default FormLayout;
-
-// let form = { ...formDetail };
-// let source = form.sections[dragIndexes.current.sectionIndex];
-// let destination = form.sections[indexes.sectionIndex];
-// source.fields.splice(
-//   dragIndexes.current.fieldIndex,
-//   0,
-//   destination.fields.splice(indexes.fieldIndex, 1)[0]
-// );
-// setFormDetail(form);
-
-// dragDestination.current.insertAdjacentElement(
-//   +sourceId < +destinationId ? "afterend" : "beforebegin",
-//   dragSource.current
-// );
-// dragSource.current.setAttribute("data-draggable-id", destinationId);
-// dragDestination.current.setAttribute("data-draggable-id", sourceId);

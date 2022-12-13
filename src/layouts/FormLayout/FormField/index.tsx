@@ -67,7 +67,6 @@ const FormField = ({
   indexes,
   formPage,
   className,
-  onBlur,
   handleFormAction,
   handleFormChange,
   ...props
@@ -156,14 +155,8 @@ const FormField = ({
     [indexes, formPage]
   );
 
-  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
-    handleFormAction("blur", indexes, { type: field.type });
-    if (typeof onBlur === "function") onBlur(event);
-  };
-
   return (
     <div
-      onBlur={handleBlur}
       className={`${styles.container} ${className || ""}`.trim()}
       {...(!formPage.isEdit && { "data-error": field.error })}
       {...props}
