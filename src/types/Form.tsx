@@ -109,3 +109,15 @@ export type FormPages = {
   isPreview: boolean;
   isFill: boolean;
 };
+
+export type FormDragValue = {
+  source: {
+    droppableId: number | null;
+    draggableId: number | null;
+  };
+  destination: {
+    droppableId: number | null;
+    draggableId: number | null;
+  };
+  dragElement: HTMLElement | null;
+};

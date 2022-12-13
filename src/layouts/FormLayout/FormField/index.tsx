@@ -31,7 +31,6 @@ type FormCardProps = {
   selectedId: string | null;
   field: FormFieldType;
   formPage: FormPages;
-  draggableId: string | number;
   indexes: Omit<FormIndexes, "optionIndex">;
   handleFormAction: HandleFormAction;
   handleFormChange: HandleFormChange;
@@ -68,7 +67,6 @@ const FormField = ({
   indexes,
   formPage,
   className,
-  draggableId,
   onBlur,
   handleFormAction,
   handleFormChange,
@@ -166,7 +164,6 @@ const FormField = ({
   return (
     <div
       onBlur={handleBlur}
-      data-draggable-id={draggableId}
       className={`${styles.container} ${className || ""}`.trim()}
       {...(!formPage.isEdit && { "data-error": field.error })}
       {...props}

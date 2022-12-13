@@ -16,6 +16,7 @@ import {
   HandleFormChange,
   HandleFormSection,
   HandleFormError,
+  FormDragValue,
 } from "types/Form";
 import FormField from "./FormField";
 import FormSection from "./FormSection";
@@ -24,6 +25,18 @@ import { shuffleArray } from "helpers/index";
 
 import styles from "./FormLayout.module.scss";
 
+let initialDragRef = {
+  source: {
+    droppableId: null,
+    draggableId: null,
+  },
+  destination: {
+    droppableId: null,
+    draggableId: null,
+  },
+  dragElement: null,
+};
+
 const FormLayout = () => {
   const { formId } = useParams<FormParams>();
 
@@ -31,15 +44,15 @@ const FormLayout = () => {
 
   const { pathname } = useLocation();
 
+  let [selectedId, setSelectedId] = useState<string | null>(null);
+
+  let [activeSection, setActiveSection] = useState<number>(0);
+
+  let dragRef = useRef<FormDragValue>(initialDragRef);
+
   let [formDetail, setFormDetail] = useState<FormDetail>({
     theme: "dark",
     sections: [
-      //   {
-      //     id: crypto.randomUUID(),
-      //     title: "Loreum Ispum",
-      //     description: "Loreum Ispum",
-      //     fields: [],
-      //   },
       {
         id: crypto.randomUUID(),
         title: "Loreum Ispum",
@@ -135,7 +148,7 @@ const FormLayout = () => {
             required: false,
             error: false,
             description: {
-              enabled: false,
+              enabled: true,
               value: "",
             },
           },
@@ -206,14 +219,6 @@ const FormLayout = () => {
       },
     ],
   });
-
-  let [selectedId, setSelectedId] = useState<string | null>(null);
-
-  let [activeSection, setActiveSection] = useState<number>(0);
-
-  let dragSource = useRef<HTMLElement | null>(null);
-
-  let dragDestination = useRef<HTMLElement | null>(null);
 
   let { sections } = formDetail;
 
@@ -444,69 +449,79 @@ const FormLayout = () => {
     console.log(user);
   };
 
-  const handleDragStart = (draggableId: string) => {
-    let element = document.querySelector(
-      `[data-draggable-id='${draggableId}']`
+  const handleDragStart = (droppableId: number, draggableId: number) => {
+    let dragElement = document.querySelector(
+      `[data-draggable-id='${draggableId}'][data-droppable-id='${droppableId}']`
     ) as HTMLElement;
-    if (!element) return;
-    dragSource.current = element;
-    console.log("dragStart", draggableId);
+
+    dragRef.current = {
+      ...dragRef.current,
+      source: { droppableId, draggableId },
+      dragElement,
+    };
     setTimeout(() => {
-      if (element) {
-        element.style.opacity = "0";
-      }
+      if (!dragElement) return;
+      dragElement.style.opacity = "0";
     }, 0);
   };
 
-  const handleDragEnter = (draggableId: string) => {
-    console.log("dragEnter", draggableId);
+  const handleDragEnter = <T,>(
+    event: DragEvent<T>,
+    droppableId: number,
+    draggableId: number
+  ) => {
+    event.stopPropagation();
     let element = document.querySelector(
-      `[data-draggable-id='${draggableId}']`
+      `[data-draggable-id='${draggableId}'][data-droppable-id='${droppableId}']`
     ) as HTMLElement;
-    if (!element) return;
-    dragDestination.current = element;
+    dragRef.current = {
+      ...dragRef.current,
+      destination: { droppableId, draggableId },
+    };
   };
 
-  const handleDragLeave = (draggableId: string) => {
-    // console.log("dragLeave", draggableId);
+  const handleDragLeave = <T,>(
+    event: DragEvent<T>,
+    droppableId: number,
+    draggableId: number
+  ) => {
+    event.stopPropagation();
   };
 
   const handleDragEnd = () => {
-    if (!dragSource.current || !dragDestination) return;
-    dragSource.current.style.opacity = "1";
+    let { dragElement } = dragRef.current;
+
+    if (dragElement) {
+      dragElement.style.opacity = "1";
+    }
+
     setTimeout(() => {
-      dragSource.current = null;
-      dragDestination.current = null;
+      dragRef.current = initialDragRef;
     }, 0);
   };
 
-  const handleDrop = (droppableId: string) => {
-    let element = document.querySelector(
-      `[data-droppable-id='${droppableId}']`
-    ) as HTMLElement;
-    if (!element || !dragSource.current || !dragDestination.current) return;
-    let sourceId = dragSource.current.getAttribute("data-draggable-id");
-    let destinationId =
-      dragDestination.current.getAttribute("data-draggable-id");
-    if (!sourceId || !destinationId) return;
-    console.log("drop", { sourceId: +sourceId, destinationId: +destinationId });
-    dragDestination.current.insertAdjacentElement(
-      +sourceId < +destinationId ? "afterend" : "beforebegin",
-      dragSource.current
-    );
-    dragSource.current.setAttribute("data-draggable-id", destinationId);
-    dragDestination.current.setAttribute("data-draggable-id", sourceId);
+  const handleDrop = () => {
+    let { source, destination } = dragRef.current;
+
+    if (
+      typeof source.draggableId !== "number" ||
+      typeof source.droppableId !== "number" ||
+      typeof destination.draggableId !== "number" ||
+      typeof destination.droppableId !== "number"
+    )
+      return;
+
     let form = { ...formDetail };
-    let section = form.sections[+droppableId];
-    section.fields.splice(
-      +destinationId,
+    form.sections[destination.droppableId].fields.splice(
+      destination.draggableId,
       0,
-      section.fields.splice(+sourceId, 1)[0]
+      form.sections[source.droppableId].fields.splice(source.draggableId, 1)[0]
     );
     setFormDetail(form);
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    // By default, data/elements cannot be dropped in other elements. To allow a drop, we must prevent the default handling of the element
     e.preventDefault();
   };
 
@@ -542,8 +557,10 @@ const FormLayout = () => {
               <div
                 className={styles.wrapper}
                 data-droppable-id={sectionIndex}
+                onDragEnter={(e) => handleDragEnter(e, sectionIndex, 0)}
+                onDragLeave={(e) => handleDragLeave(e, sectionIndex, 0)}
                 onDragOver={handleDragOver}
-                onDrop={() => handleDrop(sectionIndex.toString())}
+                onDrop={handleDrop}
               >
                 {fields.length > 0 ? (
                   fields.map((field, fieldIndex) => {
@@ -553,22 +570,22 @@ const FormLayout = () => {
                         key={field.id}
                         field={field}
                         tabIndex={-1}
+                        indexes={indexes}
                         draggable={true}
                         formPage={formPage}
                         selectedId={selectedId}
-                        indexes={indexes}
-                        draggableId={fieldIndex}
+                        data-draggable-id={fieldIndex}
+                        data-droppable-id={sectionIndex}
                         handleFormChange={handleFormChange}
                         handleFormAction={handleFormAction}
                         onDragStart={() =>
-                          handleDragStart(fieldIndex.toString())
+                          handleDragStart(sectionIndex, fieldIndex)
                         }
-                        onDragEnter={(e) => {
-                          e.stopPropagation();
-                          handleDragEnter(fieldIndex.toString());
-                        }}
-                        onDragLeave={() =>
-                          handleDragLeave(fieldIndex.toString())
+                        onDragEnter={(e) =>
+                          handleDragEnter(e, sectionIndex, fieldIndex)
+                        }
+                        onDragLeave={(e) =>
+                          handleDragLeave(e, sectionIndex, fieldIndex)
                         }
                         onDragEnd={handleDragEnd}
                         {...(formPage.isEdit && {
@@ -640,3 +657,10 @@ export default FormLayout;
 //   destination.fields.splice(indexes.fieldIndex, 1)[0]
 // );
 // setFormDetail(form);
+
+// dragDestination.current.insertAdjacentElement(
+//   +sourceId < +destinationId ? "afterend" : "beforebegin",
+//   dragSource.current
+// );
+// dragSource.current.setAttribute("data-draggable-id", destinationId);
+// dragDestination.current.setAttribute("data-draggable-id", sourceId);
