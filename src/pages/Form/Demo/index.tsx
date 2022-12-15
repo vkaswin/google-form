@@ -163,16 +163,18 @@ const Demo = () => {
         )}
       </div>
       <div className={styles.terms}>
-        <input
-          type="checkbox"
-          {...register("terms", {
-            required: {
-              value: true,
-              message: "Please agree terms and conditions",
-            },
-          })}
-        />
-        <label>Agree Terms And Conditions</label>
+        <div>
+          <input
+            type="checkbox"
+            {...register("terms", {
+              required: {
+                value: true,
+                message: "Please agree terms and conditions",
+              },
+            })}
+          />
+          <label>Agree Terms And Conditions</label>
+        </div>
         {formErrors?.terms && (
           <span className={styles.error_msg}>{formErrors.terms}</span>
         )}

@@ -44,8 +44,13 @@
   }
   .terms {
     display: flex;
-    align-items: center;
-    gap: 15px;
+    flex-direction: column;
+    gap: 5px;
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
     input {
       min-width: 15px;
       min-height: 15px;
