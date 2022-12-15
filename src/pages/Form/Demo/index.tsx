@@ -1,50 +1,11 @@
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import useForm from "hooks/useForm";
 
 import styles from "./Demo.module.scss";
 
-const states = {
-  AN: "Andaman and Nicobar Islands",
-  AP: "Andhra Pradesh",
-  AR: "Arunachal Pradesh",
-  AS: "Assam",
-  BR: "Bihar",
-  CG: "Chandigarh",
-  CH: "Chhattisgarh",
-  DN: "Dadra and Nagar Haveli",
-  DD: "Daman and Diu",
-  DL: "Delhi",
-  GA: "Goa",
-  GJ: "Gujarat",
-  HR: "Haryana",
-  HP: "Himachal Pradesh",
-  JK: "Jammu and Kashmir",
-  JH: "Jharkhand",
-  KA: "Karnataka",
-  KL: "Kerala",
-  LA: "Ladakh",
-  LD: "Lakshadweep",
-  MP: "Madhya Pradesh",
-  MH: "Maharashtra",
-  MN: "Manipur",
-  ML: "Meghalaya",
-  MZ: "Mizoram",
-  NL: "Nagaland",
-  OR: "Odisha",
-  PY: "Puducherry",
-  PB: "Punjab",
-  RJ: "Rajasthan",
-  SK: "Sikkim",
-  TN: "Tamil Nadu",
-  TS: "Telangana",
-  TR: "Tripura",
-  UP: "Uttar Pradesh",
-  UK: "Uttarakhand",
-  WB: "West Bengal",
-};
-
 const Demo = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formErrors } = useForm();
+  console.log(formErrors);
 
   const [value, setValue] = useState(0);
 
@@ -53,7 +14,7 @@ const Demo = () => {
   };
 
   const onError = (error: object) => {
-    console.log(error);
+    // console.log(error);
   };
 
   return (
@@ -71,6 +32,9 @@ const Demo = () => {
             },
           })}
         />
+        {formErrors?.name && (
+          <span className={styles.error_msg}>{formErrors.name}</span>
+        )}
       </div>
       <div className={styles.form_field}>
         <label className="form-label">Email ID</label>
@@ -85,6 +49,9 @@ const Demo = () => {
             },
           })}
         />
+        {formErrors?.email && (
+          <span className={styles.error_msg}>{formErrors.email}</span>
+        )}
       </div>
       <div className={styles.form_field}>
         <label className="form-label">Phone Number</label>
@@ -103,6 +70,9 @@ const Demo = () => {
             },
           })}
         />
+        {formErrors?.phone && (
+          <span className={styles.error_msg}>{formErrors.phone}</span>
+        )}
       </div>
       <div className={styles.form_field}>
         <label className="form-label">Date of Birth</label>
@@ -113,6 +83,9 @@ const Demo = () => {
             required: { value: true, message: "Please enter date of birth" },
           })}
         />
+        {formErrors?.dob && (
+          <span className={styles.error_msg}>{formErrors.dob}</span>
+        )}
       </div>
       <div className={styles.form_field}>
         <label className="form-label">State</label>
@@ -125,14 +98,15 @@ const Demo = () => {
           <option value="" disabled>
             Select State
           </option>
-          {Object.values(states).map((state, index) => {
-            return (
-              <option key={index} value={state}>
-                {state}
-              </option>
-            );
-          })}
+          <option>Chennai</option>
+          <option>Hyderabad</option>
+          <option>Mumbai</option>
+          <option>Delhi</option>
+          <option>Pune</option>
         </select>
+        {formErrors?.state && (
+          <span className={styles.error_msg}>{formErrors.state}</span>
+        )}
       </div>
       <div className={styles.form_field}>
         <label>Hobbies</label>
@@ -159,6 +133,9 @@ const Demo = () => {
             <label>VolleyBall</label>
           </div>
         </fieldset>
+        {formErrors?.hobbies && (
+          <span className={styles.error_msg}>{formErrors.hobbies}</span>
+        )}
       </div>
       <div className={styles.form_field}>
         <label>Gender</label>
@@ -181,6 +158,9 @@ const Demo = () => {
             <label>Others</label>
           </div>
         </fieldset>
+        {formErrors?.gender && (
+          <span className={styles.error_msg}>{formErrors.gender}</span>
+        )}
       </div>
       <div className={styles.terms}>
         <input
@@ -193,6 +173,9 @@ const Demo = () => {
           })}
         />
         <label>Agree Terms And Conditions</label>
+        {formErrors?.terms && (
+          <span className={styles.error_msg}>{formErrors.terms}</span>
+        )}
       </div>
       <div>
         <button onClick={handleSubmit(onSubmit, onError)}>Submit</button>

@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent, useRef } from "react";
+import { ChangeEvent, FocusEvent, useRef, useState } from "react";
 
 type FormRegister = (
   name: string,
@@ -22,11 +22,14 @@ type FormOptions = {
 };
 
 type FormSubmit = (
-  onValid?: (formValues: FormValues) => void,
-  onInvalid?: (errors: FormErrors) => void
+  onValid?: OnValid,
+  onInvalid?: OnInvalid
 ) => (event: any) => void;
 
-type FormValidate = (field: Field, name: string) => void;
+type OnValid = (formValues: FormValues) => void;
+type OnInvalid = (errors: FormErrors) => void;
+
+type FormValidate = (field: Field, name: string) => string | undefined;
 
 type FormValueSetter = (ref: HTMLInputElement, name: string) => void;
 
@@ -51,7 +54,7 @@ const isCheckBoxOrRadio = (type: string): boolean => {
 
 const useForm = () => {
   let formFields = useRef<FormFields>({});
-  let formErrors = useRef<FormErrors>({});
+  let [formErrors, setFormErrors] = useState<FormErrors>({});
   let formValues = useRef<FormValues>({});
 
   const setFormValidation = (
@@ -110,10 +113,6 @@ const useForm = () => {
     }
   };
 
-  const hasError = (): boolean => {
-    return Object.keys(formErrors.current).length !== 0;
-  };
-
   const setFieldValues: FormValueSetter = (ref, name) => {
     let values = formValues.current;
 
@@ -142,53 +141,48 @@ const useForm = () => {
     let { validate, max, min, pattern, required, maxLength, minLength } =
       options || {};
 
-    let errors = { ...formErrors.current };
-
     if (Array.isArray(ref)) {
       if (!required?.value) return;
 
       let value = formValues.current[name] as string[];
 
-      if (value.length > 0) {
-        delete errors[name];
-      } else {
-        errors[name] = required?.message || "This field is required";
-      }
+      if (value.length > 0) return;
+
+      return required?.message || "This field is required";
     } else {
       let isValid = ref.checkValidity();
 
-      if (isValid) {
-        delete errors[name];
-      } else {
-        let {
-          valueMissing,
-          patternMismatch,
-          rangeUnderflow,
-          rangeOverflow,
-          tooShort,
-          tooLong,
-        } = ref.validity;
+      if (isValid) return;
 
-        if (valueMissing && required?.value) {
-          errors[name] = required?.message || "This field is required";
-        } else if (rangeOverflow && max?.value && max.message) {
-          errors[name] =
-            max?.message || `This field should not be greater than ${ref.max}`;
-        } else if (rangeUnderflow && min?.value && min.message) {
-          errors[name] =
-            min?.message || `This field should not be less than ${ref.min}`;
-        } else if (tooLong && maxLength?.value) {
-          errors[name] =
-            maxLength?.message ||
-            `This field should contain atleast ${ref.maxLength} characters`;
-        } else if (tooShort && minLength?.value) {
-          errors[name] =
-            minLength?.message ||
-            `This field should contain atleast ${ref.minLength} characters`;
-        } else if (patternMismatch && pattern?.value) {
-          errors[name] =
-            pattern?.message || "This field has mismatched pattern";
-        }
+      let {
+        valueMissing,
+        patternMismatch,
+        rangeUnderflow,
+        rangeOverflow,
+        tooShort,
+        tooLong,
+      } = ref.validity;
+
+      if (valueMissing && required?.value) {
+        return required?.message || "This field is required";
+      } else if (rangeOverflow && max?.value && max.message) {
+        return (
+          max?.message || `This field should not be greater than ${ref.max}`
+        );
+      } else if (rangeUnderflow && min?.value && min.message) {
+        return min?.message || `This field should not be less than ${ref.min}`;
+      } else if (tooLong && maxLength?.value) {
+        return (
+          maxLength?.message ||
+          `This field should contain atleast ${ref.maxLength} characters`
+        );
+      } else if (tooShort && minLength?.value) {
+        return (
+          minLength?.message ||
+          `This field should contain atleast ${ref.minLength} characters`
+        );
+      } else if (patternMismatch && pattern?.value) {
+        return pattern?.message || "This field has mismatched pattern";
       }
     }
 
@@ -198,15 +192,9 @@ const useForm = () => {
     // if (validateFn) {
     //   validateFn(ref.value);
     // }
-
-    formErrors.current = errors;
   };
 
   const register: FormRegister = (name, options = {}) => {
-    let field = formFields.current[name];
-
-    if (field) return;
-
     return {
       ref: (ref) => {
         if (!ref) return;
@@ -214,14 +202,25 @@ const useForm = () => {
       },
       onChange: (event) => {
         let ref = event.target as unknown as HTMLInputElement;
-        validateField({ options, ref }, name);
-        setFieldValues(ref, name);
+        let prevError = formErrors[name];
+        let error = validateField({ options, ref }, name);
+
+        if (typeof error === "undefined") {
+          if (!formErrors[name]) return;
+          let errors = { ...formErrors };
+          delete errors[name];
+          setFormErrors(errors);
+        } else if (prevError !== error) {
+          let errors = { ...formErrors };
+          errors[name] = error;
+          setFormErrors(errors);
+        }
       },
     };
   };
 
-  const focusField = () => {
-    let errorKeys = Object.keys(formErrors.current);
+  const focusField = (errors: FormErrors) => {
+    let errorKeys = Object.keys(errors);
 
     if (errorKeys.length === 0) return;
 
@@ -236,40 +235,67 @@ const useForm = () => {
     }
   };
 
-  const validateAllFields = (): boolean => {
+  const isValidField = (
+    name: string,
+    ref: HTMLInputElement | HTMLInputElement[]
+  ) => {
+    if (Array.isArray(ref)) {
+      let value = formValues.current[name] as string[];
+      return value.length > 0;
+    }
+
+    return ref.checkValidity();
+  };
+
+  const validateAllFields = (
+    onValid?: OnValid,
+    onInvalid?: OnInvalid
+  ): void => {
+    let errors = { ...formErrors };
+
     for (let name in formFields.current) {
       let field = formFields.current[name];
       let value = formValues.current[name];
 
-      if (typeof field === "undefined" || typeof value === "undefined") break;
+      if (
+        typeof field === "undefined" ||
+        typeof value === "undefined" ||
+        isValidField(name, field.ref)
+      )
+        break;
 
-      validateField(field, name);
+      let error = validateField(field, name);
+      let prevError = errors[name];
+      if (typeof error === "undefined") {
+        delete errors[name];
+      } else if (prevError !== error) {
+        errors[name] = error;
+      }
     }
 
-    if (hasError()) {
-      focusField();
-      return false;
+    let hasError = Object.keys(errors).length !== 0;
+
+    if (hasError) {
+      focusField(errors);
+      if (typeof onInvalid === "function") onInvalid(errors);
     } else {
-      return true;
+      if (typeof onValid === "function") onValid(formValues.current);
     }
+
+    setFormErrors(errors);
   };
 
   const handleSubmit: FormSubmit = (onValid, onInvalid) => {
     return (event: Event) => {
       event.preventDefault();
-      let isValid = validateAllFields();
-
-      if (isValid) {
-        if (typeof onValid === "function") onValid(formValues.current);
-      } else {
-        if (typeof onInvalid === "function") onInvalid(formErrors.current);
-      }
+      validateAllFields(onValid, onInvalid);
     };
   };
 
   return {
     register,
     handleSubmit,
+    formErrors,
   };
 };
 
