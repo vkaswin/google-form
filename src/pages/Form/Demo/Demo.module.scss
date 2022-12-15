@@ -1,0 +1,54 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 600px;
+  margin: 15px auto;
+  .form_field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    fieldset {
+      border: none;
+    }
+    input,
+    select,
+    textarea {
+      min-height: 40px;
+      padding: 0px 10px;
+      border: 1px solid #ddd;
+      background-color: white;
+    }
+    .options {
+      display: flex;
+      gap: 30px;
+      div {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        input {
+          min-width: 15px;
+          min-height: 15px;
+        }
+      }
+    }
+  }
+  input[type="submit"],
+  button {
+    background-color: gray;
+    width: 150px;
+    color: white;
+    height: 35px;
+    border: 1px solid gray;
+    border-radius: 4px;
+  }
+  .terms {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    input {
+      min-width: 15px;
+      min-height: 15px;
+    }
+  }
+}
