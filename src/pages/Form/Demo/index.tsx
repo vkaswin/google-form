@@ -3,7 +3,35 @@ import useForm from "hooks/useForm";
 
 import styles from "./Demo.module.scss";
 
+type FormValues = {
+  name: string;
+  dob: string;
+  hobbies: string[];
+  gender: string;
+  resume: FileList | null;
+  terms: boolean;
+  state: string;
+  password: string;
+  confirmPassword: string;
+  percentage: string;
+  emailId: string;
+};
+
 const Demo = () => {
+  let defaultValues: FormValues = {
+    confirmPassword: "Aswin@123",
+    password: "Aswin@123",
+    dob: "2022-12-17",
+    emailId: "aswin@gmail.com",
+    gender: "Male",
+    hobbies: ["Cricket", "FootBall"],
+    name: "Aswin",
+    percentage: "30",
+    resume: null,
+    state: "Chennai",
+    terms: false,
+  };
+
   const {
     watch,
     register,
@@ -198,7 +226,7 @@ const Demo = () => {
             <label>BasketBall</label>
           </div>
           <div>
-            <input type="checkbox" value="Football" {...register("hobbies")} />
+            <input type="checkbox" value="FootBall" {...register("hobbies")} />
             <label>FootBall</label>
           </div>
           <div>
