@@ -8,9 +8,6 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    fieldset {
-      border: none;
-    }
     input,
     select,
     textarea {
@@ -60,5 +57,17 @@
     display: block;
     color: red;
     font-size: 14px;
+  }
+  .upload_btn {
+    border: 1px solid #ddd;
+    height: 37px;
+    width: fit-content;
+    padding: 0px 15px;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

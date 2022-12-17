@@ -4,11 +4,11 @@ type FormRegister = (
   name: string,
   options?: FormOptions
 ) =>
-  | {
+  | ({
       ref: <T>(ref: T) => void;
       onChange: <T>(event: ChangeEvent<T>) => void;
       onBlur?: (event: FocusEvent) => void;
-    }
+    } & FormRules)
   | undefined;
 
 type FormOptions = {
@@ -18,7 +18,24 @@ type FormOptions = {
   maxLength?: { value?: number; message?: string };
   min?: { value?: string; message?: string };
   max?: { value?: string; message?: string };
-  validate?: { value: (value: string) => boolean; message: string };
+  validate?: {
+    value: (value: FormValueType) => boolean | undefined;
+    message: string;
+  };
+  valueAsNumber?: boolean;
+  valueAsDate?: boolean;
+};
+
+type FormRules = {
+  name: string;
+  required?: boolean;
+  pattern?: string;
+  minLength?: number;
+  maxLength?: number;
+  min?: string;
+  max?: string;
+  valueAsNumber?: boolean;
+  valueAsDate?: boolean;
 };
 
 type FormSubmit = (
@@ -29,65 +46,86 @@ type FormSubmit = (
 type OnValid = (formValues: FormValues) => void;
 type OnInvalid = (errors: FormErrors) => void;
 
-type FormValidate = (field: Field, name: string) => string | undefined;
+type FormValidate = (name: string, ref: HTMLInputElement) => string | undefined;
 
-type FormValueSetter = (ref: HTMLInputElement, name: string) => void;
+type FormValueSetter = (name: string, ref: HTMLInputElement) => void;
 
 type Field = {
-  ref: HTMLInputElement | HTMLInputElement[];
+  ref: HTMLInputElement;
   options: FormOptions;
+  refs?: HTMLInputElement[];
 };
 
 type FormFields = Record<string, Field>;
 
-type FormValues = Record<string, string | string[] | boolean>;
+type FormValues = Record<string, FormValueType>;
+
+type FormValueType =
+  | string
+  | string[]
+  | boolean
+  | number
+  | Date
+  | FileList
+  | null;
 
 type FormErrors = Record<string, string>;
 
-const isCheckBox = (type: string): boolean => {
-  return type === "checkbox";
-};
+type WatchFunction = <T>(
+  name: string,
+  event: ChangeEvent<T>,
+  value: FormValueType
+) => void;
+
+type WatchData = string | string[];
+
+type Watcher = { name?: WatchData; fn?: WatchFunction };
+
+type Watch = (name: WatchData, fn: WatchFunction) => void;
+
+type SetError = (name: string, error: string) => void;
+
+type ClearError = (name: string) => void;
+
+type SetFormField = (data: {
+  name: string;
+  ref: HTMLInputElement;
+  options: FormOptions;
+}) => void;
 
 const isCheckBoxOrRadio = (type: string): boolean => {
   return type === "checkbox" || type === "radio";
+};
+
+const isFile = (type: string): boolean => {
+  return type === "file";
 };
 
 const useForm = () => {
   let formFields = useRef<FormFields>({});
   let [formErrors, setFormErrors] = useState<FormErrors>({});
   let formValues = useRef<FormValues>({});
+  let watcher = useRef<Watcher>({});
 
-  const setFormValidation = (
-    ref: HTMLInputElement,
-    name: string,
-    options: FormOptions
-  ) => {
-    let checkBoxOrRadio = isCheckBoxOrRadio(ref.type);
+  const setFormField: SetFormField = ({ name, ref, options }) => {
     let fields = { ...formFields.current };
-    let values = { ...formValues.current };
-    ref.name = name;
-    let { max, maxLength, min, minLength, pattern, required } = options;
 
-    if (required?.value) ref.required = required.value;
+    let field = fields[name];
 
-    if (!checkBoxOrRadio) {
-      if (max?.value) ref.max = max.value;
-      if (min?.value) ref.min = min.value;
-      if (minLength?.value) ref.minLength = minLength.value;
-      if (maxLength?.value) ref.maxLength = maxLength.value;
-      if (pattern?.value) ref.pattern = pattern.value.source;
-    }
-
-    if (checkBoxOrRadio) {
-      if (Array.isArray(fields[name]?.ref)) {
-        (fields[name].ref as HTMLInputElement[]).push(ref);
-      } else if (fields[name]?.ref) {
+    if (isCheckBoxOrRadio(ref.type)) {
+      if (
+        field &&
+        field.ref &&
+        Array.isArray(field.refs) &&
+        !field.refs.includes(ref)
+      ) {
+        fields[name] = { ...field, refs: [...field.refs, ref] };
+      } else {
         fields[name] = {
-          ref: [fields[name].ref as HTMLInputElement, ref],
+          ref: { name, type: ref.type } as any,
+          refs: [ref],
           options,
         };
-      } else {
-        fields[name] = { ref, options };
       }
     } else {
       fields[name] = {
@@ -96,64 +134,62 @@ const useForm = () => {
       };
     }
 
-    values[name] =
-      isCheckBox(ref.type) && Array.isArray(fields[name]?.ref) ? [] : "";
+    if (typeof formValues.current[name] === "undefined") {
+      formValues.current = { ...formValues.current, [name]: "" };
+    }
 
     formFields.current = fields;
-    formValues.current = values;
   };
 
-  const setFormField = <T,>(name: string, ref: T, options: FormOptions) => {
-    if (ref instanceof HTMLFieldSetElement) {
-      for (let element of ref.elements) {
-        setFormValidation(element as HTMLInputElement, name, options);
-      }
-    } else {
-      setFormValidation(ref as HTMLInputElement, name, options);
-    }
-  };
-
-  const setFieldValues: FormValueSetter = (ref, name) => {
-    let values = formValues.current;
+  const setFieldValue: FormValueSetter = (name, ref) => {
+    let values = { ...formValues.current };
+    let field = formFields.current[name];
+    let value = values[name];
 
     if (isCheckBoxOrRadio(ref.type)) {
-      if (
-        isCheckBox(ref.type) &&
-        Array.isArray(formFields.current[ref.name].ref)
-      ) {
-        let value = values[ref.name] as string[];
-        if (ref.checked) {
-          value.push(ref.value);
+      if (Array.isArray(field.refs) && field.refs.length > 1) {
+        if (Array.isArray(value)) {
+          if (ref.checked) {
+            value.push(ref.value);
+          } else {
+            value.splice(value.indexOf(ref.value), 1);
+          }
         } else {
-          value.splice(value.indexOf(ref.value), 1);
+          value = [ref.value];
         }
       } else {
-        values[name] = ref.checked ? ref.value || ref.checked : "";
+        if (ref.checked) {
+          value = ref.value;
+        } else {
+          value = "";
+        }
       }
+    } else if (isFile(ref.type)) {
+      value = ref.files;
     } else {
-      values[name] = ref.value;
+      value = ref.value;
     }
+
+    values[name] = value;
 
     formValues.current = values;
   };
 
-  const validateField: FormValidate = ({ ref, options }, name) => {
+  const validateField: FormValidate = (name, ref) => {
+    let field = formFields.current[name];
+
+    if (!field) return;
+
     let { validate, max, min, pattern, required, maxLength, minLength } =
-      options || {};
+      field.options || {};
 
-    if (Array.isArray(ref)) {
-      if (!required?.value) return;
+    if (isCheckBoxOrRadio(ref.type)) {
+      let value = formValues.current[name] as string;
 
-      let value = formValues.current[name] as string[];
-
-      if (value.length > 0) return;
-
-      return required?.message || "This field is required";
-    } else {
-      let isValid = ref.checkValidity();
-
-      if (isValid) return;
-
+      if (required?.value && value.length === 0) {
+        return required?.message || "This field is required";
+      }
+    } else if (!ref.checkValidity()) {
       let {
         valueMissing,
         patternMismatch,
@@ -184,38 +220,79 @@ const useForm = () => {
       } else if (patternMismatch && pattern?.value) {
         return pattern?.message || "This field has mismatched pattern";
       }
+    } else if (
+      typeof validate?.value === "function" &&
+      validate.value(formValues.current[name])
+    ) {
+      return validate.message || "Validation failed for this field";
     }
-
-    // let validateFn =
-    //   typeof validate?.value === "function" ? validate.value : null;
-
-    // if (validateFn) {
-    //   validateFn(ref.value);
-    // }
   };
 
   const register: FormRegister = (name, options = {}) => {
+    let {
+      max,
+      maxLength,
+      min,
+      minLength,
+      pattern,
+      required,
+      valueAsDate,
+      valueAsNumber,
+    } = options;
+
+    let formRules = {} as FormRules;
+
+    formRules.name = name;
+    if (required?.value) formRules.required = required.value;
+    if (max?.value) formRules.max = max.value;
+    if (min?.value) formRules.min = min.value;
+    if (minLength?.value) formRules.minLength = minLength.value;
+    if (maxLength?.value) formRules.maxLength = maxLength.value;
+    if (pattern?.value) formRules.pattern = pattern.value.source;
+    if (valueAsNumber) formRules.valueAsDate = valueAsDate;
+    if (valueAsNumber) formRules.valueAsNumber = valueAsNumber;
+
     return {
       ref: (ref) => {
         if (!ref) return;
-        setFormField(name, ref, options);
+
+        setFormField({
+          name,
+          options,
+          ref: ref as unknown as HTMLInputElement,
+        });
       },
       onChange: (event) => {
         let ref = event.target as unknown as HTMLInputElement;
+        setFieldValue(name, ref);
         let prevError = formErrors[name];
-        let error = validateField({ options, ref }, name);
+        let error = validateField(name, ref);
 
         if (typeof error === "undefined") {
-          if (!formErrors[name]) return;
-          let errors = { ...formErrors };
-          delete errors[name];
-          setFormErrors(errors);
+          if (formErrors[name]) {
+            let errors = { ...formErrors };
+            delete errors[name];
+            setFormErrors(errors);
+          }
         } else if (prevError !== error) {
           let errors = { ...formErrors };
           errors[name] = error;
           setFormErrors(errors);
         }
+
+        if (watcher.current.name && watcher.current.fn) {
+          let { name: watchName, fn } = watcher.current;
+          if (
+            Array.isArray(watchName)
+              ? watchName.includes(name)
+              : watchName === name
+          ) {
+            let value = formValues.current[name];
+            fn(name, event, value);
+          }
+        }
       },
+      ...formRules,
     };
   };
 
@@ -226,25 +303,9 @@ const useForm = () => {
 
     let field = formFields.current[errorKeys[0]];
 
-    if (!field) return;
+    if (!field || !field.ref.focus) return;
 
-    if (Array.isArray(field.ref)) {
-      field.ref[0].focus();
-    } else {
-      field.ref.focus();
-    }
-  };
-
-  const isValidField = (
-    name: string,
-    ref: HTMLInputElement | HTMLInputElement[]
-  ) => {
-    if (Array.isArray(ref)) {
-      let value = formValues.current[name] as string[];
-      return value.length > 0;
-    }
-
-    return ref.checkValidity();
+    field.ref.focus();
   };
 
   const validateAllFields = (
@@ -255,16 +316,11 @@ const useForm = () => {
 
     for (let name in formFields.current) {
       let field = formFields.current[name];
-      let value = formValues.current[name];
 
-      if (
-        typeof field === "undefined" ||
-        typeof value === "undefined" ||
-        isValidField(name, field.ref)
-      )
-        break;
+      //TODO CHECK VALIDITY OF A FIELD TO IGNORE THE ERROR
+      //   if (typeof field === "undefined" || field.ref.checkValidity()) continue;
 
-      let error = validateField(field, name);
+      let error = validateField(name, field.ref);
       let prevError = errors[name];
       if (typeof error === "undefined") {
         delete errors[name];
@@ -292,8 +348,28 @@ const useForm = () => {
     };
   };
 
+  const watch: Watch = (name, fn) => {
+    watcher.current.name = name;
+    watcher.current.fn = fn;
+  };
+
+  const setError: SetError = (name, error) => {
+    let errors = { ...formErrors };
+    errors[name] = error;
+    setFormErrors(errors);
+  };
+
+  const clearError: ClearError = (name) => {
+    let errors = { ...formErrors };
+    delete errors[name];
+    setFormErrors(errors);
+  };
+
   return {
+    watch,
     register,
+    setError,
+    clearError,
     handleSubmit,
     formErrors,
   };

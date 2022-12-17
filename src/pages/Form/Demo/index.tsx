@@ -4,8 +4,8 @@ import useForm from "hooks/useForm";
 import styles from "./Demo.module.scss";
 
 const Demo = () => {
-  const { register, handleSubmit, formErrors } = useForm();
-  console.log(formErrors);
+  const { watch, register, setError, clearError, handleSubmit, formErrors } =
+    useForm();
 
   const [value, setValue] = useState(0);
 
@@ -14,13 +14,17 @@ const Demo = () => {
   };
 
   const onError = (error: object) => {
-    // console.log(error);
+    console.log(error);
   };
+
+  watch("name", (name, event, value) => {
+    console.log(name, event, value);
+  });
 
   return (
     <div className={styles.container}>
       <div className={styles.form_field}>
-        <label className="form-label">Name</label>
+        <label>Name</label>
         <input
           type="text"
           placeholder="Enter Name"
@@ -37,7 +41,7 @@ const Demo = () => {
         )}
       </div>
       <div className={styles.form_field}>
-        <label className="form-label">Email ID</label>
+        <label>Email ID</label>
         <input
           type="text"
           placeholder="Enter email"
@@ -54,7 +58,7 @@ const Demo = () => {
         )}
       </div>
       <div className={styles.form_field}>
-        <label className="form-label">Phone Number</label>
+        <label>Phone Number</label>
         <input
           type="number"
           placeholder="Enter phone number"
@@ -75,7 +79,7 @@ const Demo = () => {
         )}
       </div>
       <div className={styles.form_field}>
-        <label className="form-label">Date of Birth</label>
+        <label>Date of Birth</label>
         <input
           type="date"
           placeholder="Enter Date of Birth"
@@ -88,7 +92,7 @@ const Demo = () => {
         )}
       </div>
       <div className={styles.form_field}>
-        <label className="form-label">State</label>
+        <label>State</label>
         <select
           defaultValue=""
           {...register("state", {
@@ -110,56 +114,85 @@ const Demo = () => {
       </div>
       <div className={styles.form_field}>
         <label>Hobbies</label>
-        <fieldset
-          className={styles.options}
-          {...register("hobbies", {
-            required: { value: true, message: "Please select any one hobbies" },
-          })}
-        >
+        <div className={styles.options}>
           <div>
-            <input type="checkbox" value="Cricket" />
+            <input
+              type="checkbox"
+              value="Cricket"
+              {...register("hobbies", {
+                required: {
+                  value: true,
+                  message: "Please select any one hobbies",
+                },
+              })}
+            />
             <label>Cricket</label>
           </div>
           <div>
-            <input type="checkbox" value="BasketBall" />
+            <input
+              type="checkbox"
+              value="BasketBall"
+              {...register("hobbies")}
+            />
             <label>BasketBall</label>
           </div>
           <div>
-            <input type="checkbox" value="Football" />
+            <input type="checkbox" value="Football" {...register("hobbies")} />
             <label>FootBall</label>
           </div>
           <div>
-            <input type="checkbox" value="VolleyBall" />
+            <input
+              type="checkbox"
+              value="VolleyBall"
+              {...register("hobbies")}
+            />
             <label>VolleyBall</label>
           </div>
-        </fieldset>
+        </div>
         {formErrors?.hobbies && (
           <span className={styles.error_msg}>{formErrors.hobbies}</span>
         )}
       </div>
       <div className={styles.form_field}>
         <label>Gender</label>
-        <fieldset
-          className={styles.options}
-          {...register("gender", {
-            required: { value: true, message: "Please select any gender" },
-          })}
-        >
+        <div className={styles.options}>
           <div>
-            <input type="radio" value="Male" />
+            <input
+              type="radio"
+              value="Male"
+              {...register("gender", {
+                required: { value: true, message: "Please select gender" },
+              })}
+            />
             <label>Male</label>
           </div>
           <div>
-            <input type="radio" value="Female" />
+            <input type="radio" value="Female" {...register("gender")} />
             <label>Female</label>
           </div>
           <div>
-            <input type="radio" value="Others" />
+            <input type="radio" value="Others" {...register("gender")} />
             <label>Others</label>
           </div>
-        </fieldset>
+        </div>
         {formErrors?.gender && (
           <span className={styles.error_msg}>{formErrors.gender}</span>
+        )}
+      </div>
+      <div className={styles.form_field}>
+        <label htmlFor="resume" className={styles.upload_btn}>
+          Upload Resume
+        </label>
+        <input
+          id="resume"
+          type="file"
+          {...register("resume", {
+            required: { value: true, message: "Please upload resume" },
+          })}
+          hidden
+        />
+        {formErrors?.resume && (
+          <span className={styles.error_msg}>{formErrors.resume}</span>
         )}
       </div>
       <div className={styles.terms}>
