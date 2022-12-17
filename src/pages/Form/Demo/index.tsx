@@ -7,6 +7,8 @@ const Demo = () => {
   const {
     watch,
     register,
+    reset,
+    resetField,
     setError,
     getValue,
     setValue,
@@ -15,7 +17,7 @@ const Demo = () => {
     formErrors,
   } = useForm();
 
-  const [state, setState] = useState(0);
+  const [count, setCount] = useState(0);
 
   const onSubmit = (formValues: object) => {
     console.log(formValues);
@@ -271,11 +273,12 @@ const Demo = () => {
           <span className={styles.error_msg}>{formErrors.terms}</span>
         )}
       </div>
-      <div>
+      <div className={styles.form_btn}>
         <button onClick={handleSubmit(onSubmit, onError)}>Submit</button>
+        <button onClick={reset}>Reset</button>
+        <button onClick={() => resetField("dob")}>Reset Field</button>
+        <button onClick={() => setCount(count + 1)}>Render {count}</button>
       </div>
-      <button onClick={() => setState(state + 1)}>Increment</button>
-      <span>{state}</span>
     </div>
   );
 };

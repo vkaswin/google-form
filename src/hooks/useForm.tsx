@@ -101,11 +101,19 @@ type GetValue = (name: string) => FormValueType;
 
 type SetValue = (name: string, value: FormValueType) => void;
 
-const isCheckBoxOrRadio = (type: string): boolean => {
+type ResetField = (name: string) => void;
+
+type ResetFormField = (
+  name: string,
+  field: Field,
+  formValues: FormValues
+) => void;
+
+const isCheckBoxOrRadioInput = (type: string): boolean => {
   return type === "checkbox" || type === "radio";
 };
 
-const isFile = (type: string): boolean => {
+const isFileInput = (type: string): boolean => {
   return type === "file";
 };
 
@@ -121,7 +129,7 @@ const useForm = () => {
 
     let field = fields[name];
 
-    if (isCheckBoxOrRadio(ref.type)) {
+    if (isCheckBoxOrRadioInput(ref.type)) {
       if (
         field &&
         field.ref &&
@@ -155,7 +163,7 @@ const useForm = () => {
     let field = formFields.current[name];
     let value = values[name];
 
-    if (isCheckBoxOrRadio(ref.type)) {
+    if (isCheckBoxOrRadioInput(ref.type)) {
       if (Array.isArray(field.refs) && field.refs.length > 1) {
         if (Array.isArray(value)) {
           if (ref.checked) {
@@ -173,7 +181,7 @@ const useForm = () => {
           value = "";
         }
       }
-    } else if (isFile(ref.type)) {
+    } else if (isFileInput(ref.type)) {
       value = ref.files;
     } else {
       value = ref.value;
@@ -194,7 +202,7 @@ const useForm = () => {
 
     let error: string | undefined;
 
-    if (isCheckBoxOrRadio(ref.type)) {
+    if (isCheckBoxOrRadioInput(ref.type)) {
       let value = formValues.current[name] as string;
 
       if (
@@ -399,10 +407,6 @@ const useForm = () => {
 
     for (let name in formFields.current) {
       let field = formFields.current[name];
-
-      //TODO CHECK VALIDITY OF A FIELD TO IGNORE THE ERROR
-      //   if (typeof field === "undefined" || field.ref.checkValidity()) continue;
-
       let error = validateField(name, field.ref);
       let prevError = errors[name];
       if (typeof error === "undefined") {
@@ -446,6 +450,7 @@ const useForm = () => {
   };
 
   const clearError: ClearError = (name) => {
+    if (typeof formErrors[name] === "undefined") return;
     let errors = { ...formErrors };
     delete errors[name];
     setFormErrors(errors);
@@ -463,13 +468,60 @@ const useForm = () => {
     return value;
   };
 
+  const resetFormField: ResetFormField = (name, field, formValues) => {
+    if (isCheckBoxOrRadioInput(field.ref.type)) {
+      if (Array.isArray(field.refs)) {
+        for (let ref of field.refs) {
+          ref.checked = false;
+        }
+        if (field.refs.length > 1) {
+          formValues[name] = [];
+        } else {
+          formValues[name] = "";
+        }
+      }
+    } else {
+      if (isFileInput(field.ref.type)) {
+        field.ref.files = null;
+      } else {
+        field.ref.value = "";
+      }
+      formValues[name] = "";
+    }
+  };
+
+  const reset = (): void => {
+    let values = { ...formValues.current };
+
+    for (let name in formFields.current) {
+      let field = formFields.current[name];
+      if (!field) continue;
+      resetFormField(name, field, values);
+    }
+
+    isSubmitted.current = false;
+    formValues.current = values;
+    setFormErrors({});
+  };
+
+  const resetField: ResetField = (name) => {
+    let field = formFields.current[name];
+    if (!field) return;
+    let values = { ...formValues.current };
+    resetFormField(name, field, values);
+    formValues.current = values;
+    clearError(name);
+  };
+
   return {
     watch,
+    reset,
     register,
     setValue,
     getValue,
     setError,
     clearError,
+    resetField,
     handleSubmit,
     formErrors,
   };
