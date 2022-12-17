@@ -11,17 +11,21 @@ type FormRegister = (
     } & FormRules)
   | undefined;
 
+type ValidateFunction = (value: FormValueType) => boolean | undefined;
+
 type FormOptions = {
-  required?: { value?: boolean; message?: string };
-  pattern?: { value?: RegExp; message?: string };
-  minLength?: { value?: number; message?: string };
-  maxLength?: { value?: number; message?: string };
-  min?: { value?: string; message?: string };
-  max?: { value?: string; message?: string };
-  validate?: {
-    value?: (value: FormValueType) => boolean | undefined;
-    message?: string;
-  };
+  required?: boolean | { value?: boolean; message?: string };
+  pattern?: RegExp | { value?: RegExp; message?: string };
+  minLength?: number | { value?: number; message?: string };
+  maxLength?: number | { value?: number; message?: string };
+  min?: string | { value?: string; message?: string };
+  max?: string | { value?: string; message?: string };
+  validate?:
+    | ValidateFunction
+    | {
+        value?: ValidateFunction;
+        message?: string;
+      };
   valueAsNumber?: boolean;
   valueAsDate?: boolean;
 };
@@ -188,11 +192,17 @@ const useForm = () => {
     let { validate, max, min, pattern, required, maxLength, minLength } =
       field.options || {};
 
+    let error: string | undefined;
+
     if (isCheckBoxOrRadio(ref.type)) {
       let value = formValues.current[name] as string;
 
-      if (required?.value && value.length === 0) {
-        return required?.message || "This field is required";
+      if (
+        (typeof required === "boolean" ? required : required?.value) &&
+        value.length === 0
+      ) {
+        error = typeof required === "object" ? required.message : undefined;
+        return error || "This field is required";
       }
     } else if (!ref.checkValidity()) {
       let {
@@ -204,32 +214,58 @@ const useForm = () => {
         tooLong,
       } = ref.validity;
 
-      if (valueMissing && required?.value) {
-        return required?.message || "This field is required";
-      } else if (rangeOverflow && max?.value && max.message) {
+      if (
+        valueMissing &&
+        (typeof required === "boolean" ? required : required?.value)
+      ) {
+        error = typeof required === "object" ? required.message : undefined;
+        return error || "This field is required";
+      } else if (
+        rangeOverflow &&
+        (typeof max === "string" ? max : max?.value)
+      ) {
+        error = typeof max === "object" ? max.message : undefined;
+        return error || `This field should not be greater than ${ref.max}`;
+      } else if (
+        rangeUnderflow &&
+        (typeof min === "string" ? min : min?.value)
+      ) {
+        error = typeof min === "object" ? min.message : undefined;
+        return error || `This field should not be less than ${ref.min}`;
+      } else if (
+        tooLong &&
+        (typeof maxLength === "number" ? maxLength : maxLength?.value)
+      ) {
+        error = typeof maxLength === "object" ? maxLength.message : undefined;
         return (
-          max?.message || `This field should not be greater than ${ref.max}`
-        );
-      } else if (rangeUnderflow && min?.value && min.message) {
-        return min?.message || `This field should not be less than ${ref.min}`;
-      } else if (tooLong && maxLength?.value) {
-        return (
-          maxLength?.message ||
+          error ||
           `This field should contain atleast ${ref.maxLength} characters`
         );
-      } else if (tooShort && minLength?.value) {
+      } else if (
+        tooShort &&
+        (typeof minLength === "number" ? minLength : minLength?.value)
+      ) {
+        error = typeof minLength === "object" ? minLength.message : undefined;
         return (
-          minLength?.message ||
+          error ||
           `This field should contain atleast ${ref.minLength} characters`
         );
-      } else if (patternMismatch && pattern?.value) {
-        return pattern?.message || "This field has mismatched pattern";
+      } else if (
+        patternMismatch &&
+        (pattern instanceof RegExp ? pattern : pattern?.value)
+      ) {
+        error = typeof required === "object" ? required.message : undefined;
+        return error || "This field has mismatched pattern";
       }
-    } else if (
-      typeof validate?.value === "function" &&
-      validate.value(formValues.current[name])
-    ) {
-      return validate.message || "Validation failed for this field";
+    } else {
+      let validateFn =
+        typeof validate === "function" ? validate : validate?.value;
+      if (typeof validateFn !== "function") return;
+      let value = formValues.current[name];
+      if (validateFn(value)) {
+        error = typeof validate === "object" ? validate.message : undefined;
+        return error || "Validation failed for this field";
+      }
     }
   };
 
@@ -248,14 +284,34 @@ const useForm = () => {
     let formRules = {} as FormRules;
 
     formRules.name = name;
-    if (required?.value) formRules.required = required.value;
-    if (max?.value) formRules.max = max.value;
-    if (min?.value) formRules.min = min.value;
-    if (minLength?.value) formRules.minLength = minLength.value;
-    if (maxLength?.value) formRules.maxLength = maxLength.value;
-    if (pattern?.value) formRules.pattern = pattern.value.source;
-    if (valueAsNumber) formRules.valueAsDate = valueAsDate;
-    if (valueAsNumber) formRules.valueAsNumber = valueAsNumber;
+    if (typeof required === "boolean" || required?.value) {
+      formRules.required =
+        typeof required === "boolean" ? required : required.value;
+    }
+    if (typeof max === "string" ? max : max?.value) {
+      formRules.max = typeof max === "object" ? max.value : max;
+    }
+    if (typeof min === "string" ? min : min?.value) {
+      formRules.min = typeof min === "object" ? min.value : min;
+    }
+    if (typeof minLength === "number" ? minLength : minLength?.value) {
+      formRules.minLength =
+        typeof minLength === "object" ? minLength.value : minLength;
+    }
+    if (typeof maxLength === "number" ? maxLength : maxLength?.value) {
+      formRules.maxLength =
+        typeof maxLength === "object" ? maxLength.value : maxLength;
+    }
+    if (pattern instanceof RegExp ? pattern : pattern?.value) {
+      formRules.pattern =
+        pattern instanceof RegExp ? pattern.source : pattern?.value?.source;
+    }
+    if (valueAsNumber) {
+      formRules.valueAsDate = valueAsDate;
+    }
+    if (valueAsNumber) {
+      formRules.valueAsNumber = valueAsNumber;
+    }
 
     return {
       ref: (ref) => {
