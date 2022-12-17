@@ -4,10 +4,18 @@ import useForm from "hooks/useForm";
 import styles from "./Demo.module.scss";
 
 const Demo = () => {
-  const { watch, register, setError, clearError, handleSubmit, formErrors } =
-    useForm();
+  const {
+    watch,
+    register,
+    setError,
+    getValue,
+    setValue,
+    clearError,
+    handleSubmit,
+    formErrors,
+  } = useForm();
 
-  const [value, setValue] = useState(0);
+  const [state, setState] = useState(0);
 
   const onSubmit = (formValues: object) => {
     console.log(formValues);
@@ -89,6 +97,57 @@ const Demo = () => {
         />
         {formErrors?.dob && (
           <span className={styles.error_msg}>{formErrors.dob}</span>
+        )}
+      </div>
+      <div className={styles.form_field}>
+        <label>Percentage</label>
+        <input
+          type="number"
+          placeholder="Enter Date of Birth"
+          {...register("percentage", {
+            required: { value: true, message: "Please enter percentage" },
+            min: { value: "20", message: "Minimum value should be 20" },
+            max: { value: "100", message: "Maximum value should be 100" },
+          })}
+        />
+        {formErrors?.percentage && (
+          <span className={styles.error_msg}>{formErrors.percentage}</span>
+        )}
+      </div>
+      <div className={styles.form_field}>
+        <label>Password</label>
+        <input
+          type="text"
+          placeholder="Enter Password"
+          {...register("password", {
+            required: { value: true, message: "Please enter password" },
+            pattern: {
+              value:
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d@$#!%*?&]{8,}$/,
+              message:
+                "Password contains atleast 8 character includes one captial letter, one symbol and one number",
+            },
+          })}
+        />
+        {formErrors?.password && (
+          <span className={styles.error_msg}>{formErrors.password}</span>
+        )}
+      </div>
+      <div className={styles.form_field}>
+        <label>Confirm Password</label>
+        <input
+          type="text"
+          placeholder="Enter Confirm Password"
+          {...register("confirmPassword", {
+            required: { value: true, message: "Please enter confirm password" },
+            validate: {
+              value: (val) => getValue("password") !== val,
+              message: "Confirm password is not matched with password",
+            },
+          })}
+        />
+        {formErrors?.confirmPassword && (
+          <span className={styles.error_msg}>{formErrors.confirmPassword}</span>
         )}
       </div>
       <div className={styles.form_field}>
@@ -215,8 +274,8 @@ const Demo = () => {
       <div>
         <button onClick={handleSubmit(onSubmit, onError)}>Submit</button>
       </div>
-      <button onClick={() => setValue(value + 1)}>Increment</button>
-      <span>{value}</span>
+      <button onClick={() => setState(state + 1)}>Increment</button>
+      <span>{state}</span>
     </div>
   );
 };

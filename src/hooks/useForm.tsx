@@ -19,8 +19,8 @@ type FormOptions = {
   min?: { value?: string; message?: string };
   max?: { value?: string; message?: string };
   validate?: {
-    value: (value: FormValueType) => boolean | undefined;
-    message: string;
+    value?: (value: FormValueType) => boolean | undefined;
+    message?: string;
   };
   valueAsNumber?: boolean;
   valueAsDate?: boolean;
@@ -93,6 +93,10 @@ type SetFormField = (data: {
   options: FormOptions;
 }) => void;
 
+type GetValue = (name: string) => FormValueType;
+
+type SetValue = (name: string, value: FormValueType) => void;
+
 const isCheckBoxOrRadio = (type: string): boolean => {
   return type === "checkbox" || type === "radio";
 };
@@ -106,6 +110,7 @@ const useForm = () => {
   let [formErrors, setFormErrors] = useState<FormErrors>({});
   let formValues = useRef<FormValues>({});
   let watcher = useRef<Watcher>({});
+  let isSubmitted = useRef<boolean>(false);
 
   const setFormField: SetFormField = ({ name, ref, options }) => {
     let fields = { ...formFields.current };
@@ -265,6 +270,20 @@ const useForm = () => {
       onChange: (event) => {
         let ref = event.target as unknown as HTMLInputElement;
         setFieldValue(name, ref);
+        if (watcher.current.name && watcher.current.fn) {
+          let { name: watchName, fn } = watcher.current;
+          if (
+            Array.isArray(watchName)
+              ? watchName.includes(name)
+              : watchName === name
+          ) {
+            let value = formValues.current[name];
+            fn(name, event, value);
+          }
+        }
+
+        if (!isSubmitted.current) return;
+
         let prevError = formErrors[name];
         let error = validateField(name, ref);
 
@@ -279,18 +298,6 @@ const useForm = () => {
           errors[name] = error;
           setFormErrors(errors);
         }
-
-        if (watcher.current.name && watcher.current.fn) {
-          let { name: watchName, fn } = watcher.current;
-          if (
-            Array.isArray(watchName)
-              ? watchName.includes(name)
-              : watchName === name
-          ) {
-            let value = formValues.current[name];
-            fn(name, event, value);
-          }
-        }
       },
       ...formRules,
     };
@@ -301,11 +308,31 @@ const useForm = () => {
 
     if (errorKeys.length === 0) return;
 
-    let field = formFields.current[errorKeys[0]];
+    let fieldName: string | undefined;
 
-    if (!field || !field.ref.focus) return;
+    for (let field of Object.keys(formFields.current)) {
+      if (errorKeys.includes(field)) {
+        fieldName = field;
+        break;
+      }
+    }
 
-    field.ref.focus();
+    if (!fieldName) return;
+
+    let field = formFields.current[fieldName];
+
+    if (!field) return;
+
+    let ref: HTMLInputElement;
+
+    if (field.refs) {
+      ref = field.refs[0];
+    } else {
+      ref = field.ref;
+    }
+
+    ref.focus();
+    ref.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
   const validateAllFields = (
@@ -344,6 +371,9 @@ const useForm = () => {
   const handleSubmit: FormSubmit = (onValid, onInvalid) => {
     return (event: Event) => {
       event.preventDefault();
+      if (!isSubmitted.current) {
+        isSubmitted.current = true;
+      }
       validateAllFields(onValid, onInvalid);
     };
   };
@@ -365,9 +395,23 @@ const useForm = () => {
     setFormErrors(errors);
   };
 
+  const setValue: SetValue = (name, value) => {
+    let values = { ...formValues.current };
+    values[name] = value;
+    formValues.current = values;
+  };
+
+  const getValue: GetValue = (name) => {
+    let value = formValues.current[name];
+    if (typeof value === "undefined") return null;
+    return value;
+  };
+
   return {
     watch,
     register,
+    setValue,
+    getValue,
     setError,
     clearError,
     handleSubmit,
