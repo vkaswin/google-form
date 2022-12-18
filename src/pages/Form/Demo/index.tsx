@@ -18,20 +18,6 @@ type FormValues = {
 };
 
 const Demo = () => {
-  let defaultValues: FormValues = {
-    confirmPassword: "Aswin@123",
-    password: "Aswin@123",
-    dob: "2022-12-17",
-    emailId: "aswin@gmail.com",
-    gender: "Male",
-    hobbies: ["Cricket", "FootBall"],
-    name: "Aswin",
-    percentage: "30",
-    resume: null,
-    state: "Chennai",
-    terms: false,
-  };
-
   const {
     watch,
     register,
@@ -42,6 +28,7 @@ const Demo = () => {
     setValue,
     clearError,
     handleSubmit,
+    reValidate,
     formErrors,
   } = useForm();
 
@@ -55,8 +42,9 @@ const Demo = () => {
     console.log(error);
   };
 
-  watch("name", (name, event, value) => {
+  watch("password.0.old.value.0", (name, event, value) => {
     console.log(name, event, value);
+    reValidate("password.0.new.value.0");
   });
 
   return (
@@ -66,7 +54,7 @@ const Demo = () => {
         <input
           type="text"
           placeholder="Enter Name"
-          {...register("name", {
+          {...register("user.name", {
             required: { value: true, message: "Please enter name" },
             minLength: {
               value: 3,
@@ -74,8 +62,8 @@ const Demo = () => {
             },
           })}
         />
-        {formErrors?.name && (
-          <span className={styles.error_msg}>{formErrors.name}</span>
+        {formErrors?.user?.name && (
+          <span className={styles.error_msg}>{formErrors.user.name}</span>
         )}
       </div>
       <div className={styles.form_field}>
@@ -83,7 +71,8 @@ const Demo = () => {
         <input
           type="text"
           placeholder="Enter email"
-          {...register("email", {
+          defaultValue="aswin@gmail.com"
+          {...register("user.info.detail.email", {
             required: { value: true, message: "Please enter email id" },
             pattern: {
               value: /[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$/,
@@ -98,22 +87,17 @@ const Demo = () => {
       <div className={styles.form_field}>
         <label>Phone Number</label>
         <input
-          type="number"
+          type="text"
           placeholder="Enter phone number"
-          {...register("phone", {
+          defaultValue="9093434549"
+          {...register("user.info.phone", {
             required: { value: true, message: "Please enter phone number" },
-            minLength: {
-              value: 10,
-              message: "Phone number should contains 10 digits",
-            },
-            maxLength: {
-              value: 10,
-              message: "Phone number should not be greater than 10 digits",
-            },
+            pattern:
+              /^[+]?(\d{1,2})?[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/,
           })}
         />
-        {formErrors?.phone && (
-          <span className={styles.error_msg}>{formErrors.phone}</span>
+        {formErrors?.user?.info?.phone && (
+          <span className={styles.error_msg}>{formErrors.user.info.phone}</span>
         )}
       </div>
       <div className={styles.form_field}>
@@ -136,8 +120,8 @@ const Demo = () => {
           placeholder="Enter Date of Birth"
           {...register("percentage", {
             required: { value: true, message: "Please enter percentage" },
-            min: { value: "20", message: "Minimum value should be 20" },
-            max: { value: "100", message: "Maximum value should be 100" },
+            min: "20",
+            max: "100",
           })}
         />
         {formErrors?.percentage && (
@@ -149,7 +133,7 @@ const Demo = () => {
         <input
           type="text"
           placeholder="Enter Password"
-          {...register("password", {
+          {...register("password.0.old.value.0", {
             required: { value: true, message: "Please enter password" },
             pattern: {
               value:
@@ -159,8 +143,10 @@ const Demo = () => {
             },
           })}
         />
-        {formErrors?.password && (
-          <span className={styles.error_msg}>{formErrors.password}</span>
+        {formErrors?.password?.[0]?.old?.value?.[0] && (
+          <span className={styles.error_msg}>
+            {formErrors.password[0].old.value[0]}
+          </span>
         )}
       </div>
       <div className={styles.form_field}>
@@ -168,16 +154,18 @@ const Demo = () => {
         <input
           type="text"
           placeholder="Enter Confirm Password"
-          {...register("confirmPassword", {
+          {...register("password.0.new.value.0", {
             required: { value: true, message: "Please enter confirm password" },
             validate: {
-              value: (val) => getValue("password") !== val,
+              value: (val) => getValue("password.0.old.value.0") !== val,
               message: "Confirm password is not matched with password",
             },
           })}
         />
-        {formErrors?.confirmPassword && (
-          <span className={styles.error_msg}>{formErrors.confirmPassword}</span>
+        {formErrors?.password?.[0]?.new?.value?.[0] && (
+          <span className={styles.error_msg}>
+            {formErrors.password[0].new.value[0]}
+          </span>
         )}
       </div>
       <div className={styles.form_field}>
