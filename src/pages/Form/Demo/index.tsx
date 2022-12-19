@@ -25,11 +25,12 @@ const Demo = () => {
     resetField,
     setError,
     getValue,
+    validate,
     setValue,
     clearError,
     handleSubmit,
-    reValidate,
     formErrors,
+    formValues,
   } = useForm();
 
   const [count, setCount] = useState(0);
@@ -42,9 +43,8 @@ const Demo = () => {
     console.log(error);
   };
 
-  watch("password.0.old.value.0", (name, event, value) => {
-    console.log(name, event, value);
-    reValidate("password.0.new.value.0");
+  watch("password.0.old.value.0", () => {
+    validate("password.0.new.value.0");
   });
 
   return (
@@ -171,7 +171,7 @@ const Demo = () => {
       <div className={styles.form_field}>
         <label>State</label>
         <select
-          defaultValue=""
+          defaultValue="Hyderabad"
           {...register("state", {
             required: { value: true, message: "Please select any one state" },
           })}
@@ -179,11 +179,19 @@ const Demo = () => {
           <option value="" disabled>
             Select State
           </option>
-          <option>Chennai</option>
-          <option>Hyderabad</option>
-          <option>Mumbai</option>
-          <option>Delhi</option>
-          <option>Pune</option>
+          <option label="Chennai" value="Chennai" />
+          <option
+            label="Hyderabad"
+            defaultValue="Hyderabad"
+            value="Hyderabad"
+          />
+          <option label="Mumbai" value="Mumbai" />
+          <option label="Delhi" value="Delhi">
+            Delhi
+          </option>
+          <option label="Pune" value="Pune">
+            Pune
+          </option>
         </select>
         {formErrors?.state && (
           <span className={styles.error_msg}>{formErrors.state}</span>
@@ -209,13 +217,10 @@ const Demo = () => {
             <input
               type="checkbox"
               value="BasketBall"
+              defaultChecked
               {...register("hobbies")}
             />
             <label>BasketBall</label>
-          </div>
-          <div>
-            <input type="checkbox" value="FootBall" {...register("hobbies")} />
-            <label>FootBall</label>
           </div>
           <div>
             <input
@@ -224,6 +229,15 @@ const Demo = () => {
               {...register("hobbies")}
             />
             <label>VolleyBall</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              value="FootBall"
+              defaultChecked
+              {...register("hobbies")}
+            />
+            <label>FootBall</label>
           </div>
         </div>
         {formErrors?.hobbies && (
@@ -237,6 +251,7 @@ const Demo = () => {
             <input
               type="radio"
               value="Male"
+              defaultChecked
               {...register("gender", {
                 required: { value: true, message: "Please select gender" },
               })}
@@ -276,6 +291,8 @@ const Demo = () => {
         <div>
           <input
             type="checkbox"
+            value="true"
+            defaultChecked
             {...register("terms", {
               required: {
                 value: true,
