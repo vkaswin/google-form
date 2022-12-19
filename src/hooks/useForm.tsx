@@ -52,7 +52,7 @@ const useForm = () => {
   let { current: formNames } = useRef<string[]>([]);
   let { current: formValues } = useRef<FormRecord>({});
   let [render, setRender] = useState(0);
-  let watcher = useRef<Watcher>({});
+  let { current: watcher } = useRef<Watcher>({});
   let isSubmitted = useRef<boolean>(false);
 
   const setFormField: SetFormField = ({ name, ref, options, field }) => {
@@ -417,8 +417,8 @@ const useForm = () => {
       onChange: (event) => {
         let ref = event.target as unknown as HTMLInputElement;
         setFieldValue(name, ref);
-        if (watcher.current.name && watcher.current.fn) {
-          let { name: watchName, fn } = watcher.current;
+        let { name: watchName, fn } = watcher;
+        if (watchName && fn) {
           if (
             Array.isArray(watchName)
               ? watchName.includes(name)
@@ -504,8 +504,8 @@ const useForm = () => {
   };
 
   const watch: Watch = (name, fn) => {
-    watcher.current.name = name;
-    watcher.current.fn = fn;
+    watcher.name = name;
+    watcher.fn = fn;
   };
 
   const setError: SetError = (name, value) => {
