@@ -292,7 +292,6 @@ const Demo = () => {
           <input
             type="checkbox"
             value="true"
-            defaultChecked
             {...register("terms", {
               required: {
                 value: true,

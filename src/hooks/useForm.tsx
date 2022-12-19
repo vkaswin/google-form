@@ -56,7 +56,6 @@ const useForm = () => {
   let isSubmitted = useRef<boolean>(false);
 
   const setFormField: SetFormField = ({ name, ref, options, field }) => {
-    //TODO HANDLE IF TWO CHECKBOX HAVING SAME VALUES
     if (!formNames.includes(name)) {
       formNames.push(name);
     }
@@ -90,9 +89,9 @@ const useForm = () => {
 
     if (!field) {
       if (isCheckBoxOrRadioInput(ref.type)) {
-        value = ref.defaultChecked ? ref.value || ref.checked || "" : "";
+        value = ref.defaultChecked ? ref.value || "" : undefined;
       } else {
-        value = ref.defaultValue || ref.value || "";
+        value = ref.defaultValue || ref.value || undefined;
       }
       set({ name, value, type: "values" });
     } else if (
@@ -102,14 +101,14 @@ const useForm = () => {
     ) {
       value = get(name, "values");
       let defaultValue = ref.defaultChecked
-        ? ref.defaultValue || ref.defaultChecked || ""
+        ? ref.defaultValue || ""
         : undefined;
       if (Array.isArray(value)) {
         if (typeof defaultValue !== "undefined") {
           value.push(defaultValue);
         }
       } else {
-        value = value.length > 0 ? [value] : [];
+        value = value && value.length > 0 ? [value] : [];
         if (typeof defaultValue !== "undefined") {
           value.push(defaultValue);
         }
