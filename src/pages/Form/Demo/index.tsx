@@ -47,7 +47,6 @@ const Demo = () => {
     validate("password.0.new.value.0");
   });
 
-  console.log("rerender");
   return (
     <div className={styles.container}>
       <div className={styles.form_field}>
