@@ -36,6 +36,10 @@ const isFileInput = (type: string): boolean => {
   return type === "file";
 };
 
+const isContendEditable = (editable: string): boolean => {
+  return editable === "true";
+};
+
 const defaultErrors = {
   required: `This field is required`,
   minLength: `Tis field should not less than minlength value`,
@@ -53,7 +57,7 @@ const useForm = () => {
   let { current: formValues } = useRef<FormRecord>({});
   let [render, setRender] = useState(0);
   let { current: watcher } = useRef<Watcher>({});
-  let { current: isSubmitted } = useRef<boolean>(false);
+  let isSubmitted = useRef<boolean>(false);
 
   const setFormField: SetFormField = ({ name, ref, options, field }) => {
     if (!formNames.includes(name)) {
@@ -89,9 +93,9 @@ const useForm = () => {
 
     if (!field) {
       if (isCheckBoxOrRadioInput(ref.type)) {
-        value = ref.defaultChecked ? ref.value || "" : undefined;
+        value = ref.defaultChecked ? ref.value || "" : null;
       } else {
-        value = ref.defaultValue || ref.value || undefined;
+        value = ref.defaultValue || ref.value || null;
       }
       set({ name, value, type: "values" });
     } else if (
@@ -100,16 +104,14 @@ const useForm = () => {
       Array.isArray(formField.refs)
     ) {
       value = get(name, "values");
-      let defaultValue = ref.defaultChecked
-        ? ref.defaultValue || ""
-        : undefined;
+      let defaultValue = ref.defaultChecked ? ref.defaultValue || "" : null;
       if (Array.isArray(value)) {
-        if (typeof defaultValue !== "undefined") {
+        if (defaultValue !== null) {
           value.push(defaultValue);
         }
       } else {
         value = value && value.length > 0 ? [value] : [];
-        if (typeof defaultValue !== "undefined") {
+        if (defaultValue !== null) {
           value.push(defaultValue);
         }
       }
@@ -251,6 +253,11 @@ const useForm = () => {
       }
     } else if (isFileInput(ref.type)) {
       value = ref.files;
+    } else if (isContendEditable(ref.contentEditable)) {
+      if (ref.innerHTML === "<br>") {
+        ref.innerHTML = "";
+      }
+      value = ref.innerHTML;
     } else {
       value = ref.value;
     }
@@ -273,19 +280,22 @@ const useForm = () => {
     let error: string | undefined;
     let errorType: FormErrorTypes | undefined;
 
-    if (isCheckBoxOrRadioInput(ref.type)) {
+    if (
+      isCheckBoxOrRadioInput(ref.type) ||
+      isContendEditable(ref.contentEditable)
+    ) {
       let value = get(name, "values");
 
       if (typeof value === "undefined") return;
 
       if (
         (typeof required === "boolean" ? required : required?.value) &&
-        value.length === 0
+        (value === null || value.length === 0)
       ) {
         error = typeof required === "object" ? required.message : undefined;
         errorType = "required";
       }
-    } else if (!ref.checkValidity()) {
+    } else if (!ref?.checkValidity()) {
       let {
         valueMissing,
         patternMismatch,
@@ -443,7 +453,7 @@ const useForm = () => {
           }
         }
 
-        if (!isSubmitted) return;
+        if (!isSubmitted.current) return;
 
         validateField({ name, ref });
       },
@@ -510,8 +520,8 @@ const useForm = () => {
   const handleSubmit: FormSubmit = (onValid, onInvalid) => {
     return (event: Event) => {
       event.preventDefault();
-      if (!isSubmitted) {
-        isSubmitted = true;
+      if (!isSubmitted.current) {
+        isSubmitted.current = true;
       }
       validateAllFields(onValid, onInvalid);
     };
@@ -550,7 +560,7 @@ const useForm = () => {
         if (field.refs.length > 1) {
           set({ name, value: [], type: "values" });
         } else {
-          set({ name, value: undefined, type: "values" });
+          set({ name, value: null, type: "values" });
         }
       }
     } else {
@@ -559,7 +569,7 @@ const useForm = () => {
       } else {
         field.ref.value = "";
       }
-      set({ name, value: undefined, type: "values" });
+      set({ name, value: null, type: "values" });
     }
   };
 
@@ -570,7 +580,7 @@ const useForm = () => {
       resetFormField(name, field);
     }
 
-    isSubmitted = false;
+    isSubmitted.current = false;
     formErrors = {};
     triggerReRender();
   };

@@ -47,6 +47,7 @@ const Demo = () => {
     validate("password.0.new.value.0");
   });
 
+  console.log("rerender");
   return (
     <div className={styles.container}>
       <div className={styles.form_field}>
@@ -55,6 +56,9 @@ const Demo = () => {
           contentEditable
           {...register("description", { required: true })}
         ></div>
+        {formErrors?.description && (
+          <span className={styles.error_msg}>{formErrors.description}</span>
+        )}
       </div>
       <div className={styles.form_field}>
         <label>Name</label>
