@@ -53,7 +53,7 @@ const useForm = () => {
   let { current: formValues } = useRef<FormRecord>({});
   let [render, setRender] = useState(0);
   let { current: watcher } = useRef<Watcher>({});
-  let isSubmitted = useRef<boolean>(false);
+  let { current: isSubmitted } = useRef<boolean>(false);
 
   const setFormField: SetFormField = ({ name, ref, options, field }) => {
     if (!formNames.includes(name)) {
@@ -227,7 +227,12 @@ const useForm = () => {
     let value = get(name, "values");
 
     if (isCheckBoxOrRadioInput(ref.type)) {
-      if (field && Array.isArray(field.refs) && field.refs.length > 1) {
+      if (
+        isCheckBox(ref.type) &&
+        field &&
+        Array.isArray(field.refs) &&
+        field.refs.length > 1
+      ) {
         if (Array.isArray(value)) {
           if (ref.checked) {
             value.push(ref.value);
@@ -406,15 +411,24 @@ const useForm = () => {
       ref: (ref) => {
         if (
           !ref ||
-          !(ref instanceof HTMLInputElement || ref instanceof HTMLSelectElement)
+          !(
+            ref instanceof HTMLInputElement ||
+            ref instanceof HTMLSelectElement ||
+            ref?.contentEditable === "true"
+          )
         )
           return;
 
         let field = get(name, "fields");
 
-        setFormField({ name, options, ref: ref as HTMLInputElement, field });
+        setFormField({
+          name,
+          options,
+          ref: ref as HTMLInputElement,
+          field,
+        });
       },
-      onChange: (event) => {
+      onInput: (event) => {
         let ref = event.target as unknown as HTMLInputElement;
         setFieldValue(name, ref);
         let { name: watchName, fn } = watcher;
@@ -429,7 +443,7 @@ const useForm = () => {
           }
         }
 
-        if (!isSubmitted.current) return;
+        if (!isSubmitted) return;
 
         validateField({ name, ref });
       },
@@ -496,8 +510,8 @@ const useForm = () => {
   const handleSubmit: FormSubmit = (onValid, onInvalid) => {
     return (event: Event) => {
       event.preventDefault();
-      if (!isSubmitted.current) {
-        isSubmitted.current = true;
+      if (!isSubmitted) {
+        isSubmitted = true;
       }
       validateAllFields(onValid, onInvalid);
     };
@@ -527,16 +541,16 @@ const useForm = () => {
     return value;
   };
 
-  const resetFormField: ResetFormField = (name, field, formValues) => {
+  const resetFormField: ResetFormField = (name, field) => {
     if (isCheckBoxOrRadioInput(field.ref.type)) {
       if (Array.isArray(field.refs)) {
         for (let ref of field.refs) {
           ref.checked = false;
         }
         if (field.refs.length > 1) {
-          formValues[name] = [];
+          set({ name, value: [], type: "values" });
         } else {
-          formValues[name] = "";
+          set({ name, value: undefined, type: "values" });
         }
       }
     } else {
@@ -545,18 +559,18 @@ const useForm = () => {
       } else {
         field.ref.value = "";
       }
-      formValues[name] = "";
+      set({ name, value: undefined, type: "values" });
     }
   };
 
   const reset = (): void => {
-    for (let name in formFields) {
+    for (let name of formNames) {
       let field = get(name, "fields");
       if (!field) continue;
-      resetFormField(name, field, formValues);
+      resetFormField(name, field);
     }
 
-    isSubmitted.current = false;
+    isSubmitted = false;
     formErrors = {};
     triggerReRender();
   };
@@ -564,7 +578,7 @@ const useForm = () => {
   const resetField: ResetField = (name) => {
     let field = get(name, "fields");
     if (!field) return;
-    resetFormField(name, field, formValues);
+    resetFormField(name, field);
     clearError(name);
   };
 

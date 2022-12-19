@@ -5,9 +5,8 @@ export type FormRegister = (
   options?: FormOptions
 ) =>
   | ({
-      ref: <T>(ref: T) => void;
-      onChange: <T>(event: ChangeEvent<T>) => void;
-      onBlur?: (event: FocusEvent) => void;
+      ref: (ref: any) => void;
+      onInput?: <T>(event: ChangeEvent<T>) => void;
     } & FormRules)
   | undefined;
 
@@ -129,11 +128,7 @@ export type SetValue = (name: string, value: FormValueType) => void;
 
 export type ResetField = (name: string) => void;
 
-export type ResetFormField = (
-  name: string,
-  field: Field,
-  formValues: FormRecord
-) => void;
+export type ResetFormField = (name: string, field: Field) => void;
 
 export type ValidateField = (name: string) => void;
 

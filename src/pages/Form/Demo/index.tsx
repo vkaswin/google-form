@@ -50,6 +50,13 @@ const Demo = () => {
   return (
     <div className={styles.container}>
       <div className={styles.form_field}>
+        <label>Description</label>
+        <div
+          contentEditable
+          {...register("description", { required: true })}
+        ></div>
+      </div>
+      <div className={styles.form_field}>
         <label>Name</label>
         <input
           type="text"

@@ -8,13 +8,18 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+
     input,
     select,
-    textarea {
+    textarea,
+    div[contenteditable] {
       min-height: 40px;
       padding: 0px 10px;
       border: 1px solid #ddd;
       background-color: white;
+    }
+    div[contenteditable] {
+      padding: 10px;
     }
     .options {
       display: flex;
