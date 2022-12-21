@@ -1,12 +1,9 @@
-import { ChangeEvent, ComponentProps } from "react";
-import {
-  FormPages,
-  FormSection as FormSectionType,
-  HandleFormSection,
-} from "types/Form";
+import { ComponentProps } from "react";
+import { FormDetail, FormPages, FormSection } from "types/Form";
+import { useFormContext } from "hooks/useForm";
 import TextEditor from "components/TextEditor";
 
-import styles from "./FormSection.module.scss";
+import styles from "./Section.module.scss";
 
 export type FormSectionProps = {
   selectedId: string | null;
@@ -14,11 +11,10 @@ export type FormSectionProps = {
   sectionIndex: number;
   sectionHeader?: string;
   formPage: FormPages;
-  handleFormSection: HandleFormSection;
 } & ComponentProps<"div"> &
-  Omit<FormSectionType, "fields">;
+  Omit<FormSection, "fields">;
 
-const FormSection = ({
+const Section = ({
   id,
   title,
   className,
@@ -27,10 +23,11 @@ const FormSection = ({
   selectedId,
   description,
   sectionIndex,
-  handleFormSection,
   sectionHeader = "",
   ...props
 }: FormSectionProps) => {
+  const { register } = useFormContext<FormDetail>();
+
   return formPage.isEdit ? (
     <div>
       {sectionHeader.length > 0 && (
@@ -47,25 +44,13 @@ const FormSection = ({
           placeholder="Form title"
           defaultValue={title}
           disabled={disabled}
-          onInput={(e: ChangeEvent<HTMLDivElement>) =>
-            handleFormSection({
-              sectionIndex,
-              key: "title",
-              value: e.target.innerHTML,
-            })
-          }
+          register={register(`sections.${sectionIndex}.title`)}
         />
         <TextEditor
           placeholder="Form description"
           defaultValue={description}
           disabled={disabled}
-          onInput={(e: ChangeEvent<HTMLDivElement>) =>
-            handleFormSection({
-              sectionIndex,
-              key: "description",
-              value: e.target.innerHTML,
-            })
-          }
+          register={register(`sections.${sectionIndex}.description`)}
         />
         <div className={styles.indicator}></div>
         {selectedId === id && <div className={styles.highlight}></div>}
@@ -85,4 +70,4 @@ const FormSection = ({
   );
 };
 
-export default FormSection;
+export default Section;

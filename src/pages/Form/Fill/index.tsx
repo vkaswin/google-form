@@ -1,7 +1,12 @@
 import { Fragment } from "react";
+import Form from "components/Form";
 
 const Fill = () => {
-  return <Fragment></Fragment>;
+  return (
+    <Fragment>
+      <Form />
+    </Fragment>
+  );
 };
 
 export default Fill;

@@ -1,4 +1,10 @@
-import { ChangeEvent, FocusEvent } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  ReactElement,
+  ReactNode,
+  SetStateAction,
+} from "react";
 
 export type FormRegister = (
   name: string,
@@ -46,9 +52,9 @@ export type FormSubmit = (
   onInvalid?: OnInvalid
 ) => (event: any) => void;
 
-export type OnValid = (formValues: FormRecord) => void;
+export type OnValid = (formValues: FormValues) => void;
 
-export type OnInvalid = (errors: FormRecord) => void;
+export type OnInvalid = (errors: FormErrors) => void;
 
 export type FormValidateAllFields = (
   onValid?: OnValid,
@@ -69,11 +75,17 @@ export type Field = {
   refs?: HTMLInputElement[];
 };
 
-export type FormRecord = {
+export type FormValues = {
   [key in string]: any;
 };
 
-export type FormFields = Record<string, Field>;
+export type FormErrors = {
+  [key in string]: any;
+};
+
+export type FormFields = {
+  [key in string]: Field;
+};
 
 type FormValueType =
   | string
@@ -109,22 +121,13 @@ export type SetFormField = (data: {
 
 type FormTypes = "fields" | "errors" | "values";
 
-export type FormSetter = (data: {
-  name: string;
-  value?: any;
-  type: FormTypes;
-  remove?: boolean;
-  render?: boolean;
-}) => void;
+export type FormSetter = (name: string, value: any, fields: any) => void;
 
-export type FormGetter = <T extends FormTypes>(
-  name: string,
-  type: T
-) => T extends "fields" ? Field | undefined : any;
+export type FormGetter = (name: string, fields: any) => any;
 
-export type GetValue = (name: string) => FormValueType;
+export type GetValue = (name: string) => unknown;
 
-export type SetValue = (name: string, value: FormValueType) => void;
+export type SetValue = (name: string, value: any) => void;
 
 export type ResetField = (name: string) => void;
 
@@ -140,3 +143,34 @@ export type FormErrorTypes =
   | "max"
   | "pattern"
   | "validate";
+
+export type Reset = () => void;
+
+export type SetFormValues<T> = (values: T) => void;
+
+export type ClearValue = (name: string) => void;
+
+export type FormUnSet = (name: string, fields: any) => void;
+
+export type FromProvider = <T>(
+  props: T & { children: ReactNode }
+) => ReactElement;
+
+export type FormContext = <T>() => UseForm<T>;
+
+export type UseForm<T> = {
+  register: FormRegister;
+  setValue: SetValue;
+  getValue: GetValue;
+  watch: Watch;
+  reset: Reset;
+  resetField: ResetField;
+  setError: SetError;
+  clearError: ClearError;
+  validate: ValidateField;
+  setFormValues: Dispatch<SetStateAction<T>>;
+  handleSubmit: FormSubmit;
+  clearValue: ClearValue;
+  formValues: Readonly<T>;
+  formErrors: Readonly<T>;
+};

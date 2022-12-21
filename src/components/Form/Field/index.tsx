@@ -1,19 +1,10 @@
-import {
-  ChangeEvent,
-  ComponentProps,
-  Fragment,
-  ReactNode,
-  useMemo,
-  FocusEvent,
-} from "react";
+import { ComponentProps, Fragment, ReactNode, useMemo } from "react";
 import {
   FormTypeOption,
   FormField as FormFieldType,
-  FormMoreOption,
-  FormIndexes,
-  HandleFormAction,
-  HandleFormChange,
   FormPages,
+  FormIndexes,
+  FormDetail,
 } from "types/Form";
 import TextArea from "components/TextArea";
 import Input from "components/Input";
@@ -24,17 +15,17 @@ import ToolTip from "components/ToolTip";
 import MutiOptionField from "./MutiOptionField";
 import FormType from "./FormType";
 import Switch from "components/Switch";
+import { shuffleArray } from "helpers/index";
+import { useFormContext } from "hooks/useForm";
 
-import styles from "./FormCard.module.scss";
+import styles from "./Field.module.scss";
 
 type FormCardProps = {
   selectedId: string | null;
   field: FormFieldType;
   formPage: FormPages;
-  indexes: Omit<FormIndexes, "optionIndex">;
-  handleFormAction: HandleFormAction;
-  handleFormChange: HandleFormChange;
-} & ComponentProps<"div">;
+} & FormIndexes &
+  ComponentProps<"div">;
 
 let formTypes: FormTypeOption[] = [
   { type: "input", icon: "bx-text", label: "Short answer" },
@@ -50,7 +41,7 @@ let formTypes: FormTypeOption[] = [
   { type: "file", icon: "bx-cloud-upload", label: "File Upload" },
 ];
 
-let moreOptions: FormMoreOption[] = [
+let moreOptions = [
   {
     label: "Description",
     option: "description",
@@ -61,104 +52,84 @@ let moreOptions: FormMoreOption[] = [
   },
 ];
 
-const FormField = ({
+const Field = ({
   field,
   selectedId,
-  indexes,
+  sectionIndex,
+  fieldIndex,
   formPage,
   className,
-  handleFormAction,
-  handleFormChange,
   ...props
 }: FormCardProps) => {
+  const { register, clearValue, setValue, formValues } =
+    useFormContext<FormDetail>();
+
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
     return formTypes.find((option) => {
       return option.type === field.type;
     });
   }, [field.type]);
 
-  let component = useMemo<ReactNode>(
-    () => {
-      switch (field.type) {
-        case "checkbox":
-          return (
-            <MutiOptionField
-              field={field}
-              formPage={formPage}
-              indexes={indexes}
-              handleFormChange={handleFormChange}
-              handleFormAction={handleFormAction}
-            />
-          );
+  let component = useMemo<ReactNode>(() => {
+    let fieldRef = register(
+      `sections.${sectionIndex}.fields.${fieldIndex}.value`
+    );
+    if (
+      field.type === "checkbox" ||
+      field.type === "radio" ||
+      field.type === "dropdown"
+    ) {
+      return (
+        <MutiOptionField
+          field={field}
+          formPage={formPage}
+          sectionIndex={sectionIndex}
+          fieldIndex={fieldIndex}
+        />
+      );
+    } else if (field.type === "input") {
+      <Input
+        placeholder="Short answer text"
+        disabled={formPage.isEdit}
+        defaultValue={field.value}
+        register={fieldRef}
+      />;
+    } else if (field.type === "textarea") {
+      <TextArea
+        placeholder="Long answer text"
+        defaultValue={field.value}
+        disabled={formPage.isEdit}
+        register={fieldRef}
+      />;
+    } else if (field.type === "date") {
+      return <DatePicker disabled={formPage.isEdit} />;
+    } else if (field.type === "file") {
+      return <div>File Input</div>;
+    } else {
+      return null;
+    }
+  }, [sectionIndex, fieldIndex, formPage]);
 
-        case "dropdown":
-          return (
-            <MutiOptionField
-              field={field}
-              formPage={formPage}
-              indexes={indexes}
-              handleFormChange={handleFormChange}
-              handleFormAction={handleFormAction}
-            />
-          );
-        case "radio":
-          return (
-            <MutiOptionField
-              field={field}
-              formPage={formPage}
-              indexes={indexes}
-              handleFormChange={handleFormChange}
-              handleFormAction={handleFormAction}
-            />
-          );
-        case "input":
-          return (
-            <Input
-              placeholder="Short answer text"
-              disabled={formPage.isEdit}
-              defaultValue={field.value}
-              onChange={(e) =>
-                handleFormChange({
-                  indexes,
-                  type: field.type,
-                  key: "value",
-                  value: e.target.value,
-                })
-              }
-            />
-          );
-        case "textarea":
-          return (
-            <TextArea
-              placeholder="Long answer text"
-              defaultValue={field.value}
-              disabled={formPage.isEdit}
-              onChange={(e) =>
-                handleFormChange({
-                  indexes,
-                  type: field.type,
-                  key: "value",
-                  value: e.target.value,
-                })
-              }
-            />
-          );
-        case "file":
-          return <div>File Input</div>;
-        case "date":
-          return <DatePicker disabled={formPage.isEdit} />;
-        default:
-          return null;
-      }
-    },
-    // eslint-disable-next-line
-    [indexes, formPage]
-  );
+  const handleClick = (option: string) => {
+    if (option === "description") {
+      setValue(
+        `sections.${sectionIndex}.fields.${fieldIndex}.description.enabled`,
+        !field.description.enabled
+      );
+    } else if (option === "shuffle") {
+      if (!field.options) return;
+
+      setValue(
+        `sections.${sectionIndex}.fields.${fieldIndex}.options`,
+        shuffleArray(field.options)
+      );
+    }
+  };
 
   return (
     <div
       className={`${styles.container} ${className || ""}`.trim()}
-      {...(!formPage.isEdit && { "data-error": field.error })}
+      {...(!formPage.isEdit && { "data-error": false })}
       {...props}
     >
       <div className={styles.wrapper}>
@@ -173,27 +144,23 @@ const FormField = ({
                   : ""
               }`}
               disabled={!formPage.isEdit}
-              onInput={(e: ChangeEvent<HTMLDivElement>) =>
-                handleFormChange({
-                  indexes,
-                  type: "texteditor",
-                  key: "question",
-                  value: e.target.innerHTML,
-                })
-              }
+              register={register(
+                `sections.${sectionIndex}.fields.${fieldIndex}.question`
+              )}
             />
             {selectedId === field.id && (
               <FormType
                 id={field.id}
                 options={formTypes}
-                indexes={indexes}
+                sectionIndex={sectionIndex}
+                fieldIndex={fieldIndex}
                 selectedOption={selectedOption}
-                handleFormAction={handleFormAction}
+                onChange={setValue}
               />
             )}
           </div>
         </Fragment>
-        {field.description.enabled &&
+        {field?.description?.enabled &&
           (formPage.isEdit ? (
             <div className={styles.field_description}>
               <TextEditor
@@ -201,14 +168,9 @@ const FormField = ({
                 placeholder="Description"
                 defaultValue={field.description.value}
                 disabled={!formPage.isEdit}
-                onInput={(e: ChangeEvent<HTMLDivElement>) =>
-                  handleFormChange({
-                    indexes,
-                    type: field.type,
-                    key: "description",
-                    value: e.target.innerHTML,
-                  })
-                }
+                register={register(
+                  `sections.${sectionIndex}.fields.${fieldIndex}.description`
+                )}
               />
             </div>
           ) : (
@@ -219,7 +181,7 @@ const FormField = ({
         <div className={styles.field} data-type={field.type}>
           {component}
         </div>
-        {!formPage.isEdit && field.error && (
+        {!formPage.isEdit && false && (
           <div className={styles.error_msg}>
             <i className="bx-error-circle"></i>
             <span>This is a required field</span>
@@ -231,21 +193,30 @@ const FormField = ({
               <i
                 id={`trash-${field.id}`}
                 className="bx-trash"
-                onClick={() => handleFormAction("delete-form", indexes)}
+                onClick={() =>
+                  clearValue(`sections.${sectionIndex}.fields.${fieldIndex}`)
+                }
               ></i>
               <ToolTip selector={`#trash-${field.id}`}>Trash</ToolTip>
               <i
                 id={`duplicate-${field.id}`}
                 className="bx-duplicate"
-                onClick={() => handleFormAction("duplicate-form", indexes)}
+                onClick={() =>
+                  setValue(
+                    `sections.${sectionIndex}.fields.${formValues?.sections?.[sectionIndex].fields?.length}`,
+                    field
+                  )
+                }
               ></i>
               <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
               <div className={styles.split}></div>
               <Switch
                 id={field.id}
                 label="Required"
-                checked={field.required}
-                onChange={() => handleFormAction("required", indexes)}
+                defaultChecked={field.required}
+                register={register(
+                  `sections.${sectionIndex}.fields.${fieldIndex}.required`
+                )}
               />
               <div
                 id={`more-options-${field.id}`}
@@ -272,9 +243,7 @@ const FormField = ({
                 return (
                   <DropDown.Item
                     key={index}
-                    onClick={() =>
-                      handleFormAction("more-option", indexes, { option })
-                    }
+                    onClick={() => handleClick(option)}
                   >
                     {label}
                   </DropDown.Item>
@@ -297,4 +266,4 @@ const FormField = ({
   );
 };
 
-export default FormField;
+export default Field;

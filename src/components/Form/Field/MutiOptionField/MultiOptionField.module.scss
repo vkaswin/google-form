@@ -4,8 +4,13 @@
   gap: 15px;
   .option_field {
     display: flex;
-    align-items: center;
-    gap: 15px;
+    flex-direction: column;
+    gap: 10px;
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
     i {
       &:first-child {
         color: #c5c5c5;
@@ -67,6 +72,10 @@
             color: #1a73e8;
           }
         }
+      }
+      .error_msg {
+        color: red;
+        font-size: 14px;
       }
     }
   }

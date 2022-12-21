@@ -1,3 +1,6 @@
+import { DragEvent, TouchEvent, Dispatch, SetStateAction } from "react";
+import { UseForm } from "./UseForm";
+
 export type FormDetail = {
   theme: string;
   sections: FormSection[];
@@ -10,51 +13,7 @@ export type FormSection = {
   fields: FormField[];
 };
 
-export type HandleFormChange = (data: {
-  key: FormKeys;
-  value: string;
-  type: FormType;
-  checked?: boolean;
-  indexes?: FormIndexes;
-}) => void;
-
-export type HandleFormAction = (
-  action: FormAction,
-  indexes: FormIndexes,
-  options?: {
-    type?: FormType;
-    theme?: FormTheme;
-    option?: "description" | "shuffle";
-  }
-) => void;
-
-export type HandleFormError = (field: FormField) => void;
-
-export type HandleFormSection = (data: {
-  key: "title" | "description";
-  value: string;
-  sectionIndex: number;
-}) => void;
-
-export type FormAction =
-  | "theme"
-  | "required"
-  | "delete-option"
-  | "type"
-  | "add-option"
-  | "other"
-  | "duplicate-form"
-  | "delete-form"
-  | "focus-form"
-  | "more-option"
-  | "blur";
-
 export type FormTheme = "dark" | "light";
-
-export type FormMoreOption = {
-  label: string;
-  option: "description" | "shuffle";
-};
 
 export type FormType =
   | "checkbox"
@@ -76,13 +35,11 @@ export type FormField = {
     value: string;
   };
   required?: boolean;
-  error?: boolean;
   options?: string[];
   other?: {
     enabled: boolean;
     checked: boolean;
     value: string;
-    error: boolean;
   };
 };
 
@@ -101,7 +58,6 @@ export type FormTypeOption = {
 export type FormIndexes = {
   sectionIndex: number;
   fieldIndex: number;
-  optionIndex?: number;
 };
 
 export type FormPages = {
@@ -120,4 +76,45 @@ export type FormDragValue = {
     draggableId: number | null;
   };
   dragElement: HTMLElement | null;
+};
+
+export type HandleFormNavigate = (type: "back" | "next") => void;
+
+export type HandleDragOver = (e: DragEvent<HTMLDivElement>) => void;
+
+export type HandleDrop = () => void;
+
+export type HandleDragLeave = <T>(
+  event: DragEvent<T> | TouchEvent<T>,
+  droppableId: number,
+  draggableId: number
+) => void;
+
+export type HandleDragEnter = <T>(
+  event: DragEvent<T> | TouchEvent<T>,
+  droppableId: number,
+  draggableId: number
+) => void;
+
+export type HandleDragStart = (
+  droppableId: number,
+  draggableId: number
+) => void;
+
+export type HandleDragEnd = () => void;
+
+export type FormContext = {
+  form: UseForm<FormDetail>;
+  selectedId: string | null;
+  activeSection: number;
+  formPage: FormPages;
+  setActiveSection: Dispatch<SetStateAction<number>>;
+  setSelectedId: React.Dispatch<SetStateAction<string | null>>;
+  handleFormNavigate: HandleFormNavigate;
+  handleDragStart: HandleDragStart;
+  handleDragEnter: HandleDragEnter;
+  handleDragEnd: HandleDragEnd;
+  handleDragOver: HandleDragOver;
+  handleDragLeave: HandleDragLeave;
+  handleDrop: HandleDrop;
 };

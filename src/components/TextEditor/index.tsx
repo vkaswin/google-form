@@ -5,11 +5,13 @@ import {
   useEffect,
   Fragment,
 } from "react";
+import { FormRegister } from "types/UseForm";
 
 import styles from "./TextEditor.module.scss";
 
 type TextEditorOwnProps<E extends ElementType> = {
   as?: E;
+  register?: ReturnType<FormRegister> | {};
   disabled?: boolean;
 };
 
@@ -71,19 +73,11 @@ const TextEditor = <E extends ElementType = "div">({
   disabled = false,
   defaultValue = "",
   placeholder = "Enter Here",
+  register = {},
   ...props
 }: TextEditorProps<E>) => {
   let editorRef = useRef<HTMLDivElement>(null);
   let toolBarRef = useRef<HTMLUListElement>(null);
-  let inputRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (disabled) return;
-
-    if (defaultValue.length > 0 && inputRef.current) {
-      inputRef.current.innerHTML = defaultValue;
-    }
-  }, []);
 
   const handleFocus = (): void => {
     editorRef.current?.classList.remove(styles.blur);
@@ -170,10 +164,11 @@ const TextEditor = <E extends ElementType = "div">({
           onBlur={handleBlur}
         >
           <Component
-            ref={inputRef}
             className={styles.editor}
             contentEditable={true}
             placeholder={placeholder}
+            dangerouslySetInnerHTML={{ __html: defaultValue }}
+            {...register}
             {...props}
           />
           <ul ref={toolBarRef} className={styles.toolbar}>

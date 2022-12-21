@@ -1,9 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef, useState, createContext, useContext } from "react";
 import {
   FormErrorTypes,
-  FormFields,
   FormGetter,
-  FormRecord,
   ClearError,
   Watch,
   Watcher,
@@ -22,6 +20,15 @@ import {
   ValidateField,
   FormValidateAllFields,
   Field,
+  UseForm,
+  Reset,
+  FormErrors,
+  FormValues,
+  ClearValue,
+  FormFields,
+  FormUnSet,
+  FromProvider as FormProviderType,
+  FormContext as FormContextType,
 } from "types/UseForm";
 
 const isCheckBoxOrRadioInput = (type: string): boolean => {
@@ -50,14 +57,18 @@ const defaultErrors = {
   validate: `Validation failed for this field`,
 };
 
-const useForm = () => {
-  let { current: formFields } = useRef<FormFields>({});
-  let { current: formErrors } = useRef<FormRecord>({});
+export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
   let { current: formNames } = useRef<string[]>([]);
-  let { current: formValues } = useRef<FormRecord>({});
-  let [render, setRender] = useState(0);
+
+  let { current: formFields } = useRef<FormFields>({});
+
+  let [formValues, setFormValues] = useState<T>({} as T);
+
+  let [formErrors, setFormErrors] = useState<T>({} as T);
+
   let { current: watcher } = useRef<Watcher>({});
-  let isSubmitted = useRef<boolean>(false);
+
+  let isSubmitted = useRef(false);
 
   const setFormField: SetFormField = ({ name, ref, options, field }) => {
     if (!formNames.includes(name)) {
@@ -89,127 +100,59 @@ const useForm = () => {
       formField = { ...field, refs: [...field.refs, ref] };
     }
 
-    let value: any;
-
-    if (!field) {
-      if (isCheckBoxOrRadioInput(ref.type)) {
-        value = ref.defaultChecked ? ref.value || "" : null;
-      } else {
-        value = ref.defaultValue || ref.value || null;
-      }
-      set({ name, value, type: "values" });
-    } else if (
-      isCheckBox(ref.type) &&
-      formField &&
-      Array.isArray(formField.refs)
-    ) {
-      value = get(name, "values");
-      let defaultValue = ref.defaultChecked ? ref.defaultValue || "" : null;
-      if (Array.isArray(value)) {
-        if (defaultValue !== null) {
-          value.push(defaultValue);
-        }
-      } else {
-        value = value && value.length > 0 ? [value] : [];
-        if (defaultValue !== null) {
-          value.push(defaultValue);
-        }
-      }
-      set({ name, value, type: "values" });
-    }
-
     if (!formField) return;
 
-    set({ name, value: formField, type: "fields" });
+    set(name, formField, formFields);
   };
 
-  const set: FormSetter = ({
-    name,
-    value,
-    type,
-    remove = false,
-    render = false,
-  }) => {
-    let data: FormRecord;
-
-    switch (type) {
-      case "fields":
-        data = formFields;
-        break;
-      case "errors":
-        data = formErrors;
-        break;
-      case "values":
-        data = formValues;
-        break;
-      default:
-        return;
-    }
+  const set: FormSetter = (name, value, fields) => {
+    if (typeof fields === "undefined") return;
 
     if (name.includes(".")) {
       let keys = name.split(".");
       let key: string | number | undefined;
       name = keys[0];
 
-      let obj: FormRecord = {
+      let obj = {
         [name]: isNaN(parseInt(keys[1]))
-          ? { ...data[name] }
-          : Array.isArray(data[name])
-          ? data[name]
+          ? { ...fields[name] }
+          : Array.isArray(fields[name])
+          ? fields[name]
           : [],
       };
-      let currentObj: FormRecord = obj[name];
+      let temp = obj[name];
       keys.shift();
       key = keys[0];
 
       while (keys.length > 1) {
         key = keys[0];
         key = isNaN(parseInt(key)) ? key : parseInt(key);
-        if (typeof currentObj[key] === "undefined") {
-          currentObj[key] = isNaN(parseInt(keys[1])) ? {} : [];
+        if (typeof temp[key] === "undefined") {
+          temp[key] = isNaN(parseInt(keys[1])) ? {} : [];
         }
-        currentObj = currentObj[key];
+        temp = temp[key];
         keys.shift();
         key = keys[0];
       }
 
       let keyName = isNaN(parseInt(key)) ? key : parseInt(key);
-      if (remove && typeof currentObj[keyName] !== "undefined") {
-        delete currentObj[keyName];
-      } else {
-        currentObj[keyName] = value;
-      }
-      data[name] = obj[name];
+      temp[keyName] = value;
+      fields[name] = obj[name];
     } else {
-      data[name] = value;
+      fields[name] = value;
     }
-
-    if (render) triggerReRender();
   };
 
-  const get: FormGetter = (name, type) => {
-    let data: FormRecord;
-    switch (type) {
-      case "fields":
-        data = formFields;
-        break;
-      case "errors":
-        data = formErrors;
-        break;
-      case "values":
-        data = formValues;
-        break;
+  const get: FormGetter = (name, fields) => {
+    if (typeof fields === "undefined") return;
 
-      default:
-        return;
-    }
     if (name.includes(".")) {
       let value: any;
       let keys = name.split(".");
       let key = keys.shift();
 
       if (key) {
-        value = data[key];
+        value = fields[key];
         if (typeof value === "undefined") return;
       }
 
@@ -220,15 +163,16 @@ const useForm = () => {
 
       return value;
     } else {
-      return data[name];
+      return fields[name];
     }
   };
 
   const setFieldValue: FormValueSetter = (name, ref) => {
-    let field = get(name, "fields");
-    let value = get(name, "values");
+    let field = get(name, formFields);
+    let value = get(name, formValues);
 
     if (isCheckBoxOrRadioInput(ref.type)) {
+      let fieldValue = ref.value || ref.checked;
       if (
         isCheckBox(ref.type) &&
         field &&
@@ -237,18 +181,18 @@ const useForm = () => {
       ) {
         if (Array.isArray(value)) {
           if (ref.checked) {
-            value.push(ref.value);
+            value.push(fieldValue);
           } else {
-            value.splice(value.indexOf(ref.value), 1);
+            value.splice(value.indexOf(fieldValue), 1);
           }
         } else {
-          value = [ref.value];
+          value = [fieldValue];
         }
       } else {
         if (ref.checked) {
-          value = ref.value;
+          value = fieldValue;
         } else {
-          value = "";
+          value = ref.checked;
         }
       }
     } else if (isFileInput(ref.type)) {
@@ -262,15 +206,15 @@ const useForm = () => {
       value = ref.value;
     }
 
-    set({ name, value, type: "values" });
+    set(name, value, formValues);
   };
 
   const validateField: FormValidate = ({ name, ref, render = true }) => {
-    let prevError = get(name, "errors");
+    let prevError = get(name, formErrors);
 
     if (!ref) return;
 
-    let field = get(name, "fields");
+    let field = get(name, formFields);
 
     if (!field) return;
 
@@ -284,7 +228,7 @@ const useForm = () => {
       isCheckBoxOrRadioInput(ref.type) ||
       isContendEditable(ref.contentEditable)
     ) {
-      let value = get(name, "values");
+      let value = get(name, formValues);
 
       if (typeof value === "undefined") return;
 
@@ -349,7 +293,7 @@ const useForm = () => {
       let validateFn =
         typeof validate === "function" ? validate : validate?.value;
       if (typeof validateFn === "function") {
-        let value = get(name, "values");
+        let value = get(name, formValues);
         if (validateFn(value)) {
           error = typeof validate === "object" ? validate.message : undefined;
           errorType = "validate";
@@ -361,15 +305,12 @@ const useForm = () => {
 
     if (typeof error === "undefined") {
       if (typeof prevError !== "undefined") {
-        set({ name, type: "errors", remove: true, render });
+        set(name, error, formErrors);
+        render && setFormErrors({ ...formErrors });
       }
     } else if (prevError !== error) {
-      set({
-        name,
-        value: error,
-        type: "errors",
-        render,
-      });
+      set(name, error, formErrors);
+      render && setFormErrors({ ...formErrors });
     }
   };
 
@@ -419,17 +360,9 @@ const useForm = () => {
 
     return {
       ref: (ref) => {
-        if (
-          !ref ||
-          !(
-            ref instanceof HTMLInputElement ||
-            ref instanceof HTMLSelectElement ||
-            ref?.contentEditable === "true"
-          )
-        )
-          return;
+        if (!ref) return;
 
-        let field = get(name, "fields");
+        let field = get(name, formFields);
 
         setFormField({
           name,
@@ -448,12 +381,12 @@ const useForm = () => {
               ? watchName.includes(name)
               : watchName === name
           ) {
-            let value = get(name, "values");
+            let value = get(name, formValues);
             fn(name, event, value);
           }
         }
 
-        if (!isSubmitted.current) return;
+        // if (!isSubmitted.current) return;
 
         validateField({ name, ref });
       },
@@ -461,7 +394,7 @@ const useForm = () => {
     };
   };
 
-  const focusField = (errors: FormRecord) => {
+  const focusField = (errors: FormErrors) => {
     let errorKeys = Object.keys(errors);
 
     if (errorKeys.length === 0) return;
@@ -477,7 +410,7 @@ const useForm = () => {
 
     if (!fieldName) return;
 
-    let field = get(fieldName, "fields");
+    let field = get(fieldName, formFields);
 
     if (!field) return;
 
@@ -498,7 +431,7 @@ const useForm = () => {
     onInvalid
   ): void => {
     for (let name of formNames) {
-      let field = get(name, "fields");
+      let field = get(name, formFields);
       if (typeof field === "undefined") continue;
       validateField({ name, ref: field.ref, render: false });
     }
@@ -513,8 +446,6 @@ const useForm = () => {
     // } else {
     //   if (typeof onValid === "function") onValid(formValues);
     // }
-
-    triggerReRender();
   };
 
   const handleSubmit: FormSubmit = (onValid, onInvalid) => {
@@ -533,21 +464,27 @@ const useForm = () => {
   };
 
   const setError: SetError = (name, value) => {
-    set({ name, value, type: "errors", render: true });
+    let error = get(name, formErrors);
+    if (typeof error === "undefined") return;
+    set(name, value, formErrors);
+    setFormErrors({ ...formErrors });
   };
 
   const clearError: ClearError = (name) => {
-    if (typeof get(name, "errors") === "undefined") return;
-    set({ name, type: "errors", remove: true, render: true });
+    let error = get(name, formErrors);
+    if (typeof error === "undefined") return;
+    unset(name, formErrors);
+    setFormErrors({ ...formErrors });
   };
 
   const setValue: SetValue = (name, value) => {
-    set({ name, value, type: "values" });
+    set(name, value, formValues);
+    setFormValues({ ...formValues });
   };
 
   const getValue: GetValue = (name) => {
-    let value = get(name, "values");
-    if (typeof value === "undefined") return null;
+    let value = get(name, formValues);
+    if (typeof value === "undefined") return;
     return value;
   };
 
@@ -558,9 +495,9 @@ const useForm = () => {
           ref.checked = false;
         }
         if (field.refs.length > 1) {
-          set({ name, value: [], type: "values" });
+          set(name, [], formValues);
         } else {
-          set({ name, value: null, type: "values" });
+          set(name, null, formValues);
         }
       }
     } else {
@@ -569,37 +506,72 @@ const useForm = () => {
       } else {
         field.ref.value = "";
       }
-      set({ name, value: null, type: "values" });
+      set(name, null, formValues);
     }
   };
 
-  const reset = (): void => {
+  const reset: Reset = () => {
     for (let name of formNames) {
-      let field = get(name, "fields");
+      let field = get(name, formFields);
       if (!field) continue;
       resetFormField(name, field);
     }
 
     isSubmitted.current = false;
-    formErrors = {};
-    triggerReRender();
+    setFormErrors({} as T);
   };
 
   const resetField: ResetField = (name) => {
-    let field = get(name, "fields");
+    let field = get(name, formFields);
     if (!field) return;
     resetFormField(name, field);
     clearError(name);
   };
 
   const validate: ValidateField = (name) => {
-    let field = get(name, "fields");
+    let field = get(name, formFields);
     if (!field) return;
     validateField({ name, ref: field.ref, render: true });
   };
 
-  const triggerReRender = () => {
-    setRender(render + 1);
+  const clearValue: ClearValue = (name) => {
+    let field = get(name, formFields);
+    if (!field) return;
+    unset(name, formFields);
+    unset(name, formErrors);
+    unset(name, formValues);
+    setFormValues({ ...formValues });
+  };
+
+  const unset: FormUnSet = (name: string, fields: any) => {
+    if (typeof fields === "undefined") return;
+
+    if (!name.includes(".")) {
+      return;
+    }
+
+    let value: any;
+    let keys = name.split(".");
+    let initialKey = keys.shift();
+    let lastKey = keys.pop();
+
+    if (initialKey) {
+      value = fields[initialKey];
+      if (typeof value === "undefined") return;
+    }
+
+    for (let key of keys) {
+      if (typeof value[key] === "undefined") return;
+      value = value[key];
+    }
+
+    if (!lastKey) return;
+
+    if (Array.isArray(value)) {
+      value.splice(parseInt(lastKey), 1);
+    } else if (typeof value === "object") {
+      delete value[lastKey];
+    }
   };
 
   return {
@@ -613,9 +585,19 @@ const useForm = () => {
     clearError,
     resetField,
     handleSubmit,
-    formErrors,
+    setFormValues,
+    clearValue,
     formValues,
+    formErrors,
   };
 };
 
-export default useForm;
+const FormContext = createContext({} as any);
+
+export const FromProvider: FormProviderType = ({ children, ...props }) => {
+  return <FormContext.Provider value={props}>{children}</FormContext.Provider>;
+};
+
+export const useFormContext: FormContextType = () => {
+  return useContext(FormContext);
+};

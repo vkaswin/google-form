@@ -1,21 +1,7 @@
 import { useState } from "react";
-import useForm from "hooks/useForm";
+import { useForm } from "hooks/useForm";
 
 import styles from "./Demo.module.scss";
-
-type FormValues = {
-  name: string;
-  dob: string;
-  hobbies: string[];
-  gender: string;
-  resume: FileList | null;
-  terms: boolean;
-  state: string;
-  password: string;
-  confirmPassword: string;
-  percentage: string;
-  emailId: string;
-};
 
 const Demo = () => {
   const {

@@ -14,7 +14,6 @@ export const formData: FormDetail = {
           type: "input",
           value: "",
           required: true,
-          error: false,
           description: {
             enabled: false,
             value: "",
@@ -23,10 +22,9 @@ export const formData: FormDetail = {
         {
           id: crypto.randomUUID(),
           question: "Loreum Ipsum",
-          type: "file",
+          type: "textarea",
           value: "",
           required: true,
-          error: false,
           description: {
             enabled: false,
             value: "",
@@ -38,12 +36,10 @@ export const formData: FormDetail = {
           type: "radio",
           value: "",
           required: true,
-          error: false,
           options: ["Male", "Female"],
           other: {
             enabled: true,
             checked: false,
-            error: false,
             value: "",
           },
           description: {
@@ -57,12 +53,10 @@ export const formData: FormDetail = {
           type: "checkbox",
           value: [],
           required: true,
-          error: false,
           options: ["Football", "Basketball", "Cricket"],
           other: {
             enabled: true,
             checked: false,
-            error: false,
             value: "",
           },
           description: {
@@ -76,7 +70,6 @@ export const formData: FormDetail = {
           type: "dropdown",
           value: "",
           required: true,
-          error: false,
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
           description: {
             enabled: false,
@@ -96,7 +89,6 @@ export const formData: FormDetail = {
           type: "input",
           value: "",
           required: false,
-          error: false,
           description: {
             enabled: true,
             value: "",
@@ -105,10 +97,9 @@ export const formData: FormDetail = {
         {
           id: crypto.randomUUID(),
           question: "Loreum Ipsum",
-          type: "file",
+          type: "input",
           value: "",
           required: true,
-          error: false,
           description: {
             enabled: false,
             value: "",
@@ -120,12 +111,10 @@ export const formData: FormDetail = {
           type: "radio",
           value: "",
           required: true,
-          error: true,
           options: ["Male", "Female"],
           other: {
             enabled: true,
             checked: false,
-            error: false,
             value: "",
           },
           description: {
@@ -139,12 +128,10 @@ export const formData: FormDetail = {
           type: "checkbox",
           value: [],
           required: true,
-          error: false,
           options: ["Football", "Basketball", "Cricket"],
           other: {
             enabled: true,
             checked: false,
-            error: false,
             value: "",
           },
           description: {
@@ -158,7 +145,6 @@ export const formData: FormDetail = {
           type: "dropdown",
           value: "",
           required: true,
-          error: false,
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
           description: {
             enabled: false,

@@ -1,13 +1,17 @@
 import { ComponentProps, FocusEvent, useRef } from "react";
+import { FormRegister } from "types/UseForm";
 
 import styles from "./Input.module.scss";
 
-type InputProps = {} & ComponentProps<"input">;
+type InputProps = {
+  register?: ReturnType<FormRegister> | {};
+} & ComponentProps<"input">;
 
 const Input = ({
   className,
   type = "text",
   placeholder = "Enter Here",
+  register = {},
   onFocus,
   onBlur,
   ...props
@@ -34,6 +38,7 @@ const Input = ({
         className={`${styles.field} ${className || ""}`.trim()}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        {...register}
         {...props}
       />
     </div>

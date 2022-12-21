@@ -26,12 +26,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   let [user, setUser] = useState<User | null>(null);
   let cookie = cookies();
 
-  useEffect(
-    () => {
-      getUser();
-    }, // eslint-disable-next-line
-    []
-  );
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const getUser = (): void => {
     let token = cookie.get("auth_token");
