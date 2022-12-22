@@ -6,21 +6,21 @@ import CheckBox from "components/CheckBox";
 import Select from "components/Select";
 import { useFormContext } from "hooks/useForm";
 
-import styles from "./MultiOptionField.module.scss";
+import styles from "./MultiOptions.module.scss";
 
-type MutiOptionFieldProps = {
+type MultiOptionsProps = {
   field: FormField;
   formPage: FormPages;
 } & FormIndexes;
 
 type DropDownOption = { label: string; value: string };
 
-const MutiOptionField = ({
-  field: { id, type, value, description, question, options, other, required },
+const MultiOptions = ({
+  field: { id, type, value, options, other },
   formPage,
   sectionIndex,
   fieldIndex,
-}: MutiOptionFieldProps) => {
+}: MultiOptionsProps) => {
   const { register, setValue, clearValue, formErrors } =
     useFormContext<FormDetail>();
 
@@ -225,4 +225,4 @@ const MutiOptionField = ({
   );
 };
 
-export default MutiOptionField;
+export default MultiOptions;

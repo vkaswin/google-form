@@ -7,8 +7,9 @@ import {
   Dispatch,
   SetStateAction,
 } from "react";
-import { User } from "types/User";
 import { cookies } from "helpers";
+
+type User = {};
 
 type AuthContextType = {
   user: User | null;

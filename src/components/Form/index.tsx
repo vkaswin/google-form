@@ -21,7 +21,6 @@ import {
 } from "types/Form";
 import Section from "./Section";
 import Field from "./Field";
-import { useAuth } from "hooks/useAuth";
 import { useForm, FromProvider } from "hooks/useForm";
 import { formData } from "./formData";
 
@@ -46,13 +45,13 @@ type FormProps = {
 const Form = ({ children }: FormProps) => {
   const { formId } = useParams<FormParams>();
 
-  const { user } = useAuth();
-
   const { pathname } = useLocation();
 
   let [selectedId, setSelectedId] = useState<string | null>(null);
 
   let [activeSection, setActiveSection] = useState<number>(0);
+
+  let [dragId, setDragId] = useState<string | null>(null);
 
   const formPage = useMemo<FormPages>(() => {
     return {
@@ -128,6 +127,7 @@ const Form = ({ children }: FormProps) => {
     let element = document.querySelector(
       `[data-draggable-id='${draggableId}'][data-droppable-id='${droppableId}']`
     ) as HTMLElement;
+    console.log(element);
     dragRef.current = {
       ...dragRef.current,
       destination: { droppableId, draggableId },
@@ -140,6 +140,7 @@ const Form = ({ children }: FormProps) => {
     draggableId
   ) => {
     event.stopPropagation();
+    console.log(droppableId, draggableId);
   };
 
   const handleDragEnd = () => {
@@ -220,7 +221,6 @@ const Form = ({ children }: FormProps) => {
               >
                 {fields.length > 0 ? (
                   fields.map((field, fieldIndex) => {
-                    let indexes = { fieldIndex, sectionIndex };
                     return (
                       <Field
                         key={field.id}
@@ -228,11 +228,12 @@ const Form = ({ children }: FormProps) => {
                         tabIndex={-1}
                         sectionIndex={sectionIndex}
                         fieldIndex={fieldIndex}
-                        draggable={true}
+                        draggable={dragId === field.id}
                         formPage={formPage}
                         selectedId={selectedId}
                         data-draggable-id={fieldIndex}
                         data-droppable-id={sectionIndex}
+                        setDragId={setDragId}
                         onDragStart={() =>
                           handleDragStart(sectionIndex, fieldIndex)
                         }

@@ -1,10 +1,4 @@
-import {
-  ElementType,
-  useRef,
-  ComponentProps,
-  useEffect,
-  Fragment,
-} from "react";
+import { ElementType, useRef, ComponentProps, Fragment } from "react";
 import { FormRegister } from "types/UseForm";
 
 import styles from "./TextEditor.module.scss";

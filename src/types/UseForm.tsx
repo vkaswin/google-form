@@ -54,7 +54,7 @@ export type FormSubmit = (
 
 export type OnValid = (formValues: FormValues) => void;
 
-export type OnInvalid = (errors: FormErrors) => void;
+export type OnInvalid = (errors: any) => void;
 
 export type FormValidateAllFields = (
   onValid?: OnValid,
@@ -76,10 +76,6 @@ export type Field = {
 };
 
 export type FormValues = {
-  [key in string]: any;
-};
-
-export type FormErrors = {
   [key in string]: any;
 };
 
@@ -118,8 +114,6 @@ export type SetFormField = (data: {
   options: FormOptions;
   field?: Field;
 }) => void;
-
-type FormTypes = "fields" | "errors" | "values";
 
 export type FormSetter = (name: string, value: any, fields: any) => void;
 

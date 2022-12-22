@@ -25,6 +25,15 @@ export type FormType =
   | "file"
   | "texteditor";
 
+export type FormRules = {
+  required?: { value?: boolean; message?: string };
+  pattern?: { value?: RegExp; message?: string };
+  minLength?: { value?: number; message?: string };
+  maxLength?: { value?: number; message?: string };
+  min?: { value?: string; message?: string };
+  max?: { value?: string; message?: string };
+};
+
 export type FormField = {
   id: string;
   question: string;
@@ -41,9 +50,8 @@ export type FormField = {
     checked: boolean;
     value: string;
   };
+  rules: FormRules;
 };
-
-export type FormKeys = Exclude<keyof FormField, "id"> | "header";
 
 export type FormParams = {
   formId: string;
@@ -102,19 +110,3 @@ export type HandleDragStart = (
 ) => void;
 
 export type HandleDragEnd = () => void;
-
-export type FormContext = {
-  form: UseForm<FormDetail>;
-  selectedId: string | null;
-  activeSection: number;
-  formPage: FormPages;
-  setActiveSection: Dispatch<SetStateAction<number>>;
-  setSelectedId: React.Dispatch<SetStateAction<string | null>>;
-  handleFormNavigate: HandleFormNavigate;
-  handleDragStart: HandleDragStart;
-  handleDragEnter: HandleDragEnter;
-  handleDragEnd: HandleDragEnd;
-  handleDragOver: HandleDragOver;
-  handleDragLeave: HandleDragLeave;
-  handleDrop: HandleDrop;
-};

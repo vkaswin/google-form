@@ -7,6 +7,7 @@ import {
   Watcher,
   FormRegister,
   FormRules,
+  FormValues,
   FormSetter,
   FormSubmit,
   FormValidate,
@@ -22,8 +23,6 @@ import {
   Field,
   UseForm,
   Reset,
-  FormErrors,
-  FormValues,
   ClearValue,
   FormFields,
   FormUnSet,
@@ -394,7 +393,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     };
   };
 
-  const focusField = (errors: FormErrors) => {
+  const focusField = (errors: T) => {
     let errorKeys = Object.keys(errors);
 
     if (errorKeys.length === 0) return;

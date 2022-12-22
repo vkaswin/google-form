@@ -1,4 +1,12 @@
-import { ComponentProps, Fragment, ReactNode, useMemo } from "react";
+import {
+  ComponentProps,
+  Fragment,
+  ReactNode,
+  useMemo,
+  Dispatch,
+  SetStateAction,
+  MouseEvent,
+} from "react";
 import {
   FormTypeOption,
   FormField as FormFieldType,
@@ -12,7 +20,8 @@ import TextEditor from "components/TextEditor";
 import DatePicker from "components/DatePicker";
 import DropDown from "components/DropDown";
 import ToolTip from "components/ToolTip";
-import MutiOptionField from "./MutiOptionField";
+import FileInput from "components/FileInput";
+import MutiOptions from "./MutiOptions";
 import FormType from "./FormType";
 import Switch from "components/Switch";
 import { shuffleArray } from "helpers/index";
@@ -20,10 +29,11 @@ import { useFormContext } from "hooks/useForm";
 
 import styles from "./Field.module.scss";
 
-type FormCardProps = {
+type FieldProps = {
   selectedId: string | null;
   field: FormFieldType;
   formPage: FormPages;
+  setDragId: Dispatch<SetStateAction<string | null>>;
 } & FormIndexes &
   ComponentProps<"div">;
 
@@ -59,8 +69,9 @@ const Field = ({
   fieldIndex,
   formPage,
   className,
+  setDragId,
   ...props
-}: FormCardProps) => {
+}: FieldProps) => {
   const { register, clearValue, setValue, formValues } =
     useFormContext<FormDetail>();
 
@@ -80,7 +91,7 @@ const Field = ({
       field.type === "dropdown"
     ) {
       return (
-        <MutiOptionField
+        <MutiOptions
           field={field}
           formPage={formPage}
           sectionIndex={sectionIndex}
@@ -88,23 +99,27 @@ const Field = ({
         />
       );
     } else if (field.type === "input") {
-      <Input
-        placeholder="Short answer text"
-        disabled={formPage.isEdit}
-        defaultValue={field.value}
-        register={fieldRef}
-      />;
+      return (
+        <Input
+          placeholder="Short answer text"
+          disabled={formPage.isEdit}
+          defaultValue={field.value}
+          register={fieldRef}
+        />
+      );
     } else if (field.type === "textarea") {
-      <TextArea
-        placeholder="Long answer text"
-        defaultValue={field.value}
-        disabled={formPage.isEdit}
-        register={fieldRef}
-      />;
+      return (
+        <TextArea
+          placeholder="Long answer text"
+          defaultValue={field.value}
+          disabled={formPage.isEdit}
+          register={fieldRef}
+        />
+      );
     } else if (field.type === "date") {
       return <DatePicker disabled={formPage.isEdit} />;
     } else if (field.type === "file") {
-      return <div>File Input</div>;
+      return <FileInput />;
     } else {
       return null;
     }
@@ -124,6 +139,18 @@ const Field = ({
         shuffleArray(field.options)
       );
     }
+  };
+
+  const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+    // event.stopPropagation();
+    console.log("mousedown");
+    document.addEventListener("mouseup", handleMouseUp);
+    setDragId(field.id);
+  };
+
+  const handleMouseUp = () => {
+    setDragId(null);
+    document.removeEventListener("mouseup", handleMouseUp);
   };
 
   return (
@@ -213,9 +240,9 @@ const Field = ({
               <Switch
                 id={field.id}
                 label="Required"
-                defaultChecked={field.required}
+                defaultChecked={field.rules.required?.value || false}
                 register={register(
-                  `sections.${sectionIndex}.fields.${fieldIndex}.required`
+                  `sections.${sectionIndex}.fields.${fieldIndex}.rules.required.value`
                 )}
               />
               <div
@@ -256,7 +283,7 @@ const Field = ({
           <div className={styles.highlight}></div>
         )}
         {formPage.isEdit && (
-          <div className={styles.drag_icon}>
+          <div className={styles.drag_icon} onMouseDown={handleMouseDown}>
             <i className="bx-dots-horizontal-rounded"></i>
             <i className="bx-dots-horizontal-rounded"></i>
           </div>

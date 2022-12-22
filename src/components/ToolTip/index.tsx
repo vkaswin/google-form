@@ -19,21 +19,21 @@ const ToolTip = ({ selector, children, className, ...props }: ToolTipProps) => {
 
   let [isOpen, setIsOpen] = useState(false);
 
-  const {
-    attributes,
-    styles: style,
-    state,
-  } = usePopper(referenceElement, popperElement, {
-    placement: "top",
-    modifiers: [
-      {
-        name: "offset",
-        options: {
-          offset: [0, 10],
+  const { attributes, styles: style } = usePopper(
+    referenceElement,
+    popperElement,
+    {
+      placement: "top",
+      modifiers: [
+        {
+          name: "offset",
+          options: {
+            offset: [0, 10],
+          },
         },
-      },
-    ],
-  });
+      ],
+    }
+  );
 
   const show = () => {
     setIsOpen(true);
