@@ -18,7 +18,9 @@ export const formData: FormDetail = {
             enabled: false,
             value: "",
           },
-          rules: {},
+          rules: {
+            required: { value: true },
+          },
         },
         {
           id: crypto.randomUUID(),
@@ -30,7 +32,9 @@ export const formData: FormDetail = {
             enabled: false,
             value: "",
           },
-          rules: {},
+          rules: {
+            required: { value: true },
+          },
         },
         {
           id: crypto.randomUUID(),
@@ -48,7 +52,9 @@ export const formData: FormDetail = {
             enabled: false,
             value: "",
           },
-          rules: {},
+          rules: {
+            required: { value: true },
+          },
         },
         {
           id: crypto.randomUUID(),
@@ -66,7 +72,9 @@ export const formData: FormDetail = {
             enabled: false,
             value: "",
           },
-          rules: {},
+          rules: {
+            required: { value: true },
+          },
         },
         {
           id: crypto.randomUUID(),
@@ -79,7 +87,9 @@ export const formData: FormDetail = {
             enabled: false,
             value: "",
           },
-          rules: {},
+          rules: {
+            required: { value: true },
+          },
         },
       ],
     },
@@ -98,7 +108,7 @@ export const formData: FormDetail = {
             enabled: true,
             value: "",
           },
-          rules: {},
+          rules: { required: { value: true } },
         },
         {
           id: crypto.randomUUID(),
@@ -110,7 +120,7 @@ export const formData: FormDetail = {
             enabled: false,
             value: "",
           },
-          rules: {},
+          rules: { required: { value: true } },
         },
         {
           id: crypto.randomUUID(),
@@ -128,7 +138,7 @@ export const formData: FormDetail = {
             enabled: false,
             value: "",
           },
-          rules: {},
+          rules: { required: { value: true } },
         },
         {
           id: crypto.randomUUID(),
@@ -146,7 +156,7 @@ export const formData: FormDetail = {
             enabled: false,
             value: "",
           },
-          rules: {},
+          rules: { required: { value: true } },
         },
         {
           id: crypto.randomUUID(),
@@ -159,7 +169,7 @@ export const formData: FormDetail = {
             enabled: false,
             value: "",
           },
-          rules: {},
+          rules: { required: { value: true } },
         },
       ],
     },

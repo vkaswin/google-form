@@ -1,7 +1,7 @@
-import { ComponentProps, Fragment, useState } from "react";
-import { createPortal } from "react-dom";
+import { ComponentProps, useState } from "react";
 import { usePopper } from "react-popper";
 import { clickOutside } from "helpers";
+import { FormRegister } from "types/UseForm";
 import { CSSTransition } from "react-transition-group";
 
 import styles from "./Select.module.scss";
@@ -18,6 +18,7 @@ type SelectProps<T> = {
   placeholder?: string;
   disabled?: boolean;
   options?: SelectOption<T>[];
+  register?: ReturnType<FormRegister> | {};
   onChange?: (value: T) => void;
 } & Omit<ComponentProps<"div">, "onChange" | "placeholder" | "disabled">;
 
@@ -28,6 +29,7 @@ const Select = <T,>({
   disabled,
   size,
   options = [],
+  register,
   onChange,
   ...props
 }: SelectProps<T>) => {
@@ -81,12 +83,12 @@ const Select = <T,>({
   };
 
   return (
-    <Fragment>
-      <div
-        ref={setReferenceElement}
-        style={{ pointerEvents: !!disabled ? "none" : "all" }}
-        {...props}
-      >
+    <div
+      ref={setReferenceElement}
+      style={{ pointerEvents: !!disabled ? "none" : "all" }}
+      {...props}
+    >
+      <div {...register} tabIndex={-1}>
         <label>{label}</label>
         <div
           className={styles.custom_select}
@@ -107,8 +109,6 @@ const Select = <T,>({
             ></i>
           </div>
         </div>
-      </div>
-      {createPortal(
         <CSSTransition
           in={isOpen}
           timeout={200}
@@ -144,10 +144,9 @@ const Select = <T,>({
               })}
             </div>
           </div>
-        </CSSTransition>,
-        document.body
-      )}
-    </Fragment>
+        </CSSTransition>
+      </div>
+    </div>
   );
 };
 

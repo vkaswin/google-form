@@ -16,7 +16,7 @@ type MultiOptionsProps = {
 type DropDownOption = { label: string; value: string };
 
 const MultiOptions = ({
-  field: { id, type, value, options, other },
+  field: { id, type, value, options, other, rules },
   formPage,
   sectionIndex,
   fieldIndex,
@@ -55,6 +55,11 @@ const MultiOptions = ({
     );
   };
 
+  const valueField = register(
+    `sections.${sectionIndex}.fields.${fieldIndex}.value`,
+    rules
+  );
+
   return (
     <div className={styles.container}>
       {formPage.isEdit &&
@@ -72,10 +77,9 @@ const MultiOptions = ({
                 )}
                 <Input
                   defaultValue={option}
-                  register={register(
-                    `sections.${sectionIndex}.fields.${fieldIndex}.options.${index}`,
-                    { required: true }
-                  )}
+                  name={`sections.${sectionIndex}.fields.${fieldIndex}.options.${index}`}
+                  register={register}
+                  rules={{ required: true }}
                 />
                 <i
                   className="bx-x"
@@ -105,9 +109,7 @@ const MultiOptions = ({
               label={option}
               value={option}
               defaultChecked={Array.isArray(value) && value.includes(option)}
-              register={register(
-                `sections.${sectionIndex}.fields.${fieldIndex}.value`
-              )}
+              register={valueField}
             />
           );
         })}
@@ -122,9 +124,7 @@ const MultiOptions = ({
               label={option}
               value={option}
               defaultChecked={value === option}
-              register={register(
-                `sections.${sectionIndex}.fields.${fieldIndex}.value`
-              )}
+              register={valueField}
             />
           );
         })}
@@ -134,9 +134,13 @@ const MultiOptions = ({
           size="auto"
           options={dropdownOptions}
           value={typeof value === "string" ? value : ""}
-          //   onChange={(value) =>
-          //     handleFormChange({ indexes, type, value, key: "value" })
-          //   }
+          register={valueField}
+          onChange={(value) =>
+            setValue(
+              `sections.${sectionIndex}.fields.${fieldIndex}.value`,
+              value
+            )
+          }
         />
       )}
       {other?.enabled && (
@@ -149,7 +153,7 @@ const MultiOptions = ({
                   id="checkbox-other-option"
                   placeholder="Enter here"
                   label="Other"
-                  checked={other.checked}
+                  defaultChecked={other.checked}
                   register={register(
                     `sections.${sectionIndex}.fields.${fieldIndex}.other.checked`
                   )}
@@ -160,7 +164,7 @@ const MultiOptions = ({
                   id="radio-other-option"
                   name={id}
                   label="Other"
-                  checked={other.checked}
+                  defaultChecked={other.checked}
                   register={register(
                     `sections.${sectionIndex}.fields.${fieldIndex}.other.checked`
                   )}
@@ -170,19 +174,13 @@ const MultiOptions = ({
                 placeholder={formPage.isEdit ? "Other..." : "Enter here"}
                 disabled={formPage.isEdit}
                 defaultValue={!formPage.isEdit ? other.value : ""}
-                register={register(
-                  `sections.${sectionIndex}.fields.${fieldIndex}.other.value`
-                )}
+                name={`sections.${sectionIndex}.fields.${fieldIndex}.other.value`}
+                register={register}
               />
               {formPage.isEdit && (
                 <i className="bx-x" onClick={handleOtherOption}></i>
               )}
             </div>
-          </div>
-          <div>
-            {otherErrorMsg && (
-              <span className={styles.error_msg}>{otherErrorMsg}</span>
-            )}
           </div>
         </Fragment>
       )}

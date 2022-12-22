@@ -72,7 +72,7 @@ const Field = ({
   setDragId,
   ...props
 }: FieldProps) => {
-  const { register, clearValue, setValue, formValues } =
+  const { register, clearValue, setValue, formValues, formErrors } =
     useFormContext<FormDetail>();
 
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
@@ -82,9 +82,8 @@ const Field = ({
   }, [field.type]);
 
   let component = useMemo<ReactNode>(() => {
-    let fieldRef = register(
-      `sections.${sectionIndex}.fields.${fieldIndex}.value`
-    );
+    let fieldName = `sections.${sectionIndex}.fields.${fieldIndex}.value`;
+
     if (
       field.type === "checkbox" ||
       field.type === "radio" ||
@@ -101,10 +100,12 @@ const Field = ({
     } else if (field.type === "input") {
       return (
         <Input
+          name={fieldName}
           placeholder="Short answer text"
           disabled={formPage.isEdit}
           defaultValue={field.value}
-          register={fieldRef}
+          register={register}
+          rules={field.rules}
         />
       );
     } else if (field.type === "textarea") {
@@ -113,7 +114,9 @@ const Field = ({
           placeholder="Long answer text"
           defaultValue={field.value}
           disabled={formPage.isEdit}
-          register={fieldRef}
+          name={fieldName}
+          register={register}
+          rules={field.rules}
         />
       );
     } else if (field.type === "date") {
@@ -141,22 +144,25 @@ const Field = ({
     }
   };
 
-  const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+  const handleMouseDown = () => {
     // event.stopPropagation();
-    console.log("mousedown");
     document.addEventListener("mouseup", handleMouseUp);
     setDragId(field.id);
   };
 
   const handleMouseUp = () => {
+    console.log("mouseup");
     setDragId(null);
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
+  const valueErrorMsg =
+    formErrors?.sections?.[sectionIndex]?.fields?.[fieldIndex]?.value;
+
   return (
     <div
       className={`${styles.container} ${className || ""}`.trim()}
-      {...(!formPage.isEdit && { "data-error": false })}
+      {...(!formPage.isEdit && { "data-error": !!valueErrorMsg })}
       {...props}
     >
       <div className={styles.wrapper}>
@@ -207,6 +213,9 @@ const Field = ({
           ))}
         <div className={styles.field} data-type={field.type}>
           {component}
+          {valueErrorMsg && (
+            <span className={styles.error_msg}>{valueErrorMsg}</span>
+          )}
         </div>
         {!formPage.isEdit && false && (
           <div className={styles.error_msg}>

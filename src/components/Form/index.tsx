@@ -23,6 +23,7 @@ import Section from "./Section";
 import Field from "./Field";
 import { useForm, FromProvider } from "hooks/useForm";
 import { formData } from "./formData";
+import { isEmptyObject } from "helpers";
 
 import styles from "./Form.module.scss";
 
@@ -43,6 +44,8 @@ type FormProps = {
 };
 
 const Form = ({ children }: FormProps) => {
+  let form = useForm<FormDetail>();
+
   const { formId } = useParams<FormParams>();
 
   const { pathname } = useLocation();
@@ -61,9 +64,7 @@ const Form = ({ children }: FormProps) => {
     };
   }, [pathname]);
 
-  let form = useForm<FormDetail>();
-
-  let { formValues, formErrors, setFormValues } = form;
+  let { formValues, formErrors, setFormValues, handleSubmit } = form;
 
   let { sections = [] } = formValues;
 
@@ -127,7 +128,6 @@ const Form = ({ children }: FormProps) => {
     let element = document.querySelector(
       `[data-draggable-id='${draggableId}'][data-droppable-id='${droppableId}']`
     ) as HTMLElement;
-    console.log(element);
     dragRef.current = {
       ...dragRef.current,
       destination: { droppableId, draggableId },
@@ -140,7 +140,6 @@ const Form = ({ children }: FormProps) => {
     draggableId
   ) => {
     event.stopPropagation();
-    console.log(droppableId, draggableId);
   };
 
   const handleDragEnd = () => {
@@ -181,6 +180,20 @@ const Form = ({ children }: FormProps) => {
     // By default, data/elements cannot be dropped in other elements.
     // To allow a drop, we must prevent the default handling of the element
     e.preventDefault();
+  };
+
+  const onSubmit = (data: any, action: "next" | "back" | "submit") => {
+    if (action === "next") {
+      setActiveSection((section) => section + 1);
+    } else if (action == "back") {
+      setActiveSection((section) => section - 1);
+    } else {
+      console.log("final step", data);
+    }
+  };
+
+  const onInvalid = (errors: any) => {
+    console.log(errors);
   };
 
   return (
@@ -265,7 +278,10 @@ const Form = ({ children }: FormProps) => {
               {activeSection > 0 && (
                 <button
                   className={styles.btn_navigate}
-                  onClick={() => handleFormNavigate("back")}
+                  onClick={handleSubmit(
+                    (data) => onSubmit(data, "back"),
+                    onInvalid
+                  )}
                 >
                   Back
                 </button>
@@ -274,13 +290,24 @@ const Form = ({ children }: FormProps) => {
               {activeSection < sections.length - 1 && (
                 <button
                   className={styles.btn_navigate}
-                  onClick={() => handleFormNavigate("next")}
+                  onClick={handleSubmit(
+                    (data) => onSubmit(data, "next"),
+                    onInvalid
+                  )}
                 >
                   Next
                 </button>
               )}
               {activeSection === sections.length - 1 && (
-                <button className={styles.btn_submit}>Submit</button>
+                <button
+                  className={styles.btn_submit}
+                  onClick={handleSubmit(
+                    (data) => onSubmit(data, "submit"),
+                    onInvalid
+                  )}
+                >
+                  Submit
+                </button>
               )}
             </div>
             <button className={styles.btn_clear}>Clear Form</button>

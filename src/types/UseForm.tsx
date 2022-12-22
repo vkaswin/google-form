@@ -1,4 +1,5 @@
 import {
+  FocusEvent,
   ChangeEvent,
   Dispatch,
   ReactElement,
@@ -33,6 +34,8 @@ type FormOptions = {
       };
   valueAsNumber?: boolean;
   valueAsDate?: boolean;
+  onInput?: <T>(event: ChangeEvent<T>) => void;
+  onBlur?: <T>(event: FocusEvent<T>) => void;
 };
 
 export type FormRules = {
@@ -59,7 +62,7 @@ export type OnInvalid = (errors: any) => void;
 export type FormValidateAllFields = (
   onValid?: OnValid,
   onInvalid?: OnInvalid
-) => void;
+) => boolean;
 
 export type FormValidate = (data: {
   name: string;
@@ -166,5 +169,5 @@ export type UseForm<T> = {
   handleSubmit: FormSubmit;
   clearValue: ClearValue;
   formValues: Readonly<T>;
-  formErrors: Readonly<T>;
+  formErrors: Readonly<Record<string, any>>;
 };

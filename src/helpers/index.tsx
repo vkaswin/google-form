@@ -80,3 +80,38 @@ export const debounce = <T,>(
     }, delay);
   };
 };
+
+const isObjectOrArray = (data: any) => {
+  let type = Object.prototype.toString
+    .call(data)
+    .toLowerCase()
+    .replace(/^\[object (\S+)\]$/, "$1");
+  return type === "object" || type === "array";
+};
+
+export const isEmptyObject = (obj: any): boolean => {
+  for (let key in obj) {
+    let temp = obj[key];
+    if (!isObjectOrArray(temp)) {
+      return false;
+    }
+    if (Array.isArray(temp)) {
+      for (let value of temp) {
+        if (!isObjectOrArray(value)) return false;
+        if (isEmptyObject(value)) {
+          continue;
+        } else {
+          return false;
+        }
+      }
+    } else if (Object.keys(temp).length === 0) {
+      continue;
+    } else if (isEmptyObject(temp)) {
+      continue;
+    } else {
+      return false;
+    }
+  }
+
+  return true;
+};

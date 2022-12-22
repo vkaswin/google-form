@@ -1,33 +1,34 @@
-import { ComponentProps, FocusEvent, useRef } from "react";
+import { ComponentProps, useRef } from "react";
+import { FormRules } from "types/Form";
 import { FormRegister } from "types/UseForm";
 
 import styles from "./Input.module.scss";
 
 type InputProps = {
-  register?: ReturnType<FormRegister> | {};
+  name: string;
+  rules?: FormRules | {};
+  register?: FormRegister;
 } & ComponentProps<"input">;
 
 const Input = ({
+  name,
   className,
   type = "text",
   placeholder = "Enter Here",
-  register = {},
-  onFocus,
-  onBlur,
+  rules = {},
+  register,
   ...props
 }: InputProps) => {
   let inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFocus = (event: FocusEvent<HTMLInputElement>): void => {
+  const handleFocus = (): void => {
     inputRef.current?.classList.remove(styles.blur);
     inputRef.current?.classList.add(styles.focus);
-    if (typeof onFocus === "function") onFocus(event);
   };
 
-  const handleBlur = (event: FocusEvent<HTMLInputElement>): void => {
+  const handleBlur = (): void => {
     inputRef.current?.classList.remove(styles.focus);
     inputRef.current?.classList.add(styles.blur);
-    if (typeof onBlur === "function") onBlur(event);
   };
 
   return (
@@ -37,8 +38,8 @@ const Input = ({
         placeholder={placeholder}
         className={`${styles.field} ${className || ""}`.trim()}
         onFocus={handleFocus}
-        onBlur={handleBlur}
-        {...register}
+        {...(typeof register === "function" &&
+          register(name, { ...rules, onBlur: handleBlur }))}
         {...props}
       />
     </div>

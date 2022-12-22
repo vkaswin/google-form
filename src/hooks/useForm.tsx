@@ -29,6 +29,7 @@ import {
   FromProvider as FormProviderType,
   FormContext as FormContextType,
 } from "types/UseForm";
+import { isEmptyObject } from "helpers";
 
 const isCheckBoxOrRadioInput = (type: string): boolean => {
   return type === "checkbox" || type === "radio";
@@ -219,26 +220,16 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
 
     let { validate, max, min, pattern, required, maxLength, minLength } =
       field.options || {};
-
+    let validateFn =
+      typeof validate === "function" ? validate : validate?.value;
     let error: string | undefined;
     let errorType: FormErrorTypes | undefined;
 
     if (
-      isCheckBoxOrRadioInput(ref.type) ||
-      isContendEditable(ref.contentEditable)
+      !isCheckBoxOrRadioInput(ref.type) &&
+      typeof ref.checkValidity === "function" &&
+      !ref.checkValidity()
     ) {
-      let value = get(name, formValues);
-
-      if (typeof value === "undefined") return;
-
-      if (
-        (typeof required === "boolean" ? required : required?.value) &&
-        (value === null || value.length === 0)
-      ) {
-        error = typeof required === "object" ? required.message : undefined;
-        errorType = "required";
-      }
-    } else if (!ref?.checkValidity()) {
       let {
         valueMissing,
         patternMismatch,
@@ -288,15 +279,23 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
             : undefined;
         errorType = "pattern";
       }
+    } else if (typeof validateFn === "function") {
+      let value = get(name, formValues);
+      if (validateFn(value)) {
+        error = typeof validate === "object" ? validate.message : undefined;
+        errorType = "validate";
+      }
     } else {
-      let validateFn =
-        typeof validate === "function" ? validate : validate?.value;
-      if (typeof validateFn === "function") {
-        let value = get(name, formValues);
-        if (validateFn(value)) {
-          error = typeof validate === "object" ? validate.message : undefined;
-          errorType = "validate";
-        }
+      let value = get(name, formValues);
+
+      if (typeof value === "undefined") return;
+
+      if (
+        (typeof required === "boolean" ? required : required?.value) &&
+        (value === null || value.length === 0)
+      ) {
+        error = typeof required === "object" ? required.message : undefined;
+        errorType = "required";
       }
     }
 
@@ -304,7 +303,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
 
     if (typeof error === "undefined") {
       if (typeof prevError !== "undefined") {
-        set(name, error, formErrors);
+        unset(name, formErrors);
         render && setFormErrors({ ...formErrors });
       }
     } else if (prevError !== error) {
@@ -313,7 +312,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     }
   };
 
-  const register: FormRegister = (name, options = {}) => {
+  const register: FormRegister = (name, options = {}, handler = {}) => {
     let {
       max,
       maxLength,
@@ -323,7 +322,11 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
       required,
       valueAsDate,
       valueAsNumber,
+      onBlur,
+      onInput,
     } = options;
+
+    let {} = handler;
 
     let formRules = {} as FormRules;
 
@@ -370,6 +373,11 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
           field,
         });
       },
+      onBlur: (event: any) => {
+        let ref = event.target as unknown as HTMLInputElement;
+        validateField({ name, ref });
+        if (typeof onBlur === "function") onBlur(event);
+      },
       onInput: (event) => {
         let ref = event.target as unknown as HTMLInputElement;
         setFieldValue(name, ref);
@@ -384,10 +392,9 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
             fn(name, event, value);
           }
         }
-
         // if (!isSubmitted.current) return;
-
         validateField({ name, ref });
+        if (typeof onInput === "function") onInput(event);
       },
       ...formRules,
     };
@@ -425,26 +432,25 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     ref.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  const validateAllFields: FormValidateAllFields = (
-    onValid,
-    onInvalid
-  ): void => {
+  const validateAllFields: FormValidateAllFields = () => {
     for (let name of formNames) {
+      console.log(name);
       let field = get(name, formFields);
+
       if (typeof field === "undefined") continue;
-      validateField({ name, ref: field.ref, render: false });
+
+      if (Array.isArray(field.refs)) {
+        for (let ref of field.refs) {
+          validateField({ name, ref, render: false });
+        }
+      } else {
+        validateField({ name, ref: field.ref, render: false });
+      }
     }
 
-    // TODO ERROR HANDLING
+    setFormErrors({ ...formErrors });
 
-    // let hasError = Object.keys(formErrors).length !== 0;
-
-    // if (hasError) {
-    //     focusField();
-    //   if (typeof onInvalid === "function") onInvalid(formErrors);
-    // } else {
-    //   if (typeof onValid === "function") onValid(formValues);
-    // }
+    return isEmptyObject(formErrors);
   };
 
   const handleSubmit: FormSubmit = (onValid, onInvalid) => {
@@ -453,7 +459,16 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
       if (!isSubmitted.current) {
         isSubmitted.current = true;
       }
-      validateAllFields(onValid, onInvalid);
+
+      let isValid = validateAllFields();
+      console.log(isValid);
+
+      if (isValid && typeof onValid === "function") {
+        onValid(formValues);
+      } else if (typeof onInvalid === "function") {
+        // focusField();
+        onInvalid(formErrors);
+      }
     };
   };
 
@@ -477,7 +492,10 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
   };
 
   const setValue: SetValue = (name, value) => {
+    let field = get(name, formFields);
+    if (!field) return;
     set(name, value, formValues);
+    validateField({ name, ref: field.ref, render: false });
     setFormValues({ ...formValues });
   };
 

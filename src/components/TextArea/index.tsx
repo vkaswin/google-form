@@ -1,15 +1,20 @@
 import { ComponentProps } from "react";
+import { FormRules } from "types/Form";
 import { FormRegister } from "types/UseForm";
 
 import styles from "./TextArea.module.scss";
 
 type TextAreaProps = {
-  register?: ReturnType<FormRegister>;
+  name: string;
+  register?: FormRegister;
+  rules?: FormRules;
 } & ComponentProps<"textarea">;
 
 const TextArea = ({
   placeholder = "Enter Here",
   className,
+  name,
+  rules = {},
   register,
   ...props
 }: TextAreaProps) => {
@@ -17,7 +22,7 @@ const TextArea = ({
     <textarea
       placeholder={placeholder}
       className={`${styles.field} ${className || ""}`.trim()}
-      {...register}
+      {...(typeof register === "function" && register(name, rules))}
       {...props}
     />
   );
