@@ -57,6 +57,10 @@ let moreOptions = [
     option: "description",
   },
   {
+    label: "Validation Rules",
+    option: "validation",
+  },
+  {
     label: "Shuffle option order",
     option: "shuffle",
   },
@@ -126,7 +130,7 @@ const Field = ({
     } else {
       return null;
     }
-  }, [sectionIndex, fieldIndex, formPage]);
+  }, [{ ...field }]);
 
   const handleClick = (option: string) => {
     if (option === "description") {
@@ -136,24 +140,13 @@ const Field = ({
       );
     } else if (option === "shuffle") {
       if (!field.options) return;
-
+      //TODO INPUT DEFAULT VALUE NOT UPDATING ON RENDER
+      let shuffledOptions = shuffleArray(field.options);
       setValue(
         `sections.${sectionIndex}.fields.${fieldIndex}.options`,
-        shuffleArray(field.options)
+        shuffledOptions
       );
     }
-  };
-
-  const handleMouseDown = () => {
-    // event.stopPropagation();
-    document.addEventListener("mouseup", handleMouseUp);
-    setDragId(field.id);
-  };
-
-  const handleMouseUp = () => {
-    console.log("mouseup");
-    setDragId(null);
-    document.removeEventListener("mouseup", handleMouseUp);
   };
 
   const valueErrorMsg =
@@ -292,7 +285,10 @@ const Field = ({
           <div className={styles.highlight}></div>
         )}
         {formPage.isEdit && (
-          <div className={styles.drag_icon} onMouseDown={handleMouseDown}>
+          <div
+            className={styles.drag_icon}
+            onPointerDown={() => setDragId(field.id)}
+          >
             <i className="bx-dots-horizontal-rounded"></i>
             <i className="bx-dots-horizontal-rounded"></i>
           </div>

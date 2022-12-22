@@ -148,7 +148,7 @@ const Form = ({ children }: FormProps) => {
     if (dragElement) {
       dragElement.style.visibility = "visible";
     }
-
+    setDragId(null);
     setTimeout(() => {
       dragRef.current = initialDragRef;
     }, 0);
