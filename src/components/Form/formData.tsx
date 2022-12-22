@@ -13,7 +13,6 @@ export const formData: FormDetail = {
           question: "Loreum Ipsum",
           type: "input",
           value: "",
-          required: true,
           description: {
             enabled: false,
             value: "",
@@ -27,7 +26,6 @@ export const formData: FormDetail = {
           question: "Loreum Ipsum",
           type: "textarea",
           value: "",
-          required: true,
           description: {
             enabled: false,
             value: "",
@@ -41,7 +39,6 @@ export const formData: FormDetail = {
           question: "Gender",
           type: "radio",
           value: "",
-          required: true,
           options: ["Male", "Female"],
           other: {
             enabled: true,
@@ -61,7 +58,6 @@ export const formData: FormDetail = {
           question: "Hobbies",
           type: "checkbox",
           value: [],
-          required: true,
           options: ["Football", "Basketball", "Cricket"],
           other: {
             enabled: true,
@@ -81,7 +77,6 @@ export const formData: FormDetail = {
           question: "Location",
           type: "dropdown",
           value: "",
-          required: true,
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
           description: {
             enabled: false,
@@ -103,7 +98,6 @@ export const formData: FormDetail = {
           question: "Loreum Ipsum",
           type: "input",
           value: "",
-          required: false,
           description: {
             enabled: true,
             value: "",
@@ -115,7 +109,6 @@ export const formData: FormDetail = {
           question: "Loreum Ipsum",
           type: "input",
           value: "",
-          required: true,
           description: {
             enabled: false,
             value: "",
@@ -127,7 +120,6 @@ export const formData: FormDetail = {
           question: "Gender",
           type: "radio",
           value: "",
-          required: true,
           options: ["Male", "Female"],
           other: {
             enabled: true,
@@ -145,7 +137,6 @@ export const formData: FormDetail = {
           question: "Hobbies",
           type: "checkbox",
           value: [],
-          required: true,
           options: ["Football", "Basketball", "Cricket"],
           other: {
             enabled: true,
@@ -163,7 +154,6 @@ export const formData: FormDetail = {
           question: "Location",
           type: "dropdown",
           value: "",
-          required: true,
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
           description: {
             enabled: false,

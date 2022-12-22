@@ -86,8 +86,6 @@ export type FormDragValue = {
   dragElement: HTMLElement | null;
 };
 
-export type HandleFormNavigate = (type: "back" | "next") => void;
-
 export type HandleDragOver = (e: DragEvent<HTMLDivElement>) => void;
 
 export type HandleDrop = () => void;

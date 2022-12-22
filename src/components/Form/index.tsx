@@ -5,13 +5,13 @@ import {
   useMemo,
   useRef,
   ReactNode,
+  KeyboardEvent,
 } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import {
   FormPages,
   FormParams,
   FormDetail,
-  HandleFormNavigate,
   FormDragValue,
   HandleDragOver,
   HandleDrop,
@@ -23,9 +23,9 @@ import Section from "./Section";
 import Field from "./Field";
 import { useForm, FromProvider } from "hooks/useForm";
 import { formData } from "./formData";
-import { isEmptyObject } from "helpers";
 
 import styles from "./Form.module.scss";
+import { debounce, isEmptyObject } from "helpers/index";
 
 let initialDragRef = {
   source: {
@@ -64,6 +64,8 @@ const Form = ({ children }: FormProps) => {
     };
   }, [pathname]);
 
+  let dragRef = useRef<FormDragValue>(initialDragRef);
+
   let { formValues, formErrors, setFormValues, handleSubmit } = form;
 
   let { sections = [] } = formValues;
@@ -74,7 +76,11 @@ const Form = ({ children }: FormProps) => {
     getFormDetails();
   }, [formId]);
 
-  let dragRef = useRef<FormDragValue>(initialDragRef);
+  useEffect(() => {
+    window.addEventListener("keydown", debounce(handleKeyPress, 500));
+    return () =>
+      window.removeEventListener("keydown", debounce(handleKeyPress, 500));
+  }, []);
 
   const getFormDetails = (): void => {
     try {
@@ -84,23 +90,9 @@ const Form = ({ children }: FormProps) => {
     }
   };
 
-  const handleFormNavigate: HandleFormNavigate = (
-    type: "back" | "next"
-  ): void => {
-    switch (type) {
-      case "next":
-        setActiveSection((section) => {
-          return section + 1;
-        });
-        break;
-      case "back":
-        setActiveSection((section) => {
-          return section - 1;
-        });
-        break;
-      default:
-        return;
-    }
+  const handleKeyPress = (e: any) => {
+    debugger;
+    console.log(formErrors);
   };
 
   const handleDragStart: HandleDragStart = (droppableId, draggableId) => {
@@ -192,8 +184,15 @@ const Form = ({ children }: FormProps) => {
     }
   };
 
-  const onInvalid = (errors: any) => {
-    console.log(errors);
+  const onInvalid = (errors: any, action?: "next" | "back") => {
+    if (action === "back") {
+      setActiveSection((section) => section - 1);
+    } else if (
+      action === "next" &&
+      isEmptyObject(errors?.sections?.[activeSection])
+    ) {
+      setActiveSection((section) => section + 1);
+    }
   };
 
   return (
@@ -280,7 +279,7 @@ const Form = ({ children }: FormProps) => {
                   className={styles.btn_navigate}
                   onClick={handleSubmit(
                     (data) => onSubmit(data, "back"),
-                    onInvalid
+                    (errors) => onInvalid(errors, "back")
                   )}
                 >
                   Back
@@ -292,7 +291,7 @@ const Form = ({ children }: FormProps) => {
                   className={styles.btn_navigate}
                   onClick={handleSubmit(
                     (data) => onSubmit(data, "next"),
-                    onInvalid
+                    (errors) => onInvalid(errors, "next")
                   )}
                 >
                   Next
