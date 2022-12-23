@@ -5,7 +5,6 @@ import {
   useMemo,
   useRef,
   ReactNode,
-  KeyboardEvent,
 } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import {
@@ -70,16 +69,14 @@ const Form = ({ children }: FormProps) => {
 
   let { sections = [] } = formValues;
 
-  console.log(formErrors);
-
   useEffect(() => {
     getFormDetails();
   }, [formId]);
 
   useEffect(() => {
-    window.addEventListener("keydown", debounce(handleKeyPress, 500));
-    return () =>
-      window.removeEventListener("keydown", debounce(handleKeyPress, 500));
+    if (!formPage.isEdit) return;
+    window.addEventListener("keydown", sendFormData);
+    return () => window.removeEventListener("keydown", sendFormData);
   }, []);
 
   const getFormDetails = (): void => {
@@ -90,10 +87,9 @@ const Form = ({ children }: FormProps) => {
     }
   };
 
-  const handleKeyPress = (e: any) => {
-    debugger;
-    console.log(formErrors);
-  };
+  const sendFormData = debounce(() => {
+    console.log("sendData");
+  }, 500);
 
   const handleDragStart: HandleDragStart = (droppableId, draggableId) => {
     let dragElement = document.querySelector(

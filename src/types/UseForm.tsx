@@ -67,7 +67,7 @@ export type FormValidateAllFields = (
 export type FormValidate = (data: {
   name: string;
   ref: HTMLInputElement;
-  render?: boolean;
+  updateState?: boolean;
 }) => void;
 
 export type FormValueSetter = (name: string, ref: HTMLInputElement) => void;

@@ -209,7 +209,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     set(name, value, formValues);
   };
 
-  const validateField: FormValidate = ({ name, ref, render = true }) => {
+  const validateField: FormValidate = ({ name, ref, updateState = true }) => {
     let prevError = get(name, formErrors);
 
     if (!ref) return;
@@ -304,11 +304,11 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     if (typeof error === "undefined") {
       if (typeof prevError !== "undefined") {
         unset(name, formErrors);
-        render && setFormErrors({ ...formErrors });
+        updateState && setFormErrors({ ...formErrors });
       }
     } else if (prevError !== error) {
       set(name, error, formErrors);
-      render && setFormErrors({ ...formErrors });
+      updateState && setFormErrors({ ...formErrors });
     }
   };
 
@@ -441,10 +441,10 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
 
       if (Array.isArray(field.refs)) {
         for (let ref of field.refs) {
-          validateField({ name, ref, render: false });
+          validateField({ name, ref, updateState: false });
         }
       } else {
-        validateField({ name, ref: field.ref, render: false });
+        validateField({ name, ref: field.ref, updateState: false });
       }
     }
 
@@ -495,7 +495,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     let field = get(name, formFields);
     if (!field) return;
     set(name, value, formValues);
-    validateField({ name, ref: field.ref, render: false });
+    validateField({ name, ref: field.ref, updateState: false });
     setFormValues({ ...formValues });
   };
 
@@ -548,7 +548,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
   const validate: ValidateField = (name) => {
     let field = get(name, formFields);
     if (!field) return;
-    validateField({ name, ref: field.ref, render: true });
+    validateField({ name, ref: field.ref, updateState: true });
   };
 
   const clearValue: ClearValue = (name) => {
