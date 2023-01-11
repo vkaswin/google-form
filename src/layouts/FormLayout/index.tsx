@@ -1,6 +1,8 @@
-import { Fragment, useState, useRef, ReactNode } from "react";
+import { Fragment, useState, useRef, useMemo } from "react";
+import { useLocation, useParams, Outlet } from "react-router-dom";
 import {
   FormPages,
+  FormParams,
   FormDetail,
   FormDragValue,
   HandleDragOver,
@@ -8,13 +10,16 @@ import {
   HandleDragLeave,
   HandleDragEnter,
   HandleDragStart,
+  FormContext as FormContextType,
 } from "types/Form";
 import Section from "./Section";
 import Field from "./Field";
-import { useForm, FromProvider } from "hooks/useForm";
-import { isEmptyObject } from "helpers/index";
+import { useForm } from "hooks/useForm";
+import { isEmptyObject } from "helpers";
+import PageNotFound from "pages/404";
+import { FormContext } from "./context";
 
-import styles from "./Form.module.scss";
+import styles from "./FormLayout.module.scss";
 
 let initialDragRef = {
   source: {
@@ -28,14 +33,178 @@ let initialDragRef = {
   dragElement: null,
 };
 
-type FormProps = {
-  formData: FormDetail;
-  formPage: FormPages;
-  children?: ReactNode;
+const formData: FormDetail = {
+  theme: "dark",
+  sections: [
+    {
+      id: crypto.randomUUID(),
+      title: "Loreum Ispum",
+      description: "Loreum Ispum",
+      fields: [
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "input",
+          value: "",
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: {
+            required: { value: true },
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "textarea",
+          value: "",
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: {
+            required: { value: true },
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Gender",
+          type: "radio",
+          value: "",
+          options: ["Male", "Female"],
+          other: {
+            enabled: true,
+            checked: false,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: {
+            required: { value: true },
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Hobbies",
+          type: "checkbox",
+          value: [],
+          options: ["Football", "Basketball", "Cricket"],
+          other: {
+            enabled: true,
+            checked: false,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: {
+            required: { value: true },
+          },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Location",
+          type: "dropdown",
+          value: "",
+          options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: {
+            required: { value: true },
+          },
+        },
+      ],
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Loreum Ispum",
+      description: "Loreum Ispum",
+      fields: [
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "input",
+          value: "",
+          description: {
+            enabled: true,
+            value: "",
+          },
+          rules: { required: { value: true } },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Loreum Ipsum",
+          type: "input",
+          value: "",
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: { required: { value: true } },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Gender",
+          type: "radio",
+          value: "",
+          options: ["Male", "Female"],
+          other: {
+            enabled: true,
+            checked: false,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: { required: { value: true } },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Hobbies",
+          type: "checkbox",
+          value: [],
+          options: ["Football", "Basketball", "Cricket"],
+          other: {
+            enabled: true,
+            checked: false,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: { required: { value: true } },
+        },
+        {
+          id: crypto.randomUUID(),
+          question: "Location",
+          type: "dropdown",
+          value: "",
+          options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: { required: { value: true } },
+        },
+      ],
+    },
+  ],
 };
 
-const Form = ({ children, formPage, formData }: FormProps) => {
-  let form = useForm(formData);
+const FormLayout = () => {
+  const { formId } = useParams<FormParams>();
+
+  const { pathname } = useLocation();
+
+  let [formDetail, setFormDetail] = useState(formData);
 
   let [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -45,18 +214,11 @@ const Form = ({ children, formPage, formData }: FormProps) => {
 
   let dragRef = useRef<FormDragValue>(initialDragRef);
 
-  let { formValues, setFormValues, handleSubmit } = form;
+  let form = useForm();
 
-  let { sections = [] } = formValues;
+  let { handleSubmit } = form;
 
-  //   useEffect(() => {
-  //     window.addEventListener("keydown", sendFormData);
-  //     return () => window.removeEventListener("keydown", sendFormData);
-  //   }, []);
-
-  //   const sendFormData = debounce(() => {
-  //     console.log("sendData");
-  //   }, 500);
+  let { sections = [] } = formDetail;
 
   const handleDragStart: HandleDragStart = (droppableId, draggableId) => {
     let dragElement = document.querySelector(
@@ -120,7 +282,7 @@ const Form = ({ children, formPage, formData }: FormProps) => {
     )
       return;
 
-    let form = { ...formValues };
+    let form = { ...formDetail };
 
     form.sections[destination.droppableId].fields.splice(
       destination.draggableId,
@@ -128,7 +290,7 @@ const Form = ({ children, formPage, formData }: FormProps) => {
       form.sections[source.droppableId].fields.splice(source.draggableId, 1)[0]
     );
 
-    setFormValues(form);
+    setFormDetail(form);
   };
 
   const handleDragOver: HandleDragOver = (e) => {
@@ -158,9 +320,23 @@ const Form = ({ children, formPage, formData }: FormProps) => {
     }
   };
 
+  const formPage = useMemo<FormPages>(() => {
+    let path = pathname.split("/")?.[3];
+    return {
+      isPreview: path ? path === "preview" : false,
+      isEdit: path ? path === "edit" : false,
+      isFill: path ? path === "fill" : false,
+    };
+  }, [pathname]);
+
+  let context: FormContextType = { ...form };
+
+  if (!formId || (!formPage.isEdit && !formPage.isFill && !formPage.isPreview))
+    return <PageNotFound />;
+
   return (
-    <FromProvider {...form}>
-      <div>{children}</div>
+    <FormContext.Provider value={context}>
+      <Outlet />
       <div className={styles.container}>
         {sections.map(({ id, title, description, fields }, sectionIndex) => {
           if (!(formPage.isFill ? sectionIndex === activeSection : true))
@@ -279,8 +455,8 @@ const Form = ({ children, formPage, formData }: FormProps) => {
       <div className={styles.footer}>
         <span>Google Forms</span>
       </div>
-    </FromProvider>
+    </FormContext.Provider>
   );
 };
 
-export default Form;
+export default FormLayout;

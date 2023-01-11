@@ -26,8 +26,6 @@ import {
   ClearValue,
   FormFields,
   FormUnSet,
-  FromProvider as FormProviderType,
-  FormContext as FormContextType,
 } from "types/UseForm";
 import { isEmptyObject } from "helpers";
 
@@ -609,19 +607,8 @@ export const useForm = <T extends FormValues = FormValues>(
     clearError,
     resetField,
     handleSubmit,
-    setFormValues,
     clearValue,
     formValues,
     formErrors,
   };
-};
-
-const FormContext = createContext({} as any);
-
-export const FromProvider: FormProviderType = ({ children, ...props }) => {
-  return <FormContext.Provider value={props}>{children}</FormContext.Provider>;
-};
-
-export const useFormContext: FormContextType = () => {
-  return useContext(FormContext);
 };

@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
-import { FormDetail, FormPages, FormSection } from "types/Form";
-import { useFormContext } from "hooks/useForm";
+import { FormPages, FormSection } from "types/Form";
 import TextEditor from "components/TextEditor";
+import { useFormContext } from "layouts/FormLayout/context";
 
 import styles from "./Section.module.scss";
 
@@ -26,7 +26,7 @@ const Section = ({
   sectionHeader = "",
   ...props
 }: FormSectionProps) => {
-  const { register } = useFormContext<FormDetail>();
+  const { register } = useFormContext();
 
   return formPage.isEdit ? (
     <div>

@@ -5,14 +5,12 @@ import {
   useMemo,
   Dispatch,
   SetStateAction,
-  MouseEvent,
 } from "react";
 import {
   FormTypeOption,
   FormField as FormFieldType,
   FormPages,
   FormIndexes,
-  FormDetail,
 } from "types/Form";
 import TextArea from "components/TextArea";
 import Input from "components/Input";
@@ -25,7 +23,7 @@ import MutiOptions from "./MutiOptions";
 import FormType from "./FormType";
 import Switch from "components/Switch";
 import { shuffleArray } from "helpers/index";
-import { useFormContext } from "hooks/useForm";
+import { useFormContext } from "layouts/FormLayout/context";
 
 import styles from "./Field.module.scss";
 
@@ -76,8 +74,7 @@ const Field = ({
   setDragId,
   ...props
 }: FieldProps) => {
-  const { register, clearValue, setValue, formValues, formErrors } =
-    useFormContext<FormDetail>();
+  const { register, clearValue, setValue, formErrors } = useFormContext();
 
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
     return formTypes.find((option) => {
@@ -230,11 +227,12 @@ const Field = ({
               <i
                 id={`duplicate-${field.id}`}
                 className="bx-duplicate"
-                onClick={() =>
-                  setValue(
-                    `sections.${sectionIndex}.fields.${formValues?.sections?.[sectionIndex].fields?.length}`,
-                    field
-                  )
+                onClick={
+                  () => console.log("click")
+                  //   setValue(
+                  //     `sections.${sectionIndex}.fields.${formValues?.sections?.[sectionIndex].fields?.length}`,
+                  //     field
+                  //   )
                 }
               ></i>
               <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>

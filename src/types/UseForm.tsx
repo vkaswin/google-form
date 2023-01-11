@@ -1,11 +1,4 @@
-import {
-  FocusEvent,
-  ChangeEvent,
-  Dispatch,
-  ReactElement,
-  ReactNode,
-  SetStateAction,
-} from "react";
+import { FocusEvent, ChangeEvent } from "react";
 
 export type FormRegister = (
   name: string,
@@ -149,13 +142,7 @@ export type ClearValue = (name: string) => void;
 
 export type FormUnSet = (name: string, fields: any) => void;
 
-export type FromProvider = <T>(
-  props: T & { children: ReactNode }
-) => ReactElement;
-
-export type FormContext = <T>() => UseForm<T>;
-
-export type UseForm<T> = {
+export type UseForm<T = FormValues> = {
   register: FormRegister;
   setValue: SetValue;
   getValue: GetValue;
@@ -165,7 +152,6 @@ export type UseForm<T> = {
   setError: SetError;
   clearError: ClearError;
   validate: ValidateField;
-  setFormValues: Dispatch<SetStateAction<T>>;
   handleSubmit: FormSubmit;
   clearValue: ClearValue;
   formValues: Readonly<T>;

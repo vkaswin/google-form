@@ -1,4 +1,4 @@
-import { DragEvent, TouchEvent, Dispatch, SetStateAction } from "react";
+import { DragEvent, TouchEvent } from "react";
 import { UseForm } from "./UseForm";
 
 export type FormDetail = {
@@ -108,3 +108,5 @@ export type HandleDragStart = (
 ) => void;
 
 export type HandleDragEnd = () => void;
+
+export type FormContext = UseForm;

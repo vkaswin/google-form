@@ -1,10 +1,10 @@
 import { Fragment, useMemo } from "react";
-import { FormDetail, FormField, FormIndexes, FormPages } from "types/Form";
+import { FormField, FormIndexes, FormPages } from "types/Form";
 import Input from "components/Input";
 import Radio from "components/Radio";
 import CheckBox from "components/CheckBox";
 import Select from "components/Select";
-import { useFormContext } from "hooks/useForm";
+import { useFormContext } from "layouts/FormLayout/context";
 
 import styles from "./MultiOptions.module.scss";
 
@@ -21,8 +21,7 @@ const MultiOptions = ({
   sectionIndex,
   fieldIndex,
 }: MultiOptionsProps) => {
-  const { register, setValue, clearValue, formErrors } =
-    useFormContext<FormDetail>();
+  const { register, setValue, clearValue, formErrors } = useFormContext();
 
   let icon = useMemo<string>(() => {
     switch (type) {
