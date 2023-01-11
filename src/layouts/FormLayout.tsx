@@ -1,6 +1,10 @@
-import { FormDetail } from "types/Form";
+import { Fragment, useMemo } from "react";
+import { Outlet, useLocation, useParams } from "react-router-dom";
+import { FormParams, FormPages, FormDetail } from "types/Form";
+import Form from "components/Form";
+import PageNotFound from "pages/404";
 
-export const formData: FormDetail = {
+const formData: FormDetail = {
   theme: "dark",
   sections: [
     {
@@ -165,3 +169,30 @@ export const formData: FormDetail = {
     },
   ],
 };
+
+const FormLayout = () => {
+  const { formId } = useParams<FormParams>();
+
+  const { pathname } = useLocation();
+
+  const formPage = useMemo<FormPages>(() => {
+    let path = pathname.split("/")?.[3];
+    return {
+      isPreview: path ? path === "preview" : false,
+      isEdit: path ? path === "edit" : false,
+      isFill: path ? path === "fill" : false,
+    };
+  }, [pathname]);
+
+  if (!formId || (!formPage.isEdit && !formPage.isFill && !formPage.isPreview))
+    return <PageNotFound />;
+
+  return (
+    <Fragment>
+      <Outlet />
+      <Form formData={formData} formPage={formPage} />
+    </Fragment>
+  );
+};
+
+export default FormLayout;

@@ -1,11 +1,8 @@
-import { Fragment } from "react";
-import Form from "components/Form";
-
 const Preview = () => {
   return (
-    <Fragment>
-      <Form />
-    </Fragment>
+    <div>
+      <span>Preview Page</span>
+    </div>
   );
 };
 

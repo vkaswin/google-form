@@ -1,15 +1,6 @@
-import {
-  Fragment,
-  useEffect,
-  useState,
-  useMemo,
-  useRef,
-  ReactNode,
-} from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { Fragment, useState, useRef, ReactNode } from "react";
 import {
   FormPages,
-  FormParams,
   FormDetail,
   FormDragValue,
   HandleDragOver,
@@ -21,10 +12,9 @@ import {
 import Section from "./Section";
 import Field from "./Field";
 import { useForm, FromProvider } from "hooks/useForm";
-import { formData } from "./formData";
+import { isEmptyObject } from "helpers/index";
 
 import styles from "./Form.module.scss";
-import { debounce, isEmptyObject } from "helpers/index";
 
 let initialDragRef = {
   source: {
@@ -39,15 +29,13 @@ let initialDragRef = {
 };
 
 type FormProps = {
+  formData: FormDetail;
+  formPage: FormPages;
   children?: ReactNode;
 };
 
-const Form = ({ children }: FormProps) => {
-  let form = useForm<FormDetail>();
-
-  const { formId } = useParams<FormParams>();
-
-  const { pathname } = useLocation();
+const Form = ({ children, formPage, formData }: FormProps) => {
+  let form = useForm(formData);
 
   let [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -55,41 +43,20 @@ const Form = ({ children }: FormProps) => {
 
   let [dragId, setDragId] = useState<string | null>(null);
 
-  const formPage = useMemo<FormPages>(() => {
-    return {
-      isPreview: pathname.includes("preview"),
-      isEdit: pathname.includes("edit"),
-      isFill: pathname.includes("fill"),
-    };
-  }, [pathname]);
-
   let dragRef = useRef<FormDragValue>(initialDragRef);
 
-  let { formValues, formErrors, setFormValues, handleSubmit } = form;
+  let { formValues, setFormValues, handleSubmit } = form;
 
   let { sections = [] } = formValues;
 
-  useEffect(() => {
-    getFormDetails();
-  }, [formId]);
+  //   useEffect(() => {
+  //     window.addEventListener("keydown", sendFormData);
+  //     return () => window.removeEventListener("keydown", sendFormData);
+  //   }, []);
 
-  useEffect(() => {
-    if (!formPage.isEdit) return;
-    window.addEventListener("keydown", sendFormData);
-    return () => window.removeEventListener("keydown", sendFormData);
-  }, []);
-
-  const getFormDetails = (): void => {
-    try {
-      setFormValues(formData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const sendFormData = debounce(() => {
-    console.log("sendData");
-  }, 500);
+  //   const sendFormData = debounce(() => {
+  //     console.log("sendData");
+  //   }, 500);
 
   const handleDragStart: HandleDragStart = (droppableId, draggableId) => {
     let dragElement = document.querySelector(
