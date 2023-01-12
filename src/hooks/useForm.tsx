@@ -73,39 +73,32 @@ export const useForm = <T extends FormValues = FormValues>(
   useEffect(() => {
     if (!defaultValue) return;
     setFormValues(defaultValue);
-  }, []);
+  }, [defaultValue]);
 
   const setFormField: SetFormField = ({ name, ref, options, field }) => {
     if (!formNames.includes(name)) {
       formNames.push(name);
     }
 
-    let formField: Field | undefined;
+    let formField: Field;
 
-    if (!field) {
-      if (isCheckBoxOrRadioInput(ref.type)) {
-        formField = {
-          ref: { name, type: ref.type } as HTMLInputElement,
-          refs: [ref],
-          options,
-        };
-      } else {
-        formField = {
-          ref,
-          options,
-        };
-      }
-    } else if (
-      isCheckBoxOrRadioInput(ref.type) &&
-      field &&
-      field.ref &&
-      Array.isArray(field.refs) &&
-      !field.refs.includes(ref)
-    ) {
-      formField = { ...field, refs: [...field.refs, ref] };
+    if (isCheckBoxOrRadioInput(ref.type)) {
+      formField = {
+        ref: { name, type: ref.type } as HTMLInputElement,
+        refs:
+          field && field.refs
+            ? field.refs.findIndex((el) => el === ref) === -1
+              ? [...field.refs, ref].filter(({ isConnected }) => isConnected)
+              : field.refs
+            : [ref],
+        options,
+      };
+    } else {
+      formField = {
+        ref,
+        options,
+      };
     }
-
-    if (!formField) return;
 
     set(name, formField, formFields);
   };
@@ -113,7 +106,9 @@ export const useForm = <T extends FormValues = FormValues>(
   const set: FormSetter = (name, value, fields) => {
     if (typeof fields === "undefined") return;
 
-    if (name.includes(".")) {
+    if (!name.includes(".")) {
+      fields[name] = value;
+    } else {
       let keys = name.split(".");
       let key: string | number | undefined;
       name = keys[0];
@@ -143,8 +138,6 @@ export const useForm = <T extends FormValues = FormValues>(
       let keyName = isNaN(parseInt(key)) ? key : parseInt(key);
       temp[keyName] = value;
       fields[name] = obj[name];
-    } else {
-      fields[name] = value;
     }
   };
 
@@ -293,11 +286,9 @@ export const useForm = <T extends FormValues = FormValues>(
     } else {
       let value = get(name, formValues);
 
-      if (typeof value === "undefined") return;
-
       if (
         (typeof required === "boolean" ? required : required?.value) &&
-        (value === null || value.length === 0)
+        (!value || value.length === 0)
       ) {
         error = typeof required === "object" ? required.message : undefined;
         errorType = "required";
@@ -327,7 +318,6 @@ export const useForm = <T extends FormValues = FormValues>(
       required,
       valueAsDate,
       valueAsNumber,
-      onBlur,
       onInput,
     } = options;
 
@@ -381,7 +371,6 @@ export const useForm = <T extends FormValues = FormValues>(
       onBlur: (event: any) => {
         let ref = event.target as unknown as HTMLInputElement;
         validateField({ name, ref });
-        if (typeof onBlur === "function") onBlur(event);
       },
       onInput: (event) => {
         let ref = event.target as unknown as HTMLInputElement;
@@ -405,8 +394,8 @@ export const useForm = <T extends FormValues = FormValues>(
     };
   };
 
-  const focusField = (errors: T) => {
-    let errorKeys = Object.keys(errors);
+  const focusField = () => {
+    let errorKeys = Object.keys(formErrors);
 
     if (errorKeys.length === 0) return;
 
@@ -439,10 +428,9 @@ export const useForm = <T extends FormValues = FormValues>(
 
   const validateAllFields: FormValidateAllFields = () => {
     for (let name of formNames) {
-      console.log(name);
       let field = get(name, formFields);
 
-      if (typeof field === "undefined") continue;
+      if (!field) continue;
 
       if (Array.isArray(field.refs)) {
         for (let ref of field.refs) {
@@ -466,12 +454,11 @@ export const useForm = <T extends FormValues = FormValues>(
       }
 
       let isValid = validateAllFields();
-      console.log(isValid);
 
       if (isValid && typeof onValid === "function") {
         onValid(formValues);
       } else if (typeof onInvalid === "function") {
-        // focusField();
+        focusField();
         onInvalid(formErrors);
       }
     };
@@ -500,7 +487,7 @@ export const useForm = <T extends FormValues = FormValues>(
     let field = get(name, formFields);
     if (!field) return;
     set(name, value, formValues);
-    validateField({ name, ref: field.ref, updateState: false });
+    validateField({ name, ref: field.ref });
     setFormValues({ ...formValues });
   };
 
@@ -569,30 +556,30 @@ export const useForm = <T extends FormValues = FormValues>(
     if (typeof fields === "undefined") return;
 
     if (!name.includes(".")) {
-      return;
-    }
+      delete fields[name];
+    } else {
+      let value: any;
+      let keys = name.split(".");
+      let initialKey = keys.shift();
+      let lastKey = keys.pop();
 
-    let value: any;
-    let keys = name.split(".");
-    let initialKey = keys.shift();
-    let lastKey = keys.pop();
+      if (initialKey) {
+        value = fields[initialKey];
+        if (typeof value === "undefined") return;
+      }
 
-    if (initialKey) {
-      value = fields[initialKey];
-      if (typeof value === "undefined") return;
-    }
+      for (let key of keys) {
+        if (typeof value[key] === "undefined") return;
+        value = value[key];
+      }
 
-    for (let key of keys) {
-      if (typeof value[key] === "undefined") return;
-      value = value[key];
-    }
+      if (!lastKey) return;
 
-    if (!lastKey) return;
-
-    if (Array.isArray(value)) {
-      value.splice(parseInt(lastKey), 1);
-    } else if (typeof value === "object") {
-      delete value[lastKey];
+      if (Array.isArray(value)) {
+        value.splice(parseInt(lastKey), 1);
+      } else if (typeof value === "object") {
+        delete value[lastKey];
+      }
     }
   };
 

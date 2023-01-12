@@ -36,8 +36,7 @@ export type FormRules = {
 
 export type FormField = {
   id: string;
-  question: string;
-  value: string | string[];
+  title: string;
   type: FormType;
   description: {
     enabled: boolean;

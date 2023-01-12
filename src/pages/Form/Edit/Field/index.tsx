@@ -9,7 +9,6 @@ import {
 import {
   FormTypeOption,
   FormField as FormFieldType,
-  FormPages,
   FormIndexes,
 } from "types/Form";
 import TextArea from "components/TextArea";
@@ -23,14 +22,13 @@ import MutiOptions from "./MutiOptions";
 import FormType from "./FormType";
 import Switch from "components/Switch";
 import { shuffleArray } from "helpers/index";
-import { useFormContext } from "layouts/FormLayout/context";
+import { useFormContext } from "context/form";
 
 import styles from "./Field.module.scss";
 
 type FieldProps = {
   selectedId: string | null;
   field: FormFieldType;
-  formPage: FormPages;
   setDragId: Dispatch<SetStateAction<string | null>>;
 } & FormIndexes &
   ComponentProps<"div">;
@@ -69,12 +67,12 @@ const Field = ({
   selectedId,
   sectionIndex,
   fieldIndex,
-  formPage,
   className,
   setDragId,
   ...props
 }: FieldProps) => {
-  const { register, clearValue, setValue, formErrors } = useFormContext();
+  const { register, clearValue, setValue, formErrors, formValues } =
+    useFormContext();
 
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
     return formTypes.find((option) => {
@@ -83,8 +81,6 @@ const Field = ({
   }, [field.type]);
 
   let component = useMemo<ReactNode>(() => {
-    let fieldName = `sections.${sectionIndex}.fields.${fieldIndex}.value`;
-
     if (
       field.type === "checkbox" ||
       field.type === "radio" ||
@@ -92,36 +88,17 @@ const Field = ({
     ) {
       return (
         <MutiOptions
-          field={field}
-          formPage={formPage}
           sectionIndex={sectionIndex}
           fieldIndex={fieldIndex}
+          {...field}
         />
       );
     } else if (field.type === "input") {
-      return (
-        <Input
-          name={fieldName}
-          placeholder="Short answer text"
-          disabled={formPage.isEdit}
-          defaultValue={field.value}
-          register={register}
-          rules={field.rules}
-        />
-      );
+      return <Input placeholder="Short answer text" disabled />;
     } else if (field.type === "textarea") {
-      return (
-        <TextArea
-          placeholder="Long answer text"
-          defaultValue={field.value}
-          disabled={formPage.isEdit}
-          name={fieldName}
-          register={register}
-          rules={field.rules}
-        />
-      );
+      return <TextArea placeholder="Long answer text" disabled />;
     } else if (field.type === "date") {
-      return <DatePicker disabled={formPage.isEdit} />;
+      return <DatePicker disabled />;
     } else if (field.type === "file") {
       return <FileInput />;
     } else {
@@ -150,25 +127,16 @@ const Field = ({
     formErrors?.sections?.[sectionIndex]?.fields?.[fieldIndex]?.value;
 
   return (
-    <div
-      className={`${styles.container} ${className || ""}`.trim()}
-      {...(!formPage.isEdit && { "data-error": !!valueErrorMsg })}
-      {...props}
-    >
+    <div className={`${styles.container} ${className || ""}`.trim()} {...props}>
       <div className={styles.wrapper}>
         <Fragment>
           <div className={styles.field_label}>
             <TextEditor
               as="div"
               placeholder="Question"
-              defaultValue={`${field.question} ${
-                !formPage.isEdit && field.required
-                  ? `<span class=${styles.asterisk}>*</span>`
-                  : ""
-              }`}
-              disabled={!formPage.isEdit}
+              defaultValue={field.title}
               register={register(
-                `sections.${sectionIndex}.fields.${fieldIndex}.question`
+                `sections.${sectionIndex}.fields.${fieldIndex}.title`
               )}
             />
             {selectedId === field.id && (
@@ -183,37 +151,25 @@ const Field = ({
             )}
           </div>
         </Fragment>
-        {field?.description?.enabled &&
-          (formPage.isEdit ? (
-            <div className={styles.field_description}>
-              <TextEditor
-                as="div"
-                placeholder="Description"
-                defaultValue={field.description.value}
-                disabled={!formPage.isEdit}
-                register={register(
-                  `sections.${sectionIndex}.fields.${fieldIndex}.description`
-                )}
-              />
-            </div>
-          ) : (
-            <div
-              dangerouslySetInnerHTML={{ __html: field.description.value }}
-            ></div>
-          ))}
+        {field?.description?.enabled && (
+          <div className={styles.field_description}>
+            <TextEditor
+              as="div"
+              placeholder="Description"
+              defaultValue={field.description.value}
+              register={register(
+                `sections.${sectionIndex}.fields.${fieldIndex}.description`
+              )}
+            />
+          </div>
+        )}
         <div className={styles.field} data-type={field.type}>
           {component}
           {valueErrorMsg && (
             <span className={styles.error_msg}>{valueErrorMsg}</span>
           )}
         </div>
-        {!formPage.isEdit && false && (
-          <div className={styles.error_msg}>
-            <i className="bx-error-circle"></i>
-            <span>This is a required field</span>
-          </div>
-        )}
-        {formPage.isEdit && selectedId === field.id && (
+        {selectedId === field.id && (
           <Fragment>
             <div className={styles.footer}>
               <i
@@ -227,12 +183,11 @@ const Field = ({
               <i
                 id={`duplicate-${field.id}`}
                 className="bx-duplicate"
-                onClick={
-                  () => console.log("click")
-                  //   setValue(
-                  //     `sections.${sectionIndex}.fields.${formValues?.sections?.[sectionIndex].fields?.length}`,
-                  //     field
-                  //   )
+                onClick={() =>
+                  setValue(
+                    `sections.${sectionIndex}.fields.${formValues.sections[sectionIndex].fields.length}`,
+                    field
+                  )
                 }
               ></i>
               <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
@@ -277,20 +232,17 @@ const Field = ({
                 );
               })}
             </DropDown>
+            <div className={styles.highlight}></div>
           </Fragment>
         )}
-        {formPage.isEdit && selectedId === field.id && (
-          <div className={styles.highlight}></div>
-        )}
-        {formPage.isEdit && (
-          <div
-            className={styles.drag_icon}
-            onPointerDown={() => setDragId(field.id)}
-          >
-            <i className="bx-dots-horizontal-rounded"></i>
-            <i className="bx-dots-horizontal-rounded"></i>
-          </div>
-        )}
+
+        <div
+          className={styles.drag_icon}
+          onPointerDown={() => setDragId(field.id)}
+        >
+          <i className="bx-dots-horizontal-rounded"></i>
+          <i className="bx-dots-horizontal-rounded"></i>
+        </div>
       </div>
     </div>
   );

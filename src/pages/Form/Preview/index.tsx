@@ -1,9 +1,13 @@
-const Preview = () => {
+import { Fragment } from "react";
+
+const PreviewForm = () => {
   return (
-    <div>
-      <span>Preview Page</span>
-    </div>
+    <Fragment>
+      <div>
+        <span>Preview Page</span>
+      </div>
+    </Fragment>
   );
 };
 
-export default Preview;
+export default PreviewForm;

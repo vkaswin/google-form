@@ -2,6 +2,7 @@
   width: 100%;
   padding: 5px 10px;
   resize: none;
+  outline: none;
   &:disabled {
     border-width: 0px 0px 1px 0px;
     border-color: #9e9e9e;
