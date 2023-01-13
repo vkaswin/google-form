@@ -82,7 +82,19 @@ export const useForm = <T extends FormValues = FormValues>(
 
     let formField: Field;
 
+    if (!isFileInput(ref.type)) {
+      let defaultValue = ref.defaultValue;
+      if (defaultValue) {
+        ref.value = defaultValue;
+      }
+    }
+
     if (isCheckBoxOrRadioInput(ref.type)) {
+      let defaultChecked = ref.defaultChecked;
+      if (defaultChecked) {
+        ref.checked = defaultChecked;
+      }
+
       formField = {
         ref: { name, type: ref.type } as HTMLInputElement,
         refs:
