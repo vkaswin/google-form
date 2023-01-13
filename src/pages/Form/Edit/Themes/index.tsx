@@ -72,8 +72,6 @@ const Themes = ({ colorCode, bgCode, onChange }: ThemeProps) => {
     return bgCodes["purple"];
   }, [colorCode]);
 
-  // TODO USE HOOK FORM SETVALUES TO SET STATE
-
   return (
     <Fragment>
       <i
