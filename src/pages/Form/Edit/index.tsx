@@ -29,11 +29,7 @@ let initialDragRef = {
   dragElement: null,
 };
 
-type FormProps = {
-  formData?: FormDetail;
-};
-
-const EditForm = ({}: FormProps) => {
+const EditForm = () => {
   const [formDetail, setFormDetail] = useState(formData);
 
   let [selectedId, setSelectedId] = useState<string | null>(null);
@@ -127,10 +123,8 @@ const EditForm = ({}: FormProps) => {
     e.preventDefault();
   };
 
-  let context: FormContextType = { ...form };
-
   return (
-    <FormContext.Provider value={context}>
+    <FormContext.Provider value={form}>
       <div className={styles.container}>
         {sections.map(({ id, title, description, fields }, sectionIndex) => {
           let sectionHeader =

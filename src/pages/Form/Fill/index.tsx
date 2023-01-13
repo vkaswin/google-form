@@ -16,7 +16,7 @@ const FillForm = ({ isPreview = false }: FillFormProps) => {
 
   let [activeSection, setActiveSection] = useState<number>(0);
 
-  const { handleSubmit } = form;
+  const { handleSubmit, reset } = form;
 
   const { sections = [] } = formData;
 
@@ -48,11 +48,15 @@ const FillForm = ({ isPreview = false }: FillFormProps) => {
     }
   };
 
-  const context = { ...form };
+  const clearForm = () => {
+    reset();
+    setActiveSection(0);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <Fragment>
-      <FormContext.Provider value={context}>
+      <FormContext.Provider value={form}>
         <div className={styles.container}>
           {sections.map(({ id, title, description, fields }, sectionIndex) => {
             if (!isPreview && !(sectionIndex === activeSection)) return null;
@@ -105,7 +109,9 @@ const FillForm = ({ isPreview = false }: FillFormProps) => {
                   </button>
                 )}
               </div>
-              <button className={styles.btn_clear}>Clear Form</button>
+              <button className={styles.btn_clear} onClick={clearForm}>
+                Clear Form
+              </button>
             </div>
           )}
           <div className={styles.footer}>
