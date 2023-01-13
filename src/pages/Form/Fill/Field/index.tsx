@@ -14,10 +14,11 @@ type FieldProps = {
 } & ComponentProps<"div">;
 
 const Field = ({ field, className, ...props }: FieldProps) => {
-  const { register, formValues, formErrors } = useFormContext();
+  const { register, setValue, formValues, formErrors } = useFormContext();
 
   const error = formErrors?.[field.id];
   const value = formValues[field.id];
+  const registerField = register(field.id, field.rules);
 
   let component = useMemo<ReactNode>(() => {
     if (
@@ -31,7 +32,7 @@ const Field = ({ field, className, ...props }: FieldProps) => {
         <Input
           placeholder="Short answer text"
           defaultValue={value}
-          register={register(field.id, field.rules)}
+          register={registerField}
         />
       );
     } else if (field.type === "textarea") {
@@ -39,11 +40,17 @@ const Field = ({ field, className, ...props }: FieldProps) => {
         <TextArea
           placeholder="Long answer text"
           defaultValue={value}
-          register={register(field.id, field.rules)}
+          register={registerField}
         />
       );
     } else if (field.type === "date") {
-      return <DatePicker />;
+      return (
+        <DatePicker
+          register={registerField}
+          value={formValues[field.id]}
+          onChange={(value) => setValue(field.id, value)}
+        />
+      );
     } else if (field.type === "file") {
       return <FileInput />;
     } else {

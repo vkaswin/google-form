@@ -11,7 +11,7 @@ export const formData: FormDetail = {
         {
           id: "ee8f3a59-7a20-4aef-b3f4-5731d84ba0a3",
           title: "Loreum Ipsum",
-          type: "input",
+          type: "date",
           description: {
             enabled: false,
             value: "",
@@ -86,79 +86,79 @@ export const formData: FormDetail = {
         },
       ],
     },
-    // {
-    //   id: "ad431f05-46b4-41dc-a803-c65eaa3fd94f",
-    //   title: "Loreum Ispum",
-    //   description: "Loreum Ispum",
-    //   fields: [
-    //     {
-    //       id: "e15459e7-1347-41ab-9334-4884be1d1cd1",
-    //       title: "Loreum Ipsum",
-    //       type: "input",
+    {
+      id: "ad431f05-46b4-41dc-a803-c65eaa3fd94f",
+      title: "Loreum Ispum",
+      description: "Loreum Ispum",
+      fields: [
+        {
+          id: "e15459e7-1347-41ab-9334-4884be1d1cd1",
+          title: "Loreum Ipsum",
+          type: "input",
 
-    //       description: {
-    //         enabled: true,
-    //         value: "",
-    //       },
-    //       rules: { required: { value: true } },
-    //     },
-    //     {
-    //       id: "3c4a7001-94da-4ad7-9513-187bac3f1dc8",
-    //       title: "Loreum Ipsum",
-    //       type: "input",
+          description: {
+            enabled: true,
+            value: "",
+          },
+          rules: { required: { value: true } },
+        },
+        {
+          id: "3c4a7001-94da-4ad7-9513-187bac3f1dc8",
+          title: "Loreum Ipsum",
+          type: "input",
 
-    //       description: {
-    //         enabled: false,
-    //         value: "",
-    //       },
-    //       rules: { required: { value: true } },
-    //     },
-    //     {
-    //       id: "32d54e03-7060-4a4d-a83b-3ac47f487e3a",
-    //       title: "Gender",
-    //       type: "radio",
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: { required: { value: true } },
+        },
+        {
+          id: "32d54e03-7060-4a4d-a83b-3ac47f487e3a",
+          title: "Gender",
+          type: "radio",
 
-    //       options: ["Male", "Female"],
-    //       other: {
-    //         enabled: true,
-    //         checked: false,
-    //         value: "",
-    //       },
-    //       description: {
-    //         enabled: false,
-    //         value: "",
-    //       },
-    //       rules: { required: { value: true } },
-    //     },
-    //     {
-    //       id: "c1671459-27f1-4031-9720-2a411879980f",
-    //       title: "Hobbies",
-    //       type: "checkbox",
+          options: ["Male", "Female"],
+          other: {
+            enabled: true,
+            checked: false,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: { required: { value: true } },
+        },
+        {
+          id: "c1671459-27f1-4031-9720-2a411879980f",
+          title: "Hobbies",
+          type: "checkbox",
 
-    //       options: ["Football", "Basketball", "Cricket"],
-    //       other: {
-    //         enabled: true,
-    //         checked: false,
-    //         value: "",
-    //       },
-    //       description: {
-    //         enabled: false,
-    //         value: "",
-    //       },
-    //       rules: { required: { value: true } },
-    //     },
-    //     {
-    //       id: "c6b3af39-dfa3-4eba-b7ef-5b0194d6ba1b",
-    //       title: "Location",
-    //       type: "dropdown",
-    //       options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
-    //       description: {
-    //         enabled: false,
-    //         value: "",
-    //       },
-    //       rules: { required: { value: true } },
-    //     },
-    //   ],
-    // },
+          options: ["Football", "Basketball", "Cricket"],
+          other: {
+            enabled: true,
+            checked: false,
+            value: "",
+          },
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: { required: { value: true } },
+        },
+        {
+          id: "c6b3af39-dfa3-4eba-b7ef-5b0194d6ba1b",
+          title: "Location",
+          type: "dropdown",
+          options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
+          description: {
+            enabled: false,
+            value: "",
+          },
+          rules: { required: { value: true } },
+        },
+      ],
+    },
   ],
 };

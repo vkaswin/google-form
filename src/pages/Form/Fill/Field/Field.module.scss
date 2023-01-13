@@ -29,6 +29,9 @@
     .field[data-type="textarea"] {
       max-width: 75%;
     }
+    .field[data-type="date"] {
+      max-width: 50%;
+    }
     .error_msg {
       display: flex;
       align-items: center;

@@ -12,7 +12,6 @@ type SelectOption<T> = {
 };
 
 type SelectProps<T> = {
-  label?: string;
   value?: string;
   size?: "auto";
   placeholder?: string;
@@ -20,10 +19,9 @@ type SelectProps<T> = {
   options?: SelectOption<T>[];
   register?: ReturnType<FormRegister> | {};
   onChange?: (value: T) => void;
-} & Omit<ComponentProps<"div">, "onChange" | "placeholder" | "disabled">;
+} & ComponentProps<"div">;
 
 const Select = <T,>({
-  label,
   placeholder,
   value,
   disabled,
@@ -55,10 +53,9 @@ const Select = <T,>({
     ],
   });
 
-  const handleClick = (list: any) => {
+  const handleClick = (value: any) => {
     close();
-    if (typeof onChange !== "function") return;
-    onChange(list);
+    onChange?.(value);
   };
 
   const open = () => {
@@ -89,7 +86,6 @@ const Select = <T,>({
       {...props}
     >
       <div {...register} tabIndex={-1}>
-        <label>{label}</label>
         <div
           className={styles.custom_select}
           onClick={open}

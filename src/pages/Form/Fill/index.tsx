@@ -7,7 +7,11 @@ import { formData } from "json";
 
 import styles from "./Fill.module.scss";
 
-const FillForm = () => {
+type FillFormProps = {
+  isPreview?: boolean;
+};
+
+const FillForm = ({ isPreview = false }: FillFormProps) => {
   const form = useForm();
 
   let [activeSection, setActiveSection] = useState<number>(0);
@@ -22,8 +26,13 @@ const FillForm = () => {
     } else if (action == "back") {
       setActiveSection((section) => section - 1);
     } else {
-      console.log("final step", data);
+      submitResponse(data);
     }
+  };
+
+  const submitResponse = (data: any) => {
+    try {
+    } catch (error) {}
   };
 
   const onInvalid = (errors: any, action?: "next" | "back") => {
@@ -43,13 +52,10 @@ const FillForm = () => {
 
   return (
     <Fragment>
-      <div>
-        <span>Fill page</span>
-      </div>
       <FormContext.Provider value={context}>
         <div className={styles.container}>
           {sections.map(({ id, title, description, fields }, sectionIndex) => {
-            if (!(sectionIndex === activeSection)) return null;
+            if (!isPreview && !(sectionIndex === activeSection)) return null;
 
             return (
               <Fragment key={id}>
@@ -62,44 +68,46 @@ const FillForm = () => {
               </Fragment>
             );
           })}
-          <div className={styles.cta}>
-            <div>
-              {activeSection > 0 && (
-                <button
-                  className={styles.btn_navigate}
-                  onClick={handleSubmit(
-                    (data) => onSubmit(data, "back"),
-                    (errors) => onInvalid(errors, "back")
-                  )}
-                >
-                  Back
-                </button>
-              )}
-              {activeSection < sections.length - 1 && (
-                <button
-                  className={styles.btn_navigate}
-                  onClick={handleSubmit(
-                    (data) => onSubmit(data, "next"),
-                    (errors) => onInvalid(errors, "next")
-                  )}
-                >
-                  Next
-                </button>
-              )}
-              {activeSection === sections.length - 1 && (
-                <button
-                  className={styles.btn_submit}
-                  onClick={handleSubmit(
-                    (data) => onSubmit(data, "submit"),
-                    onInvalid
-                  )}
-                >
-                  Submit
-                </button>
-              )}
+          {!isPreview && (
+            <div className={styles.cta}>
+              <div>
+                {activeSection > 0 && (
+                  <button
+                    className={styles.btn_navigate}
+                    onClick={handleSubmit(
+                      (data) => onSubmit(data, "back"),
+                      (errors) => onInvalid(errors, "back")
+                    )}
+                  >
+                    Back
+                  </button>
+                )}
+                {activeSection < sections.length - 1 && (
+                  <button
+                    className={styles.btn_navigate}
+                    onClick={handleSubmit(
+                      (data) => onSubmit(data, "next"),
+                      (errors) => onInvalid(errors, "next")
+                    )}
+                  >
+                    Next
+                  </button>
+                )}
+                {activeSection === sections.length - 1 && (
+                  <button
+                    className={styles.btn_submit}
+                    onClick={handleSubmit(
+                      (data) => onSubmit(data, "submit"),
+                      onInvalid
+                    )}
+                  >
+                    Submit
+                  </button>
+                )}
+              </div>
+              <button className={styles.btn_clear}>Clear Form</button>
             </div>
-            <button className={styles.btn_clear}>Clear Form</button>
-          </div>
+          )}
           <div className={styles.footer}>
             <span>Google Form</span>
           </div>

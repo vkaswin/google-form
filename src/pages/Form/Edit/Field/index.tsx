@@ -98,7 +98,7 @@ const Field = ({
     } else if (field.type === "textarea") {
       return <TextArea placeholder="Long answer text" disabled />;
     } else if (field.type === "date") {
-      return <DatePicker disabled />;
+      return <DatePicker placeholder="Month, day, year" disabled />;
     } else if (field.type === "file") {
       return <FileInput />;
     } else {
