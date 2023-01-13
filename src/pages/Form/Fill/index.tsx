@@ -5,7 +5,7 @@ import Field from "./Field";
 import { FormContext } from "context/form";
 import { formData } from "json";
 
-import styles from "./Fill.module.scss";
+import styles from "./FillForm.module.scss";
 
 type FillFormProps = {
   isPreview?: boolean;
@@ -55,71 +55,69 @@ const FillForm = ({ isPreview = false }: FillFormProps) => {
   };
 
   return (
-    <Fragment>
-      <FormContext.Provider value={form}>
-        <div className={styles.container}>
-          {sections.map(({ id, title, description, fields }, sectionIndex) => {
-            if (!isPreview && !(sectionIndex === activeSection)) return null;
+    <FormContext.Provider value={form}>
+      <div className={styles.container}>
+        {sections.map(({ id, title, description, fields }, sectionIndex) => {
+          if (!isPreview && !(sectionIndex === activeSection)) return null;
 
-            return (
-              <Fragment key={id}>
-                <Section title={title} description={description} />
-                <div className={styles.wrapper}>
-                  {fields.map((field) => {
-                    return <Field key={field.id} field={field} tabIndex={-1} />;
-                  })}
-                </div>
-              </Fragment>
-            );
-          })}
-          {!isPreview && (
-            <div className={styles.cta}>
-              <div>
-                {activeSection > 0 && (
-                  <button
-                    className={styles.btn_navigate}
-                    onClick={handleSubmit(
-                      (data) => onSubmit(data, "back"),
-                      (errors) => onInvalid(errors, "back")
-                    )}
-                  >
-                    Back
-                  </button>
-                )}
-                {activeSection < sections.length - 1 && (
-                  <button
-                    className={styles.btn_navigate}
-                    onClick={handleSubmit(
-                      (data) => onSubmit(data, "next"),
-                      (errors) => onInvalid(errors, "next")
-                    )}
-                  >
-                    Next
-                  </button>
-                )}
-                {activeSection === sections.length - 1 && (
-                  <button
-                    className={styles.btn_submit}
-                    onClick={handleSubmit(
-                      (data) => onSubmit(data, "submit"),
-                      onInvalid
-                    )}
-                  >
-                    Submit
-                  </button>
-                )}
+          return (
+            <Fragment key={id}>
+              <Section title={title} description={description} />
+              <div className={styles.wrapper}>
+                {fields.map((field) => {
+                  return <Field key={field.id} field={field} tabIndex={-1} />;
+                })}
               </div>
-              <button className={styles.btn_clear} onClick={clearForm}>
-                Clear Form
-              </button>
+            </Fragment>
+          );
+        })}
+        {!isPreview && (
+          <div className={styles.cta}>
+            <div>
+              {activeSection > 0 && (
+                <button
+                  className={styles.btn_navigate}
+                  onClick={handleSubmit(
+                    (data) => onSubmit(data, "back"),
+                    (errors) => onInvalid(errors, "back")
+                  )}
+                >
+                  Back
+                </button>
+              )}
+              {activeSection < sections.length - 1 && (
+                <button
+                  className={styles.btn_navigate}
+                  onClick={handleSubmit(
+                    (data) => onSubmit(data, "next"),
+                    (errors) => onInvalid(errors, "next")
+                  )}
+                >
+                  Next
+                </button>
+              )}
+              {activeSection === sections.length - 1 && (
+                <button
+                  className={styles.btn_submit}
+                  onClick={handleSubmit(
+                    (data) => onSubmit(data, "submit"),
+                    onInvalid
+                  )}
+                >
+                  Submit
+                </button>
+              )}
             </div>
-          )}
-          <div className={styles.footer}>
-            <span>Google Form</span>
+            <button className={styles.btn_clear} onClick={clearForm}>
+              Clear Form
+            </button>
           </div>
+        )}
+        <div className={styles.footer}>
+          <span>Google Form</span>
         </div>
-      </FormContext.Provider>
-    </Fragment>
+      </div>
+    </FormContext.Provider>
   );
 };
 

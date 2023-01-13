@@ -1,7 +1,8 @@
 import { FormDetail } from "types/Form";
 
 export const formData: FormDetail = {
-  theme: "dark",
+  colorCode: "#673ab7",
+  bgCode: "#f0ebf8",
   sections: [
     {
       id: "43a1ce84-d3d1-4c97-b858-a48d85e55762",

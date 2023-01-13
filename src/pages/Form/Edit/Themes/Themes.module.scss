@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  padding: 15px;
+  .color {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .bg {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .code_list {
+    display: grid;
+    grid-template-columns: repeat(4, 30px);
+    grid-auto-rows: 30px;
+    gap: 10px;
+    padding: 0px;
+    li {
+      position: relative;
+      border-radius: 50%;
+      list-style: none;
+      cursor: pointer;
+      i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+      }
+      i[data-type="color"] {
+        color: white;
+      }
+      i[data-type="bg"] {
+        color: #000;
+      }
+    }
+  }
+}

@@ -2,7 +2,8 @@ import { DragEvent, TouchEvent } from "react";
 import { UseForm } from "./UseForm";
 
 export type FormDetail = {
-  theme: string;
+  colorCode: string;
+  bgCode: string;
   sections: FormSection[];
 };
 
@@ -23,7 +24,9 @@ export type FormType =
   | "input"
   | "date"
   | "file"
-  | "texteditor";
+  | "texteditor"
+  | "slider"
+  | "rating";
 
 export type FormRules = {
   required?: { value?: boolean; message?: string };
