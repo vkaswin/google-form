@@ -115,3 +115,18 @@ export const isEmptyObject = (obj: any): boolean => {
 
   return true;
 };
+
+export const setFormTheme = ({
+  colorCode,
+  bgCode,
+}: {
+  colorCode: string;
+  bgCode: string;
+}) => {
+  let root = document.querySelector("html");
+  if (!root) return;
+  root.setAttribute(
+    "style",
+    `--primary-color: ${colorCode}; --bg-color: ${bgCode}`
+  );
+};

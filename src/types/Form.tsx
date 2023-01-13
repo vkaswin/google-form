@@ -1,8 +1,7 @@
 import { DragEvent, TouchEvent } from "react";
-import { UseForm } from "./UseForm";
 
 export type FormDetail = {
-  colorCode: string;
+  colorCode: ColorCodes;
   bgCode: string;
   sections: FormSection[];
 };
@@ -111,4 +110,20 @@ export type HandleDragStart = (
 
 export type HandleDragEnd = () => void;
 
-export type FormContext = UseForm;
+export type ColorCodes =
+  | "#db4437"
+  | "#673ab7"
+  | "#3f51b5"
+  | "#4285f4"
+  | "#03a9f4"
+  | "#00bcd4"
+  | "#ff5722"
+  | "#ff9800"
+  | "#009688"
+  | "#4caf50"
+  | "#607d8b"
+  | "#9e9e9e";
+
+export type BGCodeList = Record<ColorCodes, string[]>;
+
+export type ColorCodeList = Record<ColorCodes, string>;

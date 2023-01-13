@@ -1,8 +1,9 @@
-import { Fragment, useState } from "react";
+import { Fragment, useLayoutEffect, useState } from "react";
 import { useForm } from "hooks/useForm";
 import Section from "./Section";
 import Field from "./Field";
-import { FormContext } from "context/form";
+import { FormProvider } from "context/form";
+import { setFormTheme } from "helpers";
 import { formData } from "json";
 
 import styles from "./FillForm.module.scss";
@@ -18,7 +19,11 @@ const FillForm = ({ isPreview = false }: FillFormProps) => {
 
   const { handleSubmit, reset } = form;
 
-  const { sections = [] } = formData;
+  const { sections = [], colorCode, bgCode } = formData;
+
+  useLayoutEffect(() => {
+    setFormTheme({ colorCode, bgCode });
+  }, [colorCode, bgCode]);
 
   const onSubmit = (data: any, action: "next" | "back" | "submit") => {
     if (action === "next") {
@@ -55,7 +60,7 @@ const FillForm = ({ isPreview = false }: FillFormProps) => {
   };
 
   return (
-    <FormContext.Provider value={form}>
+    <FormProvider {...form}>
       <div className={styles.container}>
         {sections.map(({ id, title, description, fields }, sectionIndex) => {
           if (!isPreview && !(sectionIndex === activeSection)) return null;
@@ -117,7 +122,7 @@ const FillForm = ({ isPreview = false }: FillFormProps) => {
           <span>Google Form</span>
         </div>
       </div>
-    </FormContext.Provider>
+    </FormProvider>
   );
 };
 

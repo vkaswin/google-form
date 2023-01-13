@@ -1,4 +1,4 @@
-import { Fragment, useState, useRef } from "react";
+import { Fragment, useState, useRef, useEffect } from "react";
 import {
   FormDragValue,
   HandleDragOver,
@@ -6,12 +6,14 @@ import {
   HandleDragLeave,
   HandleDragEnter,
   HandleDragStart,
+  ColorCodes,
 } from "types/Form";
 import Section from "./Section";
 import Field from "./Field";
 import { useForm } from "hooks/useForm";
-import { FormContext } from "context/form";
+import { FormProvider } from "context/form";
 import Themes from "./Themes";
+import { setFormTheme } from "helpers";
 
 import { formData } from "json";
 
@@ -65,6 +67,23 @@ const EditForm = () => {
   let {
     formValues: { sections = [], colorCode, bgCode },
   } = form;
+
+  useEffect(() => {
+    getFormDetails();
+  }, []);
+
+  useEffect(() => {
+    if (!colorCode || !bgCode) return;
+    setFormTheme({ colorCode, bgCode });
+  }, [colorCode, bgCode]);
+
+  const getFormDetails = () => {
+    try {
+      setFormDetail(formData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleDragStart: HandleDragStart = (droppableId, draggableId) => {
     let dragElement = document.querySelector(
@@ -145,8 +164,8 @@ const EditForm = () => {
     e.preventDefault();
   };
 
-  const handleTheme = (name: "colorCode" | "bgCode", code: string) => {
-    setFormDetail({ ...formDetail, [name]: code });
+  const handleTheme = (theme: { colorCode: ColorCodes; bgCode: string }) => {
+    setFormDetail({ ...formDetail, ...theme });
   };
 
   const tabs = ["Questions", "Responses"];
@@ -189,7 +208,7 @@ const EditForm = () => {
           })}
         </ul>
       </div>
-      <FormContext.Provider value={form}>
+      <FormProvider {...form}>
         <div className={styles.container}>
           {sections.map(({ id, title, description, fields }, sectionIndex) => {
             let sectionHeader =
@@ -251,7 +270,7 @@ const EditForm = () => {
             <span>Google Form</span>
           </div>
         </div>
-      </FormContext.Provider>
+      </FormProvider>
     </Fragment>
   );
 };
