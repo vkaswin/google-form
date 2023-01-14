@@ -8,17 +8,18 @@ import {
   HandleDragStart,
   ColorCodes,
   FormPages,
+  FormDetail,
 } from "types/Form";
 import Section from "./Section";
 import Field from "./Field";
 import Header from "./Header";
+import Responses from "./Responses";
 import { useForm } from "hooks/useForm";
 import { FormProvider } from "context/form";
 import { setFormTheme } from "helpers";
 import { formData } from "json";
 
 import styles from "./FormBuilder.module.scss";
-import Responses from "./Responses";
 
 let initialDragRef = {
   source: {
@@ -43,7 +44,7 @@ const FormBuilder = (formPage: FormPages) => {
 
   let { current: dragRef } = useRef<FormDragValue>(initialDragRef);
 
-  let form = useForm(formData);
+  let form = useForm<FormDetail>();
 
   let { formValues, setFormValues, reset, handleSubmit } = form;
 
@@ -201,8 +202,7 @@ const FormBuilder = (formPage: FormPages) => {
           <div className={styles.container}>
             {sections.map(
               ({ id, title, description, fields }, sectionIndex) => {
-                if (!isPreview && !(sectionIndex === activeSection))
-                  return null;
+                if (isFill && !(sectionIndex === activeSection)) return null;
 
                 let sectionHeader =
                   sections.length > 1

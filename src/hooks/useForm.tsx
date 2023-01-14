@@ -1,4 +1,4 @@
-import { useRef, useState, createContext, useContext, useEffect } from "react";
+import { useRef, useState } from "react";
 import {
   FormErrorTypes,
   FormGetter,
@@ -55,9 +55,7 @@ const defaultErrors = {
   validate: `Validation failed for this field`,
 };
 
-export const useForm = <T extends FormValues = FormValues>(
-  defaultValue?: T
-): UseForm<T> => {
+export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
   let { current: formNames } = useRef<string[]>([]);
 
   let { current: formFields } = useRef<FormFields>({});
@@ -69,11 +67,6 @@ export const useForm = <T extends FormValues = FormValues>(
   let { current: watcher } = useRef<Watcher>({});
 
   let isSubmitted = useRef(false);
-
-  useEffect(() => {
-    if (!defaultValue) return;
-    setFormValues(defaultValue);
-  }, [defaultValue]);
 
   const setFormField: SetFormField = ({ name, ref, options, field }) => {
     if (!formNames.includes(name)) {
@@ -497,9 +490,8 @@ export const useForm = <T extends FormValues = FormValues>(
 
   const setValue: SetValue = (name, value) => {
     let field = get(name, formFields);
-    if (!field) return;
     set(name, value, formValues);
-    validateField({ name, ref: field.ref });
+    if (field) validateField({ name, ref: field.ref });
     setFormValues({ ...formValues });
   };
 

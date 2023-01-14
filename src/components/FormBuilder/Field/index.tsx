@@ -87,7 +87,6 @@ const Field = ({
 
   const error =
     formErrors?.sections?.[sectionIndex]?.fields?.[fieldIndex]?.value;
-  const value = formValues.sections[sectionIndex].fields[fieldIndex].value;
   const name = `sections.${sectionIndex}.fields.${fieldIndex}.value`;
   const registerField = register(name, field.rules);
 
@@ -109,7 +108,7 @@ const Field = ({
       return (
         <Input
           placeholder="Short answer text"
-          defaultValue={value}
+          defaultValue={field.value}
           register={registerField}
           {...(isEdit ? { disabled: true } : { register: registerField })}
         />
@@ -118,7 +117,7 @@ const Field = ({
       return (
         <TextArea
           placeholder="Long answer text"
-          defaultValue={value}
+          defaultValue={field.value}
           {...(isEdit ? { disabled: true } : { register: registerField })}
         />
       );
@@ -126,7 +125,7 @@ const Field = ({
       return (
         <DatePicker
           placeholder="Month, day, year"
-          value={value || ""}
+          value={field.value || ""}
           onChange={(value) => setValue(name, value)}
           {...(isEdit ? { disabled: true } : { register: registerField })}
         />
@@ -190,16 +189,18 @@ const Field = ({
                 />
               )}
             </div>
-            <div className={styles.field_description}>
-              <TextEditor
-                as="div"
-                placeholder="Description"
-                defaultValue={field.description.value}
-                register={register(
-                  `sections.${sectionIndex}.fields.${fieldIndex}.description`
-                )}
-              />
-            </div>
+            {field.description.enabled && (
+              <div className={styles.field_description}>
+                <TextEditor
+                  as="div"
+                  placeholder="Description"
+                  defaultValue={field.description.value}
+                  register={register(
+                    `sections.${sectionIndex}.fields.${fieldIndex}.description`
+                  )}
+                />
+              </div>
+            )}
           </Fragment>
         ) : (
           <Fragment>
@@ -207,7 +208,7 @@ const Field = ({
               <span>{field.title}</span>
               <span className={styles.asterisk}>*</span>
             </div>
-            {field?.description?.enabled && (
+            {field.description.enabled && (
               <div
                 dangerouslySetInnerHTML={{ __html: field.description.value }}
               ></div>
