@@ -111,7 +111,7 @@ const Field = ({
           placeholder="Short answer text"
           defaultValue={value}
           register={registerField}
-          disabled={isEdit}
+          {...(isEdit ? { disabled: true } : { register: registerField })}
         />
       );
     } else if (field.type === "textarea") {
@@ -119,18 +119,16 @@ const Field = ({
         <TextArea
           placeholder="Long answer text"
           defaultValue={value}
-          register={registerField}
-          disabled={isEdit}
+          {...(isEdit ? { disabled: true } : { register: registerField })}
         />
       );
     } else if (field.type === "date") {
       return (
         <DatePicker
           placeholder="Month, day, year"
-          register={registerField}
           value={value || ""}
           onChange={(value) => setValue(name, value)}
-          disabled={isEdit}
+          {...(isEdit ? { disabled: true } : { register: registerField })}
         />
       );
     } else if (field.type === "file") {
@@ -192,6 +190,16 @@ const Field = ({
                 />
               )}
             </div>
+            <div className={styles.field_description}>
+              <TextEditor
+                as="div"
+                placeholder="Description"
+                defaultValue={field.description.value}
+                register={register(
+                  `sections.${sectionIndex}.fields.${fieldIndex}.description`
+                )}
+              />
+            </div>
           </Fragment>
         ) : (
           <Fragment>
@@ -206,29 +214,15 @@ const Field = ({
             )}
           </Fragment>
         )}
-        {field?.description?.enabled && (
-          <div className={styles.field_description}>
-            <TextEditor
-              as="div"
-              placeholder="Description"
-              defaultValue={field.description.value}
-              register={register(
-                `sections.${sectionIndex}.fields.${fieldIndex}.description`
-              )}
-            />
-          </div>
-        )}
-        {!isEdit && (
-          <div className={styles.field} data-type={field.type}>
-            {component}
-            {error && (
-              <div className={styles.error_msg}>
-                <i className="bx-error-circle"></i>
-                <span>{error}</span>
-              </div>
-            )}
-          </div>
-        )}
+        <div className={styles.field} data-type={field.type}>
+          {component}
+          {!isEdit && error && (
+            <div className={styles.error_msg}>
+              <i className="bx-error-circle"></i>
+              <span>{error}</span>
+            </div>
+          )}
+        </div>
         {selectedId === field.id && (
           <Fragment>
             <div className={styles.footer}>

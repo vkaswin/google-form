@@ -1,7 +1,5 @@
 import { Fragment, useState } from "react";
-import { FormPages } from "types/Form";
 import FormBuilder from "components/FormBuilder";
-import Themes from "./Themes";
 import Responses from "./Responses";
 
 import styles from "./EditForm.module.scss";
@@ -27,9 +25,9 @@ const googleFormIcon = (
 );
 
 const EditForm = () => {
-  let [activeTab, setActiveTab] = useState(0);
-
   const tabs = ["Questions", "Responses"];
+
+  let [activeTab, setActiveTab] = useState(0);
 
   return (
     <Fragment>
@@ -40,11 +38,7 @@ const EditForm = () => {
             <input name="title" defaultValue="Google Form" />
           </div>
           <div className={styles.header_icon}>
-            <Themes
-            //   colorCode={colorCode}
-            //   bgCode={bgCode}
-            //   onChange={handleTheme}
-            />
+            <i id="theme" className="bx-customize"></i>
             <i className="bx-show"></i>
             <div className={styles.avatar}>
               <span>AK</span>

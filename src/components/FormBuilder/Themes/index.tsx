@@ -5,6 +5,7 @@ import { usePopper } from "react-popper";
 import { ColorCodeList, BGCodeList, ColorCodes } from "types/Form";
 
 import styles from "./Themes.module.scss";
+import DropDown from "components/DropDown";
 
 type ThemeProps = {
   colorCode?: ColorCodes;
@@ -101,27 +102,8 @@ const Themes = ({
 
   return (
     <Fragment>
-      <i
-        ref={setReferenceElement}
-        className="bx-customize"
-        onClick={toggle}
-      ></i>
-      <CSSTransition
-        in={isOpen}
-        timeout={200}
-        unmountOnExit
-        classNames={{
-          enterActive: styles.enter,
-          exitActive: styles.exit,
-        }}
-        onEntered={onEntered}
-      >
-        <div
-          ref={setPopperElement}
-          className={styles.container}
-          style={{ ...style.popper }}
-          {...attributes.popper}
-        >
+      <DropDown selector="#theme" placement="bottom-end">
+        <div className={styles.container}>
           <div className={styles.color}>
             <b>Color</b>
             <ul
@@ -172,7 +154,7 @@ const Themes = ({
             </ul>
           </div>
         </div>
-      </CSSTransition>
+      </DropDown>
     </Fragment>
   );
 };

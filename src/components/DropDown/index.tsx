@@ -18,15 +18,22 @@ type DropDownProps = {
   selector: string;
   children?: ReactNode;
   size?: "auto";
+  placement?: Placement;
 } & ComponentProps<"div">;
 
 type DropDownContextType = {
   close: () => void;
 };
 
+type Position = "top" | "bottom" | "right" | "left";
+type Side = "start" | "end";
+
+type Placement = `${Position}-${Side}` | Position;
+
 const DropDownContext = createContext<DropDownContextType | null>(null);
 
 const DropDown = ({
+  placement = "bottom-start",
   className,
   selector,
   children,
@@ -43,7 +50,7 @@ const DropDown = ({
     styles: style,
     state,
   } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement,
     modifiers: [
       {
         name: "offset",

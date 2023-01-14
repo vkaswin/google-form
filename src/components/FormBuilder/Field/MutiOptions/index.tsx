@@ -160,10 +160,7 @@ const MultiOptions = ({
                     register={field}
                   />
                 )}
-                <Input
-                  placeholder="Enter here"
-                  //    register={field}
-                />
+                <Input placeholder="Enter here" register={field} />
               </div>
             )}
           </div>

@@ -7,7 +7,6 @@ export const router = createHashRouter([
   {
     path: "/",
     element: <Navigate to="/form/123/edit" replace />,
-    // element: <Navigate to="/demo" replace />,
   },
   {
     path: "/form/:formId/edit",

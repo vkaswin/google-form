@@ -11,6 +11,7 @@ import {
 } from "types/Form";
 import Section from "./Section";
 import Field from "./Field";
+import Themes from "./Themes";
 import { useForm } from "hooks/useForm";
 import { FormProvider } from "context/form";
 import { setFormTheme } from "helpers";
@@ -30,9 +31,7 @@ let initialDragRef = {
   dragElement: null,
 };
 
-type FormBuilderProps = FormPages;
-
-const FormBuilder = (formPage: FormBuilderProps) => {
+const FormBuilder = (formPage: FormPages) => {
   let [selectedId, setSelectedId] = useState<string | null>(null);
 
   let [activeSection, setActiveSection] = useState<number>(0);
@@ -293,6 +292,9 @@ const FormBuilder = (formPage: FormBuilderProps) => {
           <span>Google Form</span>
         </div>
       </div>
+      {isEdit && (
+        <Themes colorCode={colorCode} bgCode={bgCode} onChange={handleTheme} />
+      )}
     </FormProvider>
   );
 };
