@@ -11,13 +11,14 @@ import {
 } from "types/Form";
 import Section from "./Section";
 import Field from "./Field";
-import Themes from "./Themes";
+import Header from "./Header";
 import { useForm } from "hooks/useForm";
 import { FormProvider } from "context/form";
 import { setFormTheme } from "helpers";
 import { formData } from "json";
 
 import styles from "./FormBuilder.module.scss";
+import Responses from "./Responses";
 
 let initialDragRef = {
   source: {
@@ -34,6 +35,8 @@ let initialDragRef = {
 const FormBuilder = (formPage: FormPages) => {
   let [selectedId, setSelectedId] = useState<string | null>(null);
 
+  let [activeTab, setActiveTab] = useState(0);
+
   let [activeSection, setActiveSection] = useState<number>(0);
 
   let [dragId, setDragId] = useState<string | null>(null);
@@ -44,7 +47,7 @@ const FormBuilder = (formPage: FormPages) => {
 
   let { formValues, setFormValues, reset, handleSubmit } = form;
 
-  let { sections = [], colorCode, bgCode } = formValues;
+  let { sections = [], colorCode, bgCode, title } = formValues;
 
   useEffect(() => {
     getFormDetails();
@@ -183,119 +186,133 @@ const FormBuilder = (formPage: FormPages) => {
   let { isEdit, isFill, isPreview } = formPage;
 
   return (
-    <FormProvider {...form}>
-      <div className={styles.container}>
-        {sections.map(({ id, title, description, fields }, sectionIndex) => {
-          if (!isPreview && !(sectionIndex === activeSection)) return null;
-
-          let sectionHeader =
-            sections.length > 1
-              ? `Section ${sectionIndex + 1} of ${sections.length}`
-              : undefined;
-
-          return (
-            <Fragment key={sectionIndex}>
-              <Section
-                id={id}
-                title={title}
-                selectedId={selectedId}
-                description={description}
-                sectionIndex={sectionIndex}
-                sectionHeader={sectionHeader}
-                formPage={formPage}
-                onClick={() => setSelectedId(id)}
-              />
-              <div
-                className={styles.wrapper}
-                {...(isEdit && {
-                  "data-droppable-id": sectionIndex,
-                  onDragEnter: (e) => handleDragEnter(e, sectionIndex, 0),
-                  onDragLeave: (e) => handleDragLeave(e, sectionIndex, 0),
-                  onDragOver: handleDragOver,
-                  onDrop: handleDrop,
-                })}
-              >
-                {fields.map((field, fieldIndex) => {
-                  return (
-                    <Field
-                      key={field.id}
-                      field={field}
-                      tabIndex={-1}
-                      sectionIndex={sectionIndex}
-                      fieldIndex={fieldIndex}
-                      formPage={formPage}
-                      {...(isEdit && {
-                        "data-draggable-id": fieldIndex,
-                        "data-droppable-id": sectionIndex,
-                        selectedId: selectedId,
-                        draggable: dragId === field.id,
-                        onClick: () => setSelectedId(field.id),
-                        onDragStart: () =>
-                          handleDragStart(sectionIndex, fieldIndex),
-                        onDragLeave: (e) =>
-                          handleDragLeave(e, sectionIndex, fieldIndex),
-                        onDragEnter: (e) =>
-                          handleDragEnter(e, sectionIndex, fieldIndex),
-                        onDragEnd: handleDragEnd,
-                        setDragId: setDragId,
-                      })}
-                    />
-                  );
-                })}
-              </div>
-            </Fragment>
-          );
-        })}
-        {isFill && (
-          <div className={styles.cta}>
-            <div>
-              {activeSection > 0 && (
-                <button
-                  className={styles.btn_navigate}
-                  onClick={handleSubmit(
-                    (data) => onSubmit(data, "back"),
-                    (errors) => onInvalid(errors, "back")
-                  )}
-                >
-                  Back
-                </button>
-              )}
-              {activeSection < sections.length - 1 && (
-                <button
-                  className={styles.btn_navigate}
-                  onClick={handleSubmit(
-                    (data) => onSubmit(data, "next"),
-                    (errors) => onInvalid(errors, "next")
-                  )}
-                >
-                  Next
-                </button>
-              )}
-              {activeSection === sections.length - 1 && (
-                <button
-                  className={styles.btn_submit}
-                  onClick={handleSubmit(
-                    (data) => onSubmit(data, "submit"),
-                    onInvalid
-                  )}
-                >
-                  Submit
-                </button>
-              )}
-            </div>
-            <button className={styles.btn_clear} onClick={clearForm}>
-              Clear Form
-            </button>
-          </div>
-        )}
-        <div className={styles.footer}>
-          <span>Google Form</span>
-        </div>
-      </div>
+    <Fragment>
       {isEdit && (
-        <Themes colorCode={colorCode} bgCode={bgCode} onChange={handleTheme} />
+        <Header
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          colorCode={colorCode}
+          bgCode={bgCode}
+          handleTheme={handleTheme}
+        />
       )}
-    </FormProvider>
+      {activeTab === 0 && (
+        <FormProvider {...form}>
+          <div className={styles.container}>
+            {sections.map(
+              ({ id, title, description, fields }, sectionIndex) => {
+                if (!isPreview && !(sectionIndex === activeSection))
+                  return null;
+
+                let sectionHeader =
+                  sections.length > 1
+                    ? `Section ${sectionIndex + 1} of ${sections.length}`
+                    : undefined;
+
+                return (
+                  <Fragment key={sectionIndex}>
+                    <Section
+                      id={id}
+                      title={title}
+                      selectedId={selectedId}
+                      description={description}
+                      sectionIndex={sectionIndex}
+                      sectionHeader={sectionHeader}
+                      formPage={formPage}
+                      onClick={() => setSelectedId(id)}
+                    />
+                    <div
+                      className={styles.wrapper}
+                      {...(isEdit && {
+                        "data-droppable-id": sectionIndex,
+                        onDragEnter: (e) => handleDragEnter(e, sectionIndex, 0),
+                        onDragLeave: (e) => handleDragLeave(e, sectionIndex, 0),
+                        onDragOver: handleDragOver,
+                        onDrop: handleDrop,
+                      })}
+                    >
+                      {fields.map((field, fieldIndex) => {
+                        return (
+                          <Field
+                            key={field.id}
+                            field={field}
+                            tabIndex={-1}
+                            sectionIndex={sectionIndex}
+                            fieldIndex={fieldIndex}
+                            formPage={formPage}
+                            {...(isEdit && {
+                              "data-draggable-id": fieldIndex,
+                              "data-droppable-id": sectionIndex,
+                              selectedId: selectedId,
+                              draggable: dragId === field.id,
+                              onClick: () => setSelectedId(field.id),
+                              onDragStart: () =>
+                                handleDragStart(sectionIndex, fieldIndex),
+                              onDragLeave: (e) =>
+                                handleDragLeave(e, sectionIndex, fieldIndex),
+                              onDragEnter: (e) =>
+                                handleDragEnter(e, sectionIndex, fieldIndex),
+                              onDragEnd: handleDragEnd,
+                              setDragId: setDragId,
+                            })}
+                          />
+                        );
+                      })}
+                    </div>
+                  </Fragment>
+                );
+              }
+            )}
+            {isFill && (
+              <div className={styles.cta}>
+                <div>
+                  {activeSection > 0 && (
+                    <button
+                      className={styles.btn_navigate}
+                      onClick={handleSubmit(
+                        (data) => onSubmit(data, "back"),
+                        (errors) => onInvalid(errors, "back")
+                      )}
+                    >
+                      Back
+                    </button>
+                  )}
+                  {activeSection < sections.length - 1 && (
+                    <button
+                      className={styles.btn_navigate}
+                      onClick={handleSubmit(
+                        (data) => onSubmit(data, "next"),
+                        (errors) => onInvalid(errors, "next")
+                      )}
+                    >
+                      Next
+                    </button>
+                  )}
+                  {activeSection === sections.length - 1 && (
+                    <button
+                      className={styles.btn_submit}
+                      onClick={handleSubmit(
+                        (data) => onSubmit(data, "submit"),
+                        onInvalid
+                      )}
+                    >
+                      Submit
+                    </button>
+                  )}
+                </div>
+                <button className={styles.btn_clear} onClick={clearForm}>
+                  Clear Form
+                </button>
+              </div>
+            )}
+            <div className={styles.footer}>
+              <span>Google Form</span>
+            </div>
+          </div>
+        </FormProvider>
+      )}
+      {activeTab === 1 && <Responses />}
+    </Fragment>
   );
 };
 

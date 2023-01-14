@@ -1,6 +1,7 @@
 import { DragEvent, TouchEvent } from "react";
 
 export type FormDetail = {
+  title: string;
   colorCode: ColorCodes;
   bgCode: string;
   sections: FormSection[];

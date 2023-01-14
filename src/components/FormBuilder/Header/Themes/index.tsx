@@ -1,7 +1,4 @@
-import { CSSProperties, Fragment, useMemo, useState } from "react";
-import { CSSTransition } from "react-transition-group";
-import { clickOutside } from "helpers";
-import { usePopper } from "react-popper";
+import { CSSProperties, Fragment, useMemo } from "react";
 import { ColorCodeList, BGCodeList, ColorCodes } from "types/Form";
 
 import styles from "./Themes.module.scss";
@@ -48,52 +45,11 @@ const Themes = ({
     "#9e9e9e": ["#f0f0f0", "#e7e7e7", "#dddddd"],
   };
 
-  const [isOpen, setIsOpen] = useState(false);
-
-  let [referenceElement, setReferenceElement] = useState<HTMLElement | null>(
-    null
-  );
-  let [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
-  let { attributes, styles: style } = usePopper(
-    referenceElement,
-    popperElement,
-    {
-      placement: "bottom-end",
-      modifiers: [
-        {
-          name: "offset",
-          options: {
-            offset: [0, 10],
-          },
-        },
-      ],
-    }
-  );
-
-  const toggle = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const onEntered = (element: HTMLElement) => {
-    if (!element) return;
-
-    clickOutside({
-      ref: element,
-      onClose: toggle,
-      doNotClose: (event) => {
-        if (!referenceElement) return false;
-        return referenceElement.contains(event);
-      },
-    });
-  };
-
   const handleChange = (theme: { colorCode: ColorCodes; bgCode: string }) => {
     if (theme.colorCode !== colorCode) {
       theme.bgCode = bgCodes[theme.colorCode][0];
     }
     onChange?.({ colorCode: theme.colorCode, bgCode: theme.bgCode });
-    toggle();
   };
 
   const selectedBg = useMemo(() => {
@@ -102,6 +58,7 @@ const Themes = ({
 
   return (
     <Fragment>
+      <i id="theme" className="bx-customize"></i>
       <DropDown selector="#theme" placement="bottom-end">
         <div className={styles.container}>
           <div className={styles.color}>

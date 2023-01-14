@@ -1,6 +1,7 @@
 import { FormDetail } from "types/Form";
 
 export const formData: FormDetail = {
+  title: "Google Form",
   colorCode: "#673ab7",
   bgCode: "#f0ebf8",
   sections: [
