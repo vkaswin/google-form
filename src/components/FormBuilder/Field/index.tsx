@@ -10,6 +10,7 @@ import {
   FormTypeOption,
   FormField as FormFieldType,
   FormIndexes,
+  FormPages,
 } from "types/Form";
 import TextArea from "components/TextArea";
 import Input from "components/Input";
@@ -27,9 +28,10 @@ import { useFormContext } from "context/form";
 import styles from "./Field.module.scss";
 
 type FieldProps = {
-  selectedId: string | null;
+  selectedId?: string | null;
   field: FormFieldType;
-  setDragId: Dispatch<SetStateAction<string | null>>;
+  formPage: FormPages;
+  setDragId?: Dispatch<SetStateAction<string | null>>;
 } & FormIndexes &
   ComponentProps<"div">;
 
@@ -68,17 +70,26 @@ const Field = ({
   sectionIndex,
   fieldIndex,
   className,
+  formPage,
   setDragId,
   ...props
 }: FieldProps) => {
   const { register, clearValue, setValue, formErrors, formValues } =
     useFormContext();
 
+  let { isEdit } = formPage;
+
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
     return formTypes.find((option) => {
       return option.type === field.type;
     });
   }, [field.type]);
+
+  const error =
+    formErrors?.sections?.[sectionIndex]?.fields?.[fieldIndex]?.value;
+  const value = formValues.sections[sectionIndex].fields[fieldIndex].value;
+  const name = `sections.${sectionIndex}.fields.${fieldIndex}.value`;
+  const registerField = register(name, field.rules);
 
   let component = useMemo<ReactNode>(() => {
     if (
@@ -90,15 +101,38 @@ const Field = ({
         <MutiOptions
           sectionIndex={sectionIndex}
           fieldIndex={fieldIndex}
+          formPage={formPage}
           {...field}
         />
       );
     } else if (field.type === "input") {
-      return <Input placeholder="Short answer text" disabled />;
+      return (
+        <Input
+          placeholder="Short answer text"
+          defaultValue={value}
+          register={registerField}
+          disabled={isEdit}
+        />
+      );
     } else if (field.type === "textarea") {
-      return <TextArea placeholder="Long answer text" disabled />;
+      return (
+        <TextArea
+          placeholder="Long answer text"
+          defaultValue={value}
+          register={registerField}
+          disabled={isEdit}
+        />
+      );
     } else if (field.type === "date") {
-      return <DatePicker placeholder="Month, day, year" disabled />;
+      return (
+        <DatePicker
+          placeholder="Month, day, year"
+          register={registerField}
+          value={value || ""}
+          onChange={(value) => setValue(name, value)}
+          disabled={isEdit}
+        />
+      );
     } else if (field.type === "file") {
       return <FileInput />;
     } else {
@@ -114,7 +148,6 @@ const Field = ({
       );
     } else if (option === "shuffle") {
       if (!field.options) return;
-      //TODO INPUT DEFAULT VALUE NOT UPDATING ON RENDER
       let shuffledOptions = shuffleArray(field.options);
       setValue(
         `sections.${sectionIndex}.fields.${fieldIndex}.options`,
@@ -123,34 +156,56 @@ const Field = ({
     }
   };
 
-  const valueErrorMsg =
-    formErrors?.sections?.[sectionIndex]?.fields?.[fieldIndex]?.value;
+  const handleDuplicate = (sectionIndex: number) => {
+    setValue(
+      `sections.${sectionIndex}.fields.${formValues.sections[sectionIndex].fields.length}`,
+      field
+    );
+  };
 
   return (
-    <div className={`${styles.container} ${className || ""}`.trim()} {...props}>
+    <div
+      className={`${styles.container} ${className || ""}`.trim()}
+      {...(!isEdit && { "data-error": !!error })}
+      {...props}
+    >
       <div className={styles.wrapper}>
-        <Fragment>
-          <div className={styles.field_label}>
-            <TextEditor
-              as="div"
-              placeholder="Question"
-              defaultValue={field.title}
-              register={register(
-                `sections.${sectionIndex}.fields.${fieldIndex}.title`
-              )}
-            />
-            {selectedId === field.id && (
-              <FormType
-                id={field.id}
-                options={formTypes}
-                sectionIndex={sectionIndex}
-                fieldIndex={fieldIndex}
-                selectedOption={selectedOption}
-                onChange={setValue}
+        {isEdit ? (
+          <Fragment>
+            <div className={styles.field_label}>
+              <TextEditor
+                as="div"
+                placeholder="Question"
+                defaultValue={field.title}
+                register={register(
+                  `sections.${sectionIndex}.fields.${fieldIndex}.title`
+                )}
               />
+              {selectedId === field.id && (
+                <FormType
+                  id={field.id}
+                  options={formTypes}
+                  sectionIndex={sectionIndex}
+                  fieldIndex={fieldIndex}
+                  selectedOption={selectedOption}
+                  onChange={setValue}
+                />
+              )}
+            </div>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <div className={styles.field_label}>
+              <span>{field.title}</span>
+              <span className={styles.asterisk}>*</span>
+            </div>
+            {field?.description?.enabled && (
+              <div
+                dangerouslySetInnerHTML={{ __html: field.description.value }}
+              ></div>
             )}
-          </div>
-        </Fragment>
+          </Fragment>
+        )}
         {field?.description?.enabled && (
           <div className={styles.field_description}>
             <TextEditor
@@ -163,12 +218,17 @@ const Field = ({
             />
           </div>
         )}
-        <div className={styles.field} data-type={field.type}>
-          {component}
-          {valueErrorMsg && (
-            <span className={styles.error_msg}>{valueErrorMsg}</span>
-          )}
-        </div>
+        {!isEdit && (
+          <div className={styles.field} data-type={field.type}>
+            {component}
+            {error && (
+              <div className={styles.error_msg}>
+                <i className="bx-error-circle"></i>
+                <span>{error}</span>
+              </div>
+            )}
+          </div>
+        )}
         {selectedId === field.id && (
           <Fragment>
             <div className={styles.footer}>
@@ -183,12 +243,7 @@ const Field = ({
               <i
                 id={`duplicate-${field.id}`}
                 className="bx-duplicate"
-                onClick={() =>
-                  setValue(
-                    `sections.${sectionIndex}.fields.${formValues.sections[sectionIndex].fields.length}`,
-                    field
-                  )
-                }
+                onClick={() => handleDuplicate(sectionIndex)}
               ></i>
               <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
               <div className={styles.split}></div>
@@ -235,14 +290,15 @@ const Field = ({
             <div className={styles.highlight}></div>
           </Fragment>
         )}
-
-        <div
-          className={styles.drag_icon}
-          onPointerDown={() => setDragId(field.id)}
-        >
-          <i className="bx-dots-horizontal-rounded"></i>
-          <i className="bx-dots-horizontal-rounded"></i>
-        </div>
+        {isEdit && (
+          <div
+            className={styles.drag_icon}
+            onPointerDown={() => setDragId?.(field.id)}
+          >
+            <i className="bx-dots-horizontal-rounded"></i>
+            <i className="bx-dots-horizontal-rounded"></i>
+          </div>
+        )}
       </div>
     </div>
   );

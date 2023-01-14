@@ -1,4 +1,4 @@
-import { FocusEvent, ChangeEvent } from "react";
+import { FocusEvent, ChangeEvent, Dispatch, SetStateAction } from "react";
 
 export type FormRegister = (
   name: string,
@@ -154,6 +154,7 @@ export type UseForm<T = FormValues> = {
   validate: ValidateField;
   handleSubmit: FormSubmit;
   clearValue: ClearValue;
+  setFormValues: Dispatch<SetStateAction<T>>;
   formValues: Readonly<T>;
   formErrors: Readonly<Record<string, any>>;
 };

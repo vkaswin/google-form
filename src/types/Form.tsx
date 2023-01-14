@@ -44,6 +44,7 @@ export type FormField = {
     enabled: boolean;
     value: string;
   };
+  value: string | string[];
   required?: boolean;
   options?: string[];
   other?: {
@@ -70,9 +71,9 @@ export type FormIndexes = {
 };
 
 export type FormPages = {
-  isEdit: boolean;
-  isPreview: boolean;
-  isFill: boolean;
+  isEdit?: boolean;
+  isPreview?: boolean;
+  isFill?: boolean;
 };
 
 export type FormDragValue = {

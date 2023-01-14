@@ -58,7 +58,7 @@ const Themes = ({
     referenceElement,
     popperElement,
     {
-      placement: "bottom",
+      placement: "bottom-end",
       modifiers: [
         {
           name: "offset",
@@ -92,6 +92,7 @@ const Themes = ({
       theme.bgCode = bgCodes[theme.colorCode][0];
     }
     onChange?.({ colorCode: theme.colorCode, bgCode: theme.bgCode });
+    toggle();
   };
 
   const selectedBg = useMemo(() => {

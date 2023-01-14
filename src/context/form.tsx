@@ -1,11 +1,12 @@
 import { createContext, ReactNode, useContext } from "react";
+import { FormDetail } from "types/Form";
 import { UseForm } from "types/UseForm";
 
-const FormContext = createContext({} as UseForm);
+const FormContext = createContext({} as UseForm<FormDetail>);
 
 type FormProviderType = {
   children: ReactNode;
-} & UseForm;
+} & UseForm<FormDetail>;
 
 export const useFormContext = () => {
   return useContext(FormContext);

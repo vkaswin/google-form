@@ -14,13 +14,12 @@
     }
   }
   .wrapper {
-    padding: 30px 25px 0px 25px;
+    padding: 30px 30px 0px 30px;
   }
   .field_label {
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
-    gap: 30px;
+    gap: 7px;
     > div {
       width: calc(100% - 280px);
     }
@@ -113,8 +112,10 @@
   }
   .error_msg {
     display: flex;
-    color: #da3025;
+    align-items: center;
+    gap: 5px;
     margin-top: 10px;
+    color: #da3025;
     i {
       font-size: 24px;
     }
@@ -123,8 +124,6 @@
     }
   }
   .asterisk {
-    display: inline-block;
-    margin-left: 5px;
     color: #da3025;
   }
 }

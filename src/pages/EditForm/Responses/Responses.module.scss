@@ -1,0 +1,19 @@
+.container {
+  max-width: 768px;
+  padding: 15px;
+  margin: 0px auto;
+  table {
+    background-color: white;
+    width: 100%;
+    thead {
+      td {
+        font-family: "Poppins-Medium";
+        color: var(--primary-color);
+      }
+    }
+    td {
+      padding: 10px;
+      text-align: start;
+    }
+  }
+}

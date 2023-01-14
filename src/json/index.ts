@@ -20,6 +20,7 @@ export const formData: FormDetail = {
           rules: {
             required: { value: true },
           },
+          value: "",
         },
         {
           id: "109489e9-2ddf-43a5-af55-e73d35489e50",
@@ -32,6 +33,7 @@ export const formData: FormDetail = {
           rules: {
             required: { value: true },
           },
+          value: "",
         },
         {
           id: "91572682-d918-436a-98c9-9d7f6de50573",
@@ -51,6 +53,7 @@ export const formData: FormDetail = {
           rules: {
             required: { value: true },
           },
+          value: [],
         },
         {
           id: "c7dcc839-7eab-4a88-a63d-269a798ee798",
@@ -70,6 +73,7 @@ export const formData: FormDetail = {
           rules: {
             required: { value: true },
           },
+          value: [],
         },
         {
           id: "c8a6df35-5310-4af3-8ffb-69732c5e1857",
@@ -84,6 +88,7 @@ export const formData: FormDetail = {
           rules: {
             required: { value: true },
           },
+          value: "",
         },
       ],
     },
@@ -102,6 +107,7 @@ export const formData: FormDetail = {
             value: "",
           },
           rules: { required: { value: true } },
+          value: "",
         },
         {
           id: "3c4a7001-94da-4ad7-9513-187bac3f1dc8",
@@ -113,6 +119,7 @@ export const formData: FormDetail = {
             value: "",
           },
           rules: { required: { value: true } },
+          value: "",
         },
         {
           id: "32d54e03-7060-4a4d-a83b-3ac47f487e3a",
@@ -130,6 +137,7 @@ export const formData: FormDetail = {
             value: "",
           },
           rules: { required: { value: true } },
+          value: "",
         },
         {
           id: "c1671459-27f1-4031-9720-2a411879980f",
@@ -147,6 +155,7 @@ export const formData: FormDetail = {
             value: "",
           },
           rules: { required: { value: true } },
+          value: [],
         },
         {
           id: "c6b3af39-dfa3-4eba-b7ef-5b0194d6ba1b",
@@ -158,6 +167,7 @@ export const formData: FormDetail = {
             value: "",
           },
           rules: { required: { value: true } },
+          value: "",
         },
       ],
     },

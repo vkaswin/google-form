@@ -607,6 +607,7 @@ export const useForm = <T extends FormValues = FormValues>(
     resetField,
     handleSubmit,
     clearValue,
+    setFormValues,
     formValues,
     formErrors,
   };
