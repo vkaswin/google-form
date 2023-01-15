@@ -46,7 +46,7 @@ export const formData: FormDetail = {
           rules: {
             required: { value: true },
           },
-          value: [],
+          value: "",
         },
         {
           id: "c7dcc839-7eab-4a88-a63d-269a798ee798",

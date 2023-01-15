@@ -11,6 +11,9 @@ import {
   FormField as FormFieldType,
   FormIndexes,
   FormPages,
+  HandleFormAction,
+  FormActions,
+  FormIcon,
 } from "types/Form";
 import TextArea from "components/TextArea";
 import Input from "components/Input";
@@ -69,6 +72,33 @@ const formRules = [
   {
     label: "Max",
     name: "max",
+  },
+];
+
+const icons: FormIcon[] = [
+  {
+    label: "Add new field",
+    name: "add",
+    icon: "bx-add-to-queue",
+    action: "add-field",
+  },
+  {
+    label: "Add new section",
+    name: "section",
+    icon: "bx-git-branch",
+    action: "add-section",
+  },
+  {
+    label: "Duplicate",
+    name: "duplicate",
+    icon: "bx-duplicate",
+    action: "duplicate-field",
+  },
+  {
+    label: "Delete",
+    name: "delete",
+    icon: "bx-trash",
+    action: "delete-field",
   },
 ];
 
@@ -145,11 +175,65 @@ const Field = ({
     }
   }, [{ ...field }]);
 
-  const handleDuplicate = (sectionIndex: number) => {
-    setValue(
-      `sections.${sectionIndex}.fields.${formValues.sections[sectionIndex].fields.length}`,
-      field
-    );
+  const handleFormAction: HandleFormAction = ({
+    fieldIndex,
+    sectionIndex,
+    action,
+  }) => {
+    let field;
+
+    if (action === "add-section" || action === "add-field") {
+      field = {
+        id: crypto.randomUUID(),
+        title: "",
+        type: "radio",
+        options: ["Option 1"],
+        other: {
+          enabled: false,
+          checked: false,
+          value: "",
+        },
+        description: "",
+        rules: {
+          required: { value: false },
+        },
+        value: "",
+      };
+    }
+
+    switch (action) {
+      case "delete-field":
+        clearValue(`sections.${sectionIndex}.fields.${fieldIndex}`);
+        break;
+
+      case "duplicate-field":
+        setValue(
+          `sections.${sectionIndex}.fields.${formValues.sections[sectionIndex].fields.length}`,
+          field
+        );
+        break;
+
+      case "add-section":
+        setValue(`sections.${formValues.sections.length}`, {
+          id: crypto.randomUUID(),
+          title: "",
+          description: "",
+          fields: [field],
+        });
+        break;
+
+      case "add-field":
+        setValue(
+          `sections.${sectionIndex}.fields.${
+            formValues.sections[sectionIndex].fields.length - 1
+          }`,
+          field
+        );
+        break;
+
+      default:
+        return;
+    }
   };
 
   return (
@@ -222,20 +306,20 @@ const Field = ({
         {isEdit && selectedId === field.id && (
           <Fragment>
             <div className={styles.footer}>
-              <i
-                id={`trash-${field.id}`}
-                className="bx-trash"
-                onClick={() =>
-                  clearValue(`sections.${sectionIndex}.fields.${fieldIndex}`)
-                }
-              ></i>
-              <ToolTip selector={`#trash-${field.id}`}>Trash</ToolTip>
-              <i
-                id={`duplicate-${field.id}`}
-                className="bx-duplicate"
-                onClick={() => handleDuplicate(sectionIndex)}
-              ></i>
-              <ToolTip selector={`#duplicate-${field.id}`}>Duplicate</ToolTip>
+              {icons.map(({ icon, name, action, label }, index) => {
+                return (
+                  <Fragment key={index}>
+                    <i
+                      id={`${name}-${field.id}`}
+                      className={icon}
+                      onClick={() =>
+                        handleFormAction({ sectionIndex, fieldIndex, action })
+                      }
+                    ></i>
+                    <ToolTip selector={`#${name}-${field.id}`}>{label}</ToolTip>
+                  </Fragment>
+                );
+              })}
               <div className={styles.split}></div>
               <Switch
                 id={field.id}

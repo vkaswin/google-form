@@ -126,3 +126,20 @@ export type ColorCodes =
 export type BGCodeList = Record<ColorCodes, string[]>;
 
 export type ColorCodeList = Record<ColorCodes, string>;
+
+export type FormActions =
+  | "add-field"
+  | "add-section"
+  | "delete-field"
+  | "duplicate-field";
+
+export type FormIcon = {
+  label: string;
+  name: string;
+  icon: string;
+  action: FormActions;
+};
+
+export type HandleFormAction = (
+  data: { action: FormActions } & FormIndexes
+) => void;
