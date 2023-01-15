@@ -13,7 +13,7 @@ export const formData: FormDetail = {
         {
           id: "ee8f3a59-7a20-4aef-b3f4-5731d84ba0a3",
           title: "Loreum Ipsum",
-          type: "input",
+          type: "rating",
           description: "Loreum Ispum",
           rules: {
             required: { value: true },

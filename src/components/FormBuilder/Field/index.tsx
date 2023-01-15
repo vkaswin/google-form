@@ -20,10 +20,11 @@ import Input from "components/Input";
 import TextEditor from "components/TextEditor";
 import DatePicker from "components/DatePicker";
 import ToolTip from "components/ToolTip";
+import Rating from "components/Rating";
+import Switch from "components/Switch";
 import FileInput from "components/FileInput";
 import MutiOptions from "./MutiOptions";
 import FormType from "./FormType";
-import Switch from "components/Switch";
 import { useFormContext } from "context/form";
 
 import styles from "./Field.module.scss";
@@ -49,6 +50,11 @@ let formTypes: FormTypeOption[] = [
   { type: "dropdown", icon: "bx-down-arrow-circle", label: "Dropdown" },
   { type: "date", icon: "bx-calendar", label: "Date" },
   { type: "file", icon: "bx-cloud-upload", label: "File Upload" },
+  {
+    type: "rating",
+    icon: "bx-star",
+    label: "Rating",
+  },
 ];
 
 const formRules = [
@@ -172,12 +178,30 @@ const Field = ({
         <DatePicker
           placeholder="Month, day, year"
           value={field.value || ""}
-          onChange={(value) => setValue(name, value)}
-          {...(isEdit ? { disabled: true } : { register: registerField })}
+          {...(isEdit
+            ? { disabled: true }
+            : {
+                register: registerField,
+                onChange: (value) => setValue(name, value),
+              })}
         />
       );
     } else if (field.type === "file") {
       return <FileInput />;
+    } else if (field.type === "rating") {
+      return (
+        <Rating
+          {...(field.value && {
+            rating: !Array.isArray(field.value) ? parseInt(field.value) : 0,
+          })}
+          {...(isEdit
+            ? { disabled: true }
+            : {
+                register: registerField,
+                onChange: (rating) => setValue(name, rating),
+              })}
+        />
+      );
     } else {
       return null;
     }
