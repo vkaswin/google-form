@@ -16,13 +16,11 @@ import TextArea from "components/TextArea";
 import Input from "components/Input";
 import TextEditor from "components/TextEditor";
 import DatePicker from "components/DatePicker";
-import DropDown from "components/DropDown";
 import ToolTip from "components/ToolTip";
 import FileInput from "components/FileInput";
 import MutiOptions from "./MutiOptions";
 import FormType from "./FormType";
 import Switch from "components/Switch";
-import { shuffleArray } from "helpers/index";
 import { useFormContext } from "context/form";
 
 import styles from "./Field.module.scss";
@@ -49,18 +47,28 @@ let formTypes: FormTypeOption[] = [
   { type: "file", icon: "bx-cloud-upload", label: "File Upload" },
 ];
 
-let moreOptions = [
+const formRules = [
   {
-    label: "Description",
-    option: "description",
+    label: "Pattern",
+    name: "pattern",
   },
   {
-    label: "Validation Rules",
-    option: "validation",
+    label: "MinLength",
+    name: "minLength",
+    type: "number",
   },
   {
-    label: "Shuffle option order",
-    option: "shuffle",
+    label: "MaxLength",
+    name: "maxLength",
+    type: "number",
+  },
+  {
+    label: "Min",
+    name: "min",
+  },
+  {
+    label: "Max",
+    name: "max",
   },
 ];
 
@@ -137,22 +145,6 @@ const Field = ({
     }
   }, [{ ...field }]);
 
-  const handleClick = (option: string) => {
-    if (option === "description") {
-      setValue(
-        `sections.${sectionIndex}.fields.${fieldIndex}.description.enabled`,
-        !field.description.enabled
-      );
-    } else if (option === "shuffle") {
-      if (!field.options) return;
-      let shuffledOptions = shuffleArray(field.options);
-      setValue(
-        `sections.${sectionIndex}.fields.${fieldIndex}.options`,
-        shuffledOptions
-      );
-    }
-  };
-
   const handleDuplicate = (sectionIndex: number) => {
     setValue(
       `sections.${sectionIndex}.fields.${formValues.sections[sectionIndex].fields.length}`,
@@ -189,12 +181,12 @@ const Field = ({
                 />
               )}
             </div>
-            {field.description.enabled && (
+            {field.description && (
               <div className={styles.field_description}>
                 <TextEditor
                   as="div"
                   placeholder="Description"
-                  defaultValue={field.description.value}
+                  defaultValue={field.description}
                   register={register(
                     `sections.${sectionIndex}.fields.${fieldIndex}.description`
                   )}
@@ -206,11 +198,14 @@ const Field = ({
           <Fragment>
             <div className={styles.field_label}>
               <span>{field.title}</span>
-              <span className={styles.asterisk}>*</span>
+              {field.rules.required?.value && (
+                <span className={styles.asterisk}>*</span>
+              )}
             </div>
-            {field.description.enabled && (
+            {field.description && (
               <div
-                dangerouslySetInnerHTML={{ __html: field.description.value }}
+                dangerouslySetInnerHTML={{ __html: field.description }}
+                className={styles.field_description}
               ></div>
             )}
           </Fragment>
@@ -224,7 +219,7 @@ const Field = ({
             </div>
           )}
         </div>
-        {selectedId === field.id && (
+        {isEdit && selectedId === field.id && (
           <Fragment>
             <div className={styles.footer}>
               <i
@@ -250,41 +245,42 @@ const Field = ({
                   `sections.${sectionIndex}.fields.${fieldIndex}.rules.required.value`
                 )}
               />
-              <div
-                id={`more-options-${field.id}`}
-                className={styles.more_options}
-              >
-                <i className="bx-dots-vertical-rounded"></i>
-              </div>
             </div>
-            <DropDown
-              selector={`#more-options-${field.id}`}
-              className={styles.option_drop_down}
-            >
-              {moreOptions.map(({ label, option }, index) => {
-                if (
-                  option === "shuffle" &&
-                  !(
-                    field.type === "checkbox" ||
-                    field.type === "dropdown" ||
-                    field.type === "radio"
-                  )
-                )
-                  return null;
-
-                return (
-                  <DropDown.Item
-                    key={index}
-                    onClick={() => handleClick(option)}
-                  >
-                    {label}
-                  </DropDown.Item>
-                );
-              })}
-            </DropDown>
+            {field.type === "input" ||
+              field.type === "textarea" ||
+              (field.type === "date" && (
+                <div className={styles.rules}>
+                  {formRules.map(({ label, name, type }, index) => {
+                    return (
+                      <div key={index} className={styles.rule_field}>
+                        <div>
+                          <label>{label}</label>
+                          <Input
+                            placeholder="Enter here"
+                            register={register(
+                              `sections.${sectionIndex}.fields.${fieldIndex}.rules.${name}.value`
+                            )}
+                            {...(type && { type })}
+                          />
+                        </div>
+                        <div>
+                          <label>Error Message</label>
+                          <Input
+                            placeholder="Enter here"
+                            register={register(
+                              `sections.${sectionIndex}.fields.${fieldIndex}.rules.${name}.message`
+                            )}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
             <div className={styles.highlight}></div>
           </Fragment>
         )}
+
         {isEdit && (
           <div
             className={styles.drag_icon}

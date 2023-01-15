@@ -129,15 +129,16 @@ const DatePicker = ({
 
   return (
     <div ref={setReferenceElement} className={styles.container}>
-      <div
-        className={`${styles.field} ${disabled ? styles.disabled : ""}`.trim()}
-        onClick={toggle}
-        tabIndex={-1}
-        {...register}
-        {...props}
-      >
-        <span>{value || placeholder}</span>
-        <i className="bx-calendar-event"></i>
+      <div tabIndex={-1} {...register} {...props}>
+        <div
+          className={`${styles.field} ${
+            disabled ? styles.disabled : ""
+          }`.trim()}
+          onClick={toggle}
+        >
+          <span> {value || placeholder}</span>
+          <i className="bx-calendar-event"></i>
+        </div>
         {!disabled && (
           <CSSTransition
             in={isOpen}

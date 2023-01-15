@@ -313,7 +313,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     }
   };
 
-  const register: FormRegister = (name, options = {}, handler = {}) => {
+  const register: FormRegister = (name, options = {}) => {
     let {
       max,
       maxLength,
@@ -325,8 +325,6 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
       valueAsNumber,
       onInput,
     } = options;
-
-    let {} = handler;
 
     let formRules = {} as FormRules;
 

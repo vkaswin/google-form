@@ -1,6 +1,6 @@
 import { Fragment, useState, useRef, useEffect } from "react";
 import {
-  FormDragValue,
+  FormDragRef,
   HandleDragOver,
   HandleDrop,
   HandleDragLeave,
@@ -42,7 +42,7 @@ const FormBuilder = (formPage: FormPages) => {
 
   let [dragId, setDragId] = useState<string | null>(null);
 
-  let { current: dragRef } = useRef<FormDragValue>(initialDragRef);
+  let dragRef = useRef<FormDragRef>(initialDragRef);
 
   let form = useForm<FormDetail>();
 
@@ -72,8 +72,8 @@ const FormBuilder = (formPage: FormPages) => {
       `[data-draggable-id='${draggableId}'][data-droppable-id='${droppableId}']`
     ) as HTMLElement;
 
-    dragRef = {
-      ...dragRef,
+    dragRef.current = {
+      ...dragRef.current,
       source: { droppableId, draggableId },
       dragElement,
     };
@@ -92,8 +92,8 @@ const FormBuilder = (formPage: FormPages) => {
     let element = document.querySelector(
       `[data-draggable-id='${draggableId}'][data-droppable-id='${droppableId}']`
     ) as HTMLElement;
-    dragRef = {
-      ...dragRef,
+    dragRef.current = {
+      ...dragRef.current,
       destination: { droppableId, draggableId },
     };
   };
@@ -107,19 +107,19 @@ const FormBuilder = (formPage: FormPages) => {
   };
 
   const handleDragEnd = () => {
-    let { dragElement } = dragRef;
+    let { dragElement } = dragRef.current;
 
     if (dragElement) {
       dragElement.style.visibility = "visible";
     }
     setDragId(null);
     setTimeout(() => {
-      dragRef = initialDragRef;
+      dragRef.current = initialDragRef;
     }, 0);
   };
 
   const handleDrop: HandleDrop = () => {
-    let { source, destination } = dragRef;
+    let { source, destination } = dragRef.current;
 
     if (
       typeof source.draggableId !== "number" ||

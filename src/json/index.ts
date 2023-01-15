@@ -13,24 +13,19 @@ export const formData: FormDetail = {
         {
           id: "ee8f3a59-7a20-4aef-b3f4-5731d84ba0a3",
           title: "Loreum Ipsum",
-          type: "date",
-          description: {
-            enabled: false,
-            value: "",
-          },
+          type: "input",
+          description: "Loreum Ispum",
           rules: {
             required: { value: true },
+            minLength: { value: 30, message: "Minlength failed" },
           },
           value: "",
         },
         {
           id: "109489e9-2ddf-43a5-af55-e73d35489e50",
           title: "Loreum Ipsum",
-          type: "textarea",
-          description: {
-            enabled: false,
-            value: "",
-          },
+          type: "date",
+          description: "",
           rules: {
             required: { value: true },
           },
@@ -47,10 +42,7 @@ export const formData: FormDetail = {
             checked: false,
             value: "",
           },
-          description: {
-            enabled: false,
-            value: "",
-          },
+          description: "",
           rules: {
             required: { value: true },
           },
@@ -67,10 +59,7 @@ export const formData: FormDetail = {
             checked: false,
             value: "",
           },
-          description: {
-            enabled: false,
-            value: "",
-          },
+          description: "",
           rules: {
             required: { value: true },
           },
@@ -82,10 +71,7 @@ export const formData: FormDetail = {
           type: "dropdown",
 
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
-          description: {
-            enabled: false,
-            value: "",
-          },
+          description: "",
           rules: {
             required: { value: true },
           },
@@ -102,11 +88,7 @@ export const formData: FormDetail = {
           id: "e15459e7-1347-41ab-9334-4884be1d1cd1",
           title: "Loreum Ipsum",
           type: "input",
-
-          description: {
-            enabled: true,
-            value: "",
-          },
+          description: "",
           rules: { required: { value: true } },
           value: "",
         },
@@ -114,11 +96,7 @@ export const formData: FormDetail = {
           id: "3c4a7001-94da-4ad7-9513-187bac3f1dc8",
           title: "Loreum Ipsum",
           type: "input",
-
-          description: {
-            enabled: false,
-            value: "",
-          },
+          description: "",
           rules: { required: { value: true } },
           value: "",
         },
@@ -133,10 +111,7 @@ export const formData: FormDetail = {
             checked: false,
             value: "",
           },
-          description: {
-            enabled: false,
-            value: "",
-          },
+          description: "",
           rules: { required: { value: true } },
           value: "",
         },
@@ -151,10 +126,7 @@ export const formData: FormDetail = {
             checked: false,
             value: "",
           },
-          description: {
-            enabled: false,
-            value: "",
-          },
+          description: "",
           rules: { required: { value: true } },
           value: [],
         },
@@ -163,10 +135,7 @@ export const formData: FormDetail = {
           title: "Location",
           type: "dropdown",
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
-          description: {
-            enabled: false,
-            value: "",
-          },
+          description: "",
           rules: { required: { value: true } },
           value: "",
         },

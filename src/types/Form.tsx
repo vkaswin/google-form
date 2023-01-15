@@ -41,10 +41,7 @@ export type FormField = {
   id: string;
   title: string;
   type: FormType;
-  description: {
-    enabled: boolean;
-    value: string;
-  };
+  description: string;
   value: string | string[];
   required?: boolean;
   options?: string[];
@@ -77,7 +74,7 @@ export type FormPages = {
   isFill?: boolean;
 };
 
-export type FormDragValue = {
+export type FormDragRef = {
   source: {
     droppableId: number | null;
     draggableId: number | null;

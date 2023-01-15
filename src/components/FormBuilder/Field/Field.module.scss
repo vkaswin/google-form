@@ -19,7 +19,7 @@
   .field_label {
     display: flex;
     align-items: flex-start;
-    gap: 20px;
+    gap: 10px;
     > div {
       width: calc(100% - 280px);
     }
@@ -56,19 +56,6 @@
       color: #606368;
       font-size: 26px;
       cursor: pointer;
-    }
-    .more_options {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 35px;
-      height: 35px;
-      background-color: transparent;
-      border-radius: 50%;
-      cursor: pointer;
-      &:hover {
-        background-color: #f6f6f6;
-      }
     }
   }
   .drag_icon {
@@ -125,6 +112,25 @@
   }
   .asterisk {
     color: #da3025;
+  }
+  .rules {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid #dadce0;
+    padding: 30px 0px;
+    .rule_field {
+      display: flex;
+      gap: 20px;
+      > div {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      label {
+        font-size: 14px;
+      }
+    }
   }
 }
 

@@ -56,18 +56,6 @@ export const clickOutside = ({
   document.addEventListener("click", handleClickOutside);
 };
 
-export const shuffleArray = <T,>(array: T[]): T[] | undefined => {
-  if (!Array.isArray(array)) return;
-  let arr = [...array];
-  for (var i = arr.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-  }
-  return arr;
-};
-
 export const debounce = <T,>(
   fn: (args: T) => void,
   delay: number
