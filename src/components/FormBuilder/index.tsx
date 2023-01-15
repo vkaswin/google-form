@@ -16,7 +16,7 @@ import Header from "./Header";
 import Responses from "./Responses";
 import { useForm } from "hooks/useForm";
 import { FormProvider } from "context/form";
-import { setFormTheme, focusElement } from "helpers";
+import { setFormTheme, focusElement, isEmpty } from "helpers";
 import { formData } from "json";
 
 import styles from "./FormBuilder.module.scss";
@@ -185,12 +185,9 @@ const FormBuilder = (formPage: FormPages) => {
     if (action === "back") {
       setActiveSection((section) => section - 1);
     } else if (action === "next") {
-      let keys = Object.keys(errors);
-      let hasError = formData.sections[activeSection].fields.some(({ id }) =>
-        keys.includes(id)
-      );
-      if (hasError) return;
-      setActiveSection((section) => section + 1);
+      if (isEmpty(errors?.sections?.[activeSection])) {
+        setActiveSection((section) => section + 1);
+      }
     }
   };
 

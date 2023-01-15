@@ -77,7 +77,7 @@ const isObjectOrArray = (data: any) => {
   return type === "object" || type === "array";
 };
 
-export const isEmptyObject = (obj: any): boolean => {
+export const isEmpty = (obj: any): boolean => {
   for (let key in obj) {
     let temp = obj[key];
     if (!isObjectOrArray(temp)) {
@@ -86,7 +86,7 @@ export const isEmptyObject = (obj: any): boolean => {
     if (Array.isArray(temp)) {
       for (let value of temp) {
         if (!isObjectOrArray(value)) return false;
-        if (isEmptyObject(value)) {
+        if (isEmpty(value)) {
           continue;
         } else {
           return false;
@@ -94,7 +94,7 @@ export const isEmptyObject = (obj: any): boolean => {
       }
     } else if (Object.keys(temp).length === 0) {
       continue;
-    } else if (isEmptyObject(temp)) {
+    } else if (isEmpty(temp)) {
       continue;
     } else {
       return false;

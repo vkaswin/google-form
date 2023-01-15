@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { FormField, FormIndexes, FormPages } from "types/Form";
 import Input from "components/Input";
 import Radio from "components/Radio";
@@ -22,7 +22,7 @@ const MultiOptions = ({
   fieldIndex,
   formPage: { isEdit },
 }: MultiOptionsProps) => {
-  const { register, setValue, clearValue, formValues, formErrors } =
+  const { register, setValue, clearValue, watch, formValues, formErrors } =
     useFormContext();
 
   let icon = useMemo<string>(() => {
@@ -148,6 +148,7 @@ const MultiOptions = ({
                     placeholder="Enter here"
                     label="Other"
                     defaultChecked={other.checked}
+                    value="Other"
                     register={field}
                   />
                 )}
@@ -157,10 +158,18 @@ const MultiOptions = ({
                     name={id}
                     label="Other"
                     defaultChecked={other.checked}
+                    value="Other"
                     register={field}
                   />
                 )}
-                <Input placeholder="Enter here" register={field} />
+                {value.includes("Other") && (
+                  <Input
+                    placeholder="Enter here"
+                    register={register(
+                      `sections.${sectionIndex}.fields.${fieldIndex}.other.value`
+                    )}
+                  />
+                )}
               </div>
             )}
           </div>

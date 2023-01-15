@@ -48,7 +48,7 @@ const Rating = ({
   let star = Array(rating)
     .fill(starFilled)
     .concat(Array(5 - rating).fill(starOutline));
-  console.log(register);
+
   return (
     <div
       className={`${styles.container} ${className || ""}`.trim()}

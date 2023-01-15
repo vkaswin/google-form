@@ -27,7 +27,7 @@ import {
   FormFields,
   FormUnSet,
 } from "types/UseForm";
-import { isEmptyObject } from "helpers";
+import { isEmpty } from "helpers";
 
 const isCheckBoxOrRadioInput = (type: string): boolean => {
   return type === "checkbox" || type === "radio";
@@ -446,7 +446,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
 
     setFormErrors({ ...formErrors });
 
-    return isEmptyObject(formErrors);
+    return isEmpty(formErrors);
   };
 
   const handleSubmit: FormSubmit = (onValid, onInvalid) => {
@@ -461,7 +461,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
       if (isValid && typeof onValid === "function") {
         onValid(formValues);
       } else if (typeof onInvalid === "function") {
-        focusField();
+        // focusField();
         onInvalid(formErrors);
       }
     };
