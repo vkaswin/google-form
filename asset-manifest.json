@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/react-google-form/static/css/main.6d27e678.css",
-    "main.js": "/react-google-form/static/js/main.0d52da23.js",
+    "main.js": "/react-google-form/static/js/main.9742db70.js",
     "static/media/icons.svg": "/react-google-form/static/media/icons.468e2c817b23619a961a.svg",
     "static/media/icons.eot": "/react-google-form/static/media/icons.5fc889455954d2025848.eot",
     "static/media/icons.woff": "/react-google-form/static/media/icons.68a81c0b9428d2d2ac1d.woff",
@@ -11,10 +11,10 @@
     "static/media/Poppins-Bold.ttf": "/react-google-form/static/media/Poppins-Bold.cdb29a5d7ccf57ff05a3.ttf",
     "index.html": "/react-google-form/index.html",
     "main.6d27e678.css.map": "/react-google-form/static/css/main.6d27e678.css.map",
-    "main.0d52da23.js.map": "/react-google-form/static/js/main.0d52da23.js.map"
+    "main.9742db70.js.map": "/react-google-form/static/js/main.9742db70.js.map"
   },
   "entrypoints": [
     "static/css/main.6d27e678.css",
-    "static/js/main.0d52da23.js"
+    "static/js/main.9742db70.js"
   ]
 }
