@@ -13,11 +13,10 @@ export const formData: FormDetail = {
         {
           id: "ee8f3a59-7a20-4aef-b3f4-5731d84ba0a3",
           title: "Loreum Ipsum",
-          type: "rating",
+          type: "input",
           description: "Loreum Ispum",
           rules: {
             required: { value: true },
-            minLength: { value: 30, message: "Minlength failed" },
           },
           value: "",
         },

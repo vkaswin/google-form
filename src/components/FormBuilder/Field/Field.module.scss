@@ -19,11 +19,13 @@
   .field_label {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
     gap: 10px;
     > div {
       width: calc(100% - 280px);
     }
+  }
+  .field_label[data-edit] {
+    justify-content: space-between;
   }
   .field_description {
     padding: 15px 0px;

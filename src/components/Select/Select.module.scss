@@ -27,10 +27,6 @@
   }
 }
 
-// selected - #E8F0FE
-// selectedHover - #F7FAFE
-// hover - #EEEEEE
-
 .enter[data-popper-placement^="left"],
 .exit[data-popper-placement^="left"] {
   .select_options {
@@ -82,7 +78,7 @@
       cursor: pointer;
     }
     .options:hover {
-      background-color: rgba(26, 39, 201, 0.05);
+      background-color: #e9ecef;
     }
     &::-webkit-scrollbar {
       width: 7px;

@@ -277,7 +277,7 @@ const Field = ({
       <div className={styles.wrapper}>
         {isEdit ? (
           <Fragment>
-            <div className={styles.field_label}>
+            <div data-edit className={styles.field_label}>
               <TextEditor
                 as="div"
                 placeholder="Question"
