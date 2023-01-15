@@ -118,3 +118,7 @@ export const setFormTheme = ({
     `--primary-color: ${colorCode}; --bg-color: ${bgCode}`
   );
 };
+
+export const focusElement = (element: Element): void => {
+  element.scrollIntoView({ behavior: "smooth", block: "center" });
+};

@@ -5,6 +5,7 @@ import {
   useMemo,
   Dispatch,
   SetStateAction,
+  MutableRefObject,
 } from "react";
 import {
   FormTypeOption,
@@ -12,7 +13,6 @@ import {
   FormIndexes,
   FormPages,
   HandleFormAction,
-  FormActions,
   FormIcon,
 } from "types/Form";
 import TextArea from "components/TextArea";
@@ -32,6 +32,7 @@ type FieldProps = {
   selectedId?: string | null;
   field: FormFieldType;
   formPage: FormPages;
+  focusFieldId: MutableRefObject<string | null>;
   setDragId?: Dispatch<SetStateAction<string | null>>;
 } & FormIndexes &
   ComponentProps<"div">;
@@ -109,11 +110,18 @@ const Field = ({
   fieldIndex,
   className,
   formPage,
+  focusFieldId,
   setDragId,
   ...props
 }: FieldProps) => {
-  const { register, clearValue, setValue, formErrors, formValues } =
-    useFormContext();
+  const {
+    register,
+    clearValue,
+    setValue,
+    setFormValues,
+    formErrors,
+    formValues,
+  } = useFormContext();
 
   let { isEdit } = formPage;
 
@@ -180,10 +188,10 @@ const Field = ({
     sectionIndex,
     action,
   }) => {
-    let field;
+    let formField;
 
     if (action === "add-section" || action === "add-field") {
-      field = {
+      formField = {
         id: crypto.randomUUID(),
         title: "",
         type: "radio",
@@ -199,6 +207,7 @@ const Field = ({
         },
         value: "",
       };
+      focusFieldId.current = formField.id;
     }
 
     switch (action) {
@@ -207,10 +216,11 @@ const Field = ({
         break;
 
       case "duplicate-field":
-        setValue(
-          `sections.${sectionIndex}.fields.${formValues.sections[sectionIndex].fields.length}`,
-          field
-        );
+        let formField = { ...field, id: crypto.randomUUID() };
+        focusFieldId.current = formField.id;
+        let form = { ...formValues };
+        form.sections[sectionIndex].fields.splice(fieldIndex + 1, 0, formField);
+        setFormValues(form);
         break;
 
       case "add-section":
@@ -224,9 +234,7 @@ const Field = ({
 
       case "add-field":
         setValue(
-          `sections.${sectionIndex}.fields.${
-            formValues.sections[sectionIndex].fields.length - 1
-          }`,
+          `sections.${sectionIndex}.fields.${formValues.sections[sectionIndex].fields.length}`,
           field
         );
         break;

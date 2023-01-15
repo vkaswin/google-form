@@ -16,7 +16,7 @@ import Header from "./Header";
 import Responses from "./Responses";
 import { useForm } from "hooks/useForm";
 import { FormProvider } from "context/form";
-import { setFormTheme } from "helpers";
+import { setFormTheme, focusElement } from "helpers";
 import { formData } from "json";
 
 import styles from "./FormBuilder.module.scss";
@@ -44,6 +44,8 @@ const FormBuilder = (formPage: FormPages) => {
 
   let dragRef = useRef<FormDragRef>(initialDragRef);
 
+  let focusFieldId = useRef<string | null>(null);
+
   let form = useForm<FormDetail>();
 
   let { formValues, setFormValues, reset, handleSubmit } = form;
@@ -53,6 +55,15 @@ const FormBuilder = (formPage: FormPages) => {
   useEffect(() => {
     getFormDetails();
   }, []);
+
+  useEffect(() => {
+    if (!focusFieldId.current) return;
+    let element = document.querySelector(
+      `[data-field-id='${focusFieldId.current}']`
+    );
+    if (element) focusElement(element);
+    focusFieldId.current = null;
+  }, [formValues]);
 
   useEffect(() => {
     if (!colorCode || !bgCode) return;
@@ -129,7 +140,12 @@ const FormBuilder = (formPage: FormPages) => {
     )
       return;
 
+    let { dragElement } = dragRef.current;
     let form = { ...formValues };
+
+    if (dragElement) {
+      focusFieldId.current = dragElement.getAttribute("data-field-id");
+    }
 
     form.sections[destination.droppableId].fields.splice(
       destination.draggableId,
@@ -240,7 +256,9 @@ const FormBuilder = (formPage: FormPages) => {
                             sectionIndex={sectionIndex}
                             fieldIndex={fieldIndex}
                             formPage={formPage}
+                            focusFieldId={focusFieldId}
                             {...(isEdit && {
+                              "data-field-id": field.id,
                               "data-draggable-id": fieldIndex,
                               "data-droppable-id": sectionIndex,
                               selectedId: selectedId,
