@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/react-google-form/static/css/main.18907633.css",
-    "main.js": "/react-google-form/static/js/main.8fb762fd.js",
-    "static/media/icons.svg": "/react-google-form/static/media/icons.468e2c817b23619a961a.svg",
-    "static/media/icons.eot": "/react-google-form/static/media/icons.5fc889455954d2025848.eot",
-    "static/media/icons.woff": "/react-google-form/static/media/icons.68a81c0b9428d2d2ac1d.woff",
-    "static/media/icons.ttf": "/react-google-form/static/media/icons.5a18f537f6232f6e2c21.ttf",
-    "static/media/Poppins-Regular.ttf": "/react-google-form/static/media/Poppins-Regular.35d26b781dc5fda684cc.ttf",
-    "static/media/Poppins-Medium.ttf": "/react-google-form/static/media/Poppins-Medium.673ed42382ab264e0bf5.ttf",
-    "static/media/Poppins-Bold.ttf": "/react-google-form/static/media/Poppins-Bold.cdb29a5d7ccf57ff05a3.ttf",
-    "index.html": "/react-google-form/index.html",
-    "main.18907633.css.map": "/react-google-form/static/css/main.18907633.css.map",
-    "main.8fb762fd.js.map": "/react-google-form/static/js/main.8fb762fd.js.map"
+    "main.css": "/google-form-clone/static/css/main.e7048f52.css",
+    "main.js": "/google-form-clone/static/js/main.8fb762fd.js",
+    "static/media/icons.svg": "/google-form-clone/static/media/icons.468e2c817b23619a961a.svg",
+    "static/media/icons.eot": "/google-form-clone/static/media/icons.5fc889455954d2025848.eot",
+    "static/media/icons.woff": "/google-form-clone/static/media/icons.68a81c0b9428d2d2ac1d.woff",
+    "static/media/icons.ttf": "/google-form-clone/static/media/icons.5a18f537f6232f6e2c21.ttf",
+    "static/media/Poppins-Regular.ttf": "/google-form-clone/static/media/Poppins-Regular.35d26b781dc5fda684cc.ttf",
+    "static/media/Poppins-Medium.ttf": "/google-form-clone/static/media/Poppins-Medium.673ed42382ab264e0bf5.ttf",
+    "static/media/Poppins-Bold.ttf": "/google-form-clone/static/media/Poppins-Bold.cdb29a5d7ccf57ff05a3.ttf",
+    "index.html": "/google-form-clone/index.html",
+    "main.e7048f52.css.map": "/google-form-clone/static/css/main.e7048f52.css.map",
+    "main.8fb762fd.js.map": "/google-form-clone/static/js/main.8fb762fd.js.map"
   },
   "entrypoints": [
-    "static/css/main.18907633.css",
+    "static/css/main.e7048f52.css",
     "static/js/main.8fb762fd.js"
   ]
 }
