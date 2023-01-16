@@ -1,0 +1,25 @@
+{
+    "name": "google-form",
+    "version": "1.0.0",
+    "description": "Google Form",
+    "main": "index.js",
+    "scripts": {
+        "start": "node dist/index.js",
+        "dev": "nodemon index.ts",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Aswin Kumar",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/express": "^4.17.15",
+        "@types/node": "^18.11.18",
+        "concurrently": "^7.6.0",
+        "nodemon": "^2.0.20",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.9.4"
+    },
+    "dependencies": {
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2"
+    }
+}
