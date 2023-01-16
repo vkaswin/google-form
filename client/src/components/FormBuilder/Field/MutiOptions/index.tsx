@@ -14,7 +14,7 @@ type MultiOptionsProps = { formPage: FormPages } & FormField & FormIndexes;
 
 const MultiOptions = ({
   id,
-  type,
+  fieldType,
   options,
   other,
   rules,
@@ -26,7 +26,7 @@ const MultiOptions = ({
     useFormContext();
 
   let icon = useMemo<string>(() => {
-    switch (type) {
+    switch (fieldType) {
       case "checkbox":
         return "bx-square";
       case "radio":
@@ -34,15 +34,15 @@ const MultiOptions = ({
       default:
         return "";
     }
-  }, [type]);
+  }, [fieldType]);
 
   let dropdownOptions = useMemo<DropDownOption[] | undefined>(() => {
-    if (type !== "dropdown") return;
+    if (fieldType !== "dropdown") return;
 
     return options?.map((option) => {
       return { label: option, value: option };
     });
-  }, [type, options]);
+  }, [fieldType, options]);
 
   const name = `sections.${sectionIndex}.fields.${fieldIndex}.value`;
   const field = register(name, rules);
@@ -68,7 +68,7 @@ const MultiOptions = ({
             return (
               <div key={index} className={styles.option_field}>
                 <div>
-                  {type === "dropdown" ? (
+                  {fieldType === "dropdown" ? (
                     <span>{index + 1}.</span>
                   ) : (
                     <i className={icon}></i>
@@ -101,7 +101,7 @@ const MultiOptions = ({
         </Fragment>
       ) : (
         <Fragment>
-          {(type === "checkbox" || type === "radio") &&
+          {(fieldType === "checkbox" || fieldType === "radio") &&
             options?.map((option, index) => {
               let props = {
                 key: index,
@@ -110,16 +110,16 @@ const MultiOptions = ({
                 value: option,
                 register: field,
                 defaultChecked:
-                  type === "checkbox"
+                  fieldType === "checkbox"
                     ? Array.isArray(value) && value.includes(option)
                     : value === option,
               };
 
-              const Component = type === "checkbox" ? CheckBox : Radio;
+              const Component = fieldType === "checkbox" ? CheckBox : Radio;
 
               return <Component {...props} />;
             })}
-          {type === "dropdown" && (
+          {fieldType === "dropdown" && (
             <Select
               className={styles.select_field}
               size="auto"
@@ -142,7 +142,7 @@ const MultiOptions = ({
               </div>
             ) : (
               <div>
-                {type === "checkbox" && (
+                {fieldType === "checkbox" && (
                   <CheckBox
                     id="checkbox-other-option"
                     placeholder="Enter here"
@@ -152,7 +152,7 @@ const MultiOptions = ({
                     register={field}
                   />
                 )}
-                {type === "radio" && (
+                {fieldType === "radio" && (
                   <Radio
                     id="radio-other-option"
                     label="Other"
@@ -174,7 +174,7 @@ const MultiOptions = ({
       )}
       {isEdit && (
         <div className={styles.wrapper}>
-          {type === "dropdown" ? (
+          {fieldType === "dropdown" ? (
             <span>{options && options.length + 1}.</span>
           ) : (
             <i className={icon}></i>
@@ -190,7 +190,7 @@ const MultiOptions = ({
             >
               <span>Add Option</span>
             </div>
-            {type !== "dropdown" && other && !other.enabled && (
+            {fieldType !== "dropdown" && other && !other.enabled && (
               <div
                 className={styles.other_option}
                 onClick={() =>

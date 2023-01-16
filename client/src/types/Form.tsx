@@ -40,7 +40,7 @@ export type FormRules = {
 export type FormField = {
   id: string;
   title: string;
-  type: FormType;
+  fieldType: FormType;
   description: string;
   value: string | string[];
   required?: boolean;

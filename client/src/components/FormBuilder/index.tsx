@@ -192,11 +192,11 @@ const FormBuilder = (formPage: FormPages) => {
   const getFormData = (data: FormDetail): FormSubmitData[] => {
     let formData = data.sections.reduce((formData, section, index) => {
       let formValues = section.fields.reduce(
-        (formValues, { value, type, other, id }) => {
-          if (type === "radio" && value === "Other" && other?.value) {
+        (formValues, { value, fieldType, other, id }) => {
+          if (fieldType === "radio" && value === "Other" && other?.value) {
             formValues[id] = `Other : ${other.value}`;
           } else if (
-            type === "checkbox" &&
+            fieldType === "checkbox" &&
             Array.isArray(value) &&
             value.includes("Other") &&
             other?.value

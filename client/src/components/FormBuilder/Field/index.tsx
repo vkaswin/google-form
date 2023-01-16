@@ -133,9 +133,9 @@ const Field = ({
 
   let selectedOption = useMemo<FormTypeOption | undefined>(() => {
     return formTypes.find((option) => {
-      return option.type === field.type;
+      return option.type === field.fieldType;
     });
-  }, [field.type]);
+  }, [field.fieldType]);
 
   const error =
     formErrors?.sections?.[sectionIndex]?.fields?.[fieldIndex]?.value;
@@ -144,9 +144,9 @@ const Field = ({
 
   let component = useMemo<ReactNode>(() => {
     if (
-      field.type === "checkbox" ||
-      field.type === "radio" ||
-      field.type === "dropdown"
+      field.fieldType === "checkbox" ||
+      field.fieldType === "radio" ||
+      field.fieldType === "dropdown"
     ) {
       return (
         <MutiOptions
@@ -156,7 +156,7 @@ const Field = ({
           {...field}
         />
       );
-    } else if (field.type === "input") {
+    } else if (field.fieldType === "input") {
       return (
         <Input
           placeholder="Short answer text"
@@ -165,7 +165,7 @@ const Field = ({
           {...(isEdit ? { disabled: true } : { register: registerField })}
         />
       );
-    } else if (field.type === "textarea") {
+    } else if (field.fieldType === "textarea") {
       return (
         <TextArea
           placeholder="Long answer text"
@@ -173,7 +173,7 @@ const Field = ({
           {...(isEdit ? { disabled: true } : { register: registerField })}
         />
       );
-    } else if (field.type === "date") {
+    } else if (field.fieldType === "date") {
       return (
         <DatePicker
           placeholder="Month, day, year"
@@ -186,9 +186,9 @@ const Field = ({
               })}
         />
       );
-    } else if (field.type === "file") {
+    } else if (field.fieldType === "file") {
       return <FileInput />;
-    } else if (field.type === "rating") {
+    } else if (field.fieldType === "rating") {
       return (
         <Rating
           {...(field.value && {
@@ -326,7 +326,7 @@ const Field = ({
             )}
           </Fragment>
         )}
-        <div className={styles.field} data-type={field.type}>
+        <div className={styles.field} data-type={field.fieldType}>
           {component}
           {!isEdit && error && (
             <div className={styles.error_msg}>
@@ -362,9 +362,9 @@ const Field = ({
                 )}
               />
             </div>
-            {field.type === "input" ||
-              field.type === "textarea" ||
-              (field.type === "date" && (
+            {field.fieldType === "input" ||
+              field.fieldType === "textarea" ||
+              (field.fieldType === "date" && (
                 <div className={styles.rules}>
                   {formRules.map(({ label, name, type }, index) => {
                     return (
