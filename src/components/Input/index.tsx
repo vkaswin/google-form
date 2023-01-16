@@ -44,6 +44,9 @@ const Input = ({
         placeholder={placeholder}
         className={`${styles.field} ${className || ""}`.trim()}
         onFocus={handleFocus}
+        {...(type === "number" && {
+          onWheel: (e) => (e.target as HTMLInputElement).blur(),
+        })}
         {...(register && register)}
         {...props}
       />

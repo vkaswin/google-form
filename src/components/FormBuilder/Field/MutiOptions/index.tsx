@@ -155,21 +155,18 @@ const MultiOptions = ({
                 {type === "radio" && (
                   <Radio
                     id="radio-other-option"
-                    name={id}
                     label="Other"
                     defaultChecked={other.checked}
                     value="Other"
                     register={field}
                   />
                 )}
-                {value.includes("Other") && (
-                  <Input
-                    placeholder="Enter here"
-                    register={register(
-                      `sections.${sectionIndex}.fields.${fieldIndex}.other.value`
-                    )}
-                  />
-                )}
+                <Input
+                  placeholder="Enter here"
+                  register={register(
+                    `sections.${sectionIndex}.fields.${fieldIndex}.other.value`
+                  )}
+                />
               </div>
             )}
           </div>

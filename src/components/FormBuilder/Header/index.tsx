@@ -1,8 +1,16 @@
-import { Dispatch, SetStateAction } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { ColorCodes } from "types/Form";
 import Themes from "./Themes";
 
 import styles from "./Header.module.scss";
+import { debounce } from "helpers";
 
 const googleFormIcon = (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
@@ -28,7 +36,9 @@ type HeaderProps = {
   activeTab: number;
   colorCode: ColorCodes;
   bgCode: string;
+  title: string;
   handleTheme: (data: { colorCode: ColorCodes; bgCode: string }) => void;
+  handleTitle: (title: string) => void;
   setActiveTab: Dispatch<SetStateAction<number>>;
 };
 
@@ -36,17 +46,45 @@ const Header = ({
   activeTab,
   colorCode,
   bgCode,
+  title,
   handleTheme,
+  handleTitle,
   setActiveTab,
 }: HeaderProps) => {
   const tabs = ["Questions", "Responses"];
+
+  const [hide, setHide] = useState(true);
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (hide) return;
+    if (!inputRef.current) return;
+    inputRef.current.focus();
+  }, [hide]);
+
+  const toggleTitle = () => {
+    setHide(!hide);
+  };
+
+  const handleChange = debounce((e: ChangeEvent<HTMLInputElement>) => {
+    handleTitle(e.target.value);
+  }, 500);
 
   return (
     <div className={styles.container}>
       <div className={styles.top}>
         <div className={styles.title}>
           {googleFormIcon}
-          <input name="title" defaultValue="Google Form" />
+          <input
+            ref={inputRef}
+            name="title"
+            defaultValue={title || "Google Form"}
+            onChange={handleChange}
+            onBlur={toggleTitle}
+            hidden={hide}
+          />
+          {hide && <h1 onClick={toggleTitle}>{title}</h1>}
         </div>
         <div className={styles.icon}>
           <Themes

@@ -17,10 +17,7 @@ type ToolBarActions =
   | "italic"
   | "underline"
   | "strikethrough"
-  | "link"
-  | "eraser"
-  | "undo"
-  | "redo";
+  | "link";
 
 type ToolBar = {
   icon: string;
@@ -47,18 +44,6 @@ let toolbar: ToolBar[] = [
   {
     icon: "bx-strikethrough",
     action: "strikethrough",
-  },
-  {
-    icon: "bx-eraser",
-    action: "eraser",
-  },
-  {
-    icon: "bx-undo",
-    action: "undo",
-  },
-  {
-    icon: "bx-redo",
-    action: "redo",
   },
 ];
 

@@ -55,7 +55,7 @@ const defaultErrors = {
   validate: `Validation failed for this field`,
 };
 
-export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
+const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
   let { current: formNames } = useRef<string[]>([]);
 
   let { current: formFields } = useRef<FormFields>({});
@@ -371,7 +371,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
           field,
         });
       },
-      onBlur: (event: any) => {
+      onBlur: (event: FocusEvent) => {
         let ref = event.target as unknown as HTMLInputElement;
         validateField({ name, ref });
       },
@@ -429,7 +429,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     ref.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  const validateAllFields: FormValidateAllFields = () => {
+  const validateAllFields: FormValidateAllFields<T> = () => {
     for (let name of formNames) {
       let field = get(name, formFields);
 
@@ -449,7 +449,7 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     return isEmpty(formErrors);
   };
 
-  const handleSubmit: FormSubmit = (onValid, onInvalid) => {
+  const handleSubmit: FormSubmit<T> = (onValid, onInvalid) => {
     return (event: Event) => {
       event.preventDefault();
       if (!isSubmitted.current) {
@@ -602,3 +602,5 @@ export const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     formErrors,
   };
 };
+
+export default useForm;

@@ -143,3 +143,5 @@ export type FormIcon = {
 export type HandleFormAction = (
   data: { action: FormActions } & FormIndexes
 ) => void;
+
+export type FormSubmitData = Record<string, string | string[]>;

@@ -80,17 +80,13 @@ const isObjectOrArray = (data: any) => {
 export const isEmpty = (obj: any): boolean => {
   for (let key in obj) {
     let temp = obj[key];
-    if (!isObjectOrArray(temp)) {
-      return false;
-    }
+    if (!isObjectOrArray(temp)) return false;
     if (Array.isArray(temp)) {
+      temp = temp.filter(Boolean);
       for (let value of temp) {
         if (!isObjectOrArray(value)) return false;
-        if (isEmpty(value)) {
-          continue;
-        } else {
-          return false;
-        }
+        if (isEmpty(value)) continue;
+        else return false;
       }
     } else if (Object.keys(temp).length === 0) {
       continue;

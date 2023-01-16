@@ -43,17 +43,17 @@ export type FormRules = {
   valueAsDate?: boolean;
 };
 
-export type FormSubmit = (
-  onValid?: OnValid,
+export type FormSubmit<T> = (
+  onValid?: OnValid<T>,
   onInvalid?: OnInvalid
 ) => (event: any) => void;
 
-export type OnValid = (formValues: FormValues) => void;
+export type OnValid<T> = (formValues: T) => void;
 
 export type OnInvalid = (errors: any) => void;
 
-export type FormValidateAllFields = (
-  onValid?: OnValid,
+export type FormValidateAllFields<T> = (
+  onValid?: OnValid<T>,
   onInvalid?: OnInvalid
 ) => boolean;
 
@@ -152,7 +152,7 @@ export type UseForm<T = FormValues> = {
   setError: SetError;
   clearError: ClearError;
   validate: ValidateField;
-  handleSubmit: FormSubmit;
+  handleSubmit: FormSubmit<T>;
   clearValue: ClearValue;
   setFormValues: Dispatch<SetStateAction<T>>;
   formValues: Readonly<T>;

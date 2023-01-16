@@ -9,17 +9,20 @@ import {
   ColorCodes,
   FormPages,
   FormDetail,
+  FormSubmitData,
 } from "types/Form";
 import Section from "./Section";
 import Field from "./Field";
 import Header from "./Header";
 import Responses from "./Responses";
-import { useForm } from "hooks/useForm";
+import useForm from "hooks/useForm";
+import useTitle from "hooks/useTitle";
 import { FormProvider } from "context/form";
 import { setFormTheme, focusElement, isEmpty } from "helpers";
 import { formData } from "json";
 
 import styles from "./FormBuilder.module.scss";
+import { useParams } from "react-router-dom";
 
 let initialDragRef = {
   source: {
@@ -48,13 +51,17 @@ const FormBuilder = (formPage: FormPages) => {
 
   let form = useForm<FormDetail>();
 
+  let { formId } = useParams();
+
   let { formValues, setFormValues, reset, handleSubmit } = form;
 
   let { sections = [], colorCode, bgCode, title } = formValues;
 
+  useTitle(title);
+
   useEffect(() => {
     getFormDetails();
-  }, []);
+  }, [formId]);
 
   useEffect(() => {
     if (!focusFieldId.current) return;
@@ -72,7 +79,7 @@ const FormBuilder = (formPage: FormPages) => {
 
   const getFormDetails = () => {
     try {
-      setFormValues(formData);
+      setFormValues(JSON.parse(JSON.stringify(formData)));
     } catch (error) {
       console.log(error);
     }
@@ -176,9 +183,38 @@ const FormBuilder = (formPage: FormPages) => {
     }
   };
 
-  const submitResponse = (data: any) => {
+  const submitResponse = (data: FormDetail) => {
     try {
+      let formData = getFormData(data);
     } catch (error) {}
+  };
+
+  const getFormData = (data: FormDetail): FormSubmitData[] => {
+    let formData = data.sections.reduce((formData, section, index) => {
+      let formValues = section.fields.reduce(
+        (formValues, { value, type, other, id }) => {
+          if (type === "radio" && value === "Other" && other?.value) {
+            formValues[id] = `Other : ${other.value}`;
+          } else if (
+            type === "checkbox" &&
+            Array.isArray(value) &&
+            value.includes("Other") &&
+            other?.value
+          ) {
+            value = value.splice(value.indexOf("Other"), 1);
+            formValues[id] = [...value, `Other : ${other.value}`];
+          } else {
+            formValues[id] = value;
+          }
+          return formValues;
+        },
+        {} as FormSubmitData
+      );
+      formData[index] = formValues;
+      return formData;
+    }, [] as FormSubmitData[]);
+
+    return formData;
   };
 
   const onInvalid = (errors: any, action?: "next" | "back") => {
@@ -197,6 +233,10 @@ const FormBuilder = (formPage: FormPages) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleTitle = (title: string) => {
+    setFormValues({ ...formValues, title });
+  };
+
   let { isEdit, isFill, isPreview } = formPage;
 
   return (
@@ -204,10 +244,12 @@ const FormBuilder = (formPage: FormPages) => {
       {isEdit && (
         <Header
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
           colorCode={colorCode}
           bgCode={bgCode}
+          title={title}
+          handleTitle={handleTitle}
           handleTheme={handleTheme}
+          setActiveTab={setActiveTab}
         />
       )}
       {activeTab === 0 && (
