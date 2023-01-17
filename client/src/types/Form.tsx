@@ -8,7 +8,7 @@ export type FormDetail = {
 };
 
 export type FormSection = {
-  id: string;
+  _id?: Readonly<string>;
   title: string;
   description: string;
   fields: FormField[];
@@ -38,17 +38,17 @@ export type FormRules = {
 };
 
 export type FormField = {
-  id: string;
+  _id?: Readonly<string>;
   title: string;
   fieldType: FormType;
   description: string;
-  value: string | string[];
+  value?: string | string[];
   required?: boolean;
   options?: string[];
   other?: {
     enabled: boolean;
     checked: boolean;
-    value: string;
+    value?: string;
   };
   rules: FormRules;
 };
@@ -144,4 +144,4 @@ export type HandleFormAction = (
   data: { action: FormActions } & FormIndexes
 ) => void;
 
-export type FormSubmitData = Record<string, string | string[]>;
+export type FormSubmitData = Record<string, string | string[] | null>;

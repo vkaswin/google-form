@@ -8,17 +8,10 @@ type FormTypeProps = {
   id: string;
   options: FormTypeOption[];
   selectedOption: FormTypeOption | undefined;
-  onChange: (name: string, value: any) => void;
+  onChange: (value: string) => void;
 } & FormIndexes;
 
-const FormType = ({
-  id,
-  options,
-  selectedOption,
-  sectionIndex,
-  fieldIndex,
-  onChange,
-}: FormTypeProps) => {
+const FormType = ({ id, options, selectedOption, onChange }: FormTypeProps) => {
   return (
     <Fragment>
       <div id={`option-${id}`} className={styles.wrapper}>
@@ -33,12 +26,7 @@ const FormType = ({
           return (
             <DropDown.Item
               key={`${option.label}-${id}`}
-              onClick={() =>
-                onChange(
-                  `sections.${sectionIndex}.fields.${fieldIndex}.type`,
-                  option.type
-                )
-              }
+              onClick={() => onChange(option.type)}
             >
               <i className={option.icon}></i>
               <span>{option.label}</span>

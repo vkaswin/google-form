@@ -14,6 +14,7 @@ import {
   FormPages,
   HandleFormAction,
   FormIcon,
+  FormField,
 } from "types/Form";
 import TextArea from "components/TextArea";
 import Input from "components/Input";
@@ -34,6 +35,8 @@ type FieldProps = {
   field: FormFieldType;
   formPage: FormPages;
   focusFieldId: MutableRefObject<string | null>;
+  fieldId: string;
+  isSelected: Boolean;
   setDragId?: Dispatch<SetStateAction<string | null>>;
 } & FormIndexes &
   ComponentProps<"div">;
@@ -117,6 +120,8 @@ const Field = ({
   className,
   formPage,
   focusFieldId,
+  isSelected,
+  fieldId,
   setDragId,
   ...props
 }: FieldProps) => {
@@ -153,6 +158,7 @@ const Field = ({
           sectionIndex={sectionIndex}
           fieldIndex={fieldIndex}
           formPage={formPage}
+          fieldId={fieldId}
           {...field}
         />
       );
@@ -216,7 +222,6 @@ const Field = ({
 
     if (action === "add-section" || action === "add-field") {
       formField = {
-        id: crypto.randomUUID(),
         title: "",
         type: "radio",
         options: ["Option 1"],
@@ -231,7 +236,6 @@ const Field = ({
         },
         value: "",
       };
-      focusFieldId.current = formField.id;
     }
 
     switch (action) {
@@ -240,16 +244,16 @@ const Field = ({
         break;
 
       case "duplicate-field":
-        let formField = { ...field, id: crypto.randomUUID() };
-        focusFieldId.current = formField.id;
+        let formField = JSON.parse(JSON.stringify(field)) as FormField;
+        focusFieldId.current = `${sectionIndex}${fieldIndex + 1}`;
         let form = { ...formValues };
         form.sections[sectionIndex].fields.splice(fieldIndex + 1, 0, formField);
         setFormValues(form);
         break;
 
       case "add-section":
+        focusFieldId.current = `${formValues.sections.length}`;
         setValue(`sections.${formValues.sections.length}`, {
-          id: crypto.randomUUID(),
           title: "",
           description: "",
           fields: [field],
@@ -266,6 +270,11 @@ const Field = ({
       default:
         return;
     }
+  };
+
+  const handleFormType = (value: string) => {
+    //TODO REMOVE AND ADD CERTAIN FIELD WHEN CHANGE FIELD TYPE
+    setValue(`sections.${sectionIndex}.fields.${fieldIndex}.fieldType`, value);
   };
 
   return (
@@ -286,14 +295,14 @@ const Field = ({
                   `sections.${sectionIndex}.fields.${fieldIndex}.title`
                 )}
               />
-              {selectedId === field.id && (
+              {isSelected && (
                 <FormType
-                  id={field.id}
+                  id={fieldId}
                   options={formTypes}
                   sectionIndex={sectionIndex}
                   fieldIndex={fieldIndex}
                   selectedOption={selectedOption}
-                  onChange={setValue}
+                  onChange={handleFormType}
                 />
               )}
             </div>
@@ -335,26 +344,26 @@ const Field = ({
             </div>
           )}
         </div>
-        {isEdit && selectedId === field.id && (
+        {isEdit && isSelected && (
           <Fragment>
             <div className={styles.footer}>
               {icons.map(({ icon, name, action, label }, index) => {
                 return (
                   <Fragment key={index}>
                     <i
-                      id={`${name}-${field.id}`}
+                      id={`${name}-${fieldId}`}
                       className={icon}
                       onClick={() =>
                         handleFormAction({ sectionIndex, fieldIndex, action })
                       }
                     ></i>
-                    <ToolTip selector={`#${name}-${field.id}`}>{label}</ToolTip>
+                    <ToolTip selector={`#${name}-${fieldId}`}>{label}</ToolTip>
                   </Fragment>
                 );
               })}
               <div className={styles.split}></div>
               <Switch
-                id={field.id}
+                id={fieldId}
                 label="Required"
                 defaultChecked={field.rules.required?.value || false}
                 register={register(
@@ -400,7 +409,7 @@ const Field = ({
         {isEdit && (
           <div
             className={styles.drag_icon}
-            onPointerDown={() => setDragId?.(field.id)}
+            onPointerDown={() => setDragId?.(fieldId)}
           >
             <i className="bx-dots-horizontal-rounded"></i>
             <i className="bx-dots-horizontal-rounded"></i>

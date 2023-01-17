@@ -10,16 +10,17 @@ export type FormSectionProps = {
   sectionIndex: number;
   sectionHeader?: string;
   formPage: FormPages;
+  isSelected: Boolean;
 } & ComponentProps<"div"> &
   Omit<FormSection, "fields">;
 
 const Section = ({
-  id,
   title,
   className,
   selectedId,
   description,
   sectionIndex,
+  isSelected,
   sectionHeader = "",
   formPage: { isEdit },
   ...props
@@ -49,7 +50,7 @@ const Section = ({
           register={register(`sections.${sectionIndex}.description`)}
         />
         <div className={styles.indicator}></div>
-        {selectedId === id && <div className={styles.highlight}></div>}
+        {isSelected && <div className={styles.highlight}></div>}
       </div>
     </div>
   ) : (

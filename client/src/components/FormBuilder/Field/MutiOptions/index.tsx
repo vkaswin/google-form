@@ -10,10 +10,11 @@ import styles from "./MultiOptions.module.scss";
 
 type DropDownOption = { label: string; value: string };
 
-type MultiOptionsProps = { formPage: FormPages } & FormField & FormIndexes;
+type MultiOptionsProps = { formPage: FormPages; fieldId: string } & FormField &
+  FormIndexes;
 
 const MultiOptions = ({
-  id,
+  fieldId,
   fieldType,
   options,
   other,
@@ -105,7 +106,7 @@ const MultiOptions = ({
             options?.map((option, index) => {
               let props = {
                 key: index,
-                id: `${id}${index}`,
+                id: `${fieldId}${index}`,
                 label: option,
                 value: option,
                 register: field,

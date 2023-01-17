@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const FormSchema = new mongoose.Schema(
   {
+    creatorId: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     title: {
       type: String,
       required: true,
@@ -15,7 +20,6 @@ const FormSchema = new mongoose.Schema(
       required: true,
     },
     sections: {
-      _id: false,
       required: true,
       type: [
         {
@@ -26,20 +30,25 @@ const FormSchema = new mongoose.Schema(
             type: String,
           },
           fields: {
-            _id: false,
             required: true,
             type: [
               {
                 title: String,
-                formType: String,
                 description: String,
+                fieldType: {
+                  type: String,
+                  required: true,
+                },
                 options: {
-                  type: [String],
                   default: null,
+                  type: [String],
                 },
                 other: {
-                  enabled: Boolean,
-                  checked: Boolean,
+                  default: null,
+                  type: {
+                    enabled: Boolean,
+                    checked: Boolean,
+                  },
                 },
                 rules: {
                   default: {},

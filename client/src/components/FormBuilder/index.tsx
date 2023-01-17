@@ -23,6 +23,7 @@ import { formData } from "json";
 
 import styles from "./FormBuilder.module.scss";
 import { useParams } from "react-router-dom";
+import { getFormById } from "services/Form";
 
 let initialDragRef = {
   source: {
@@ -77,9 +78,11 @@ const FormBuilder = (formPage: FormPages) => {
     setFormTheme({ colorCode, bgCode });
   }, [colorCode, bgCode]);
 
-  const getFormDetails = () => {
+  const getFormDetails = async () => {
     try {
-      setFormValues(JSON.parse(JSON.stringify(formData)));
+      if (!formId) return;
+      const res = await getFormById(formId);
+      setFormValues(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -186,15 +189,17 @@ const FormBuilder = (formPage: FormPages) => {
   const submitResponse = (data: FormDetail) => {
     try {
       let formData = getFormData(data);
+      console.log(formData);
     } catch (error) {}
   };
 
   const getFormData = (data: FormDetail): FormSubmitData[] => {
     let formData = data.sections.reduce((formData, section, index) => {
       let formValues = section.fields.reduce(
-        (formValues, { value, fieldType, other, id }) => {
+        (formValues, { value, fieldType, other, _id }) => {
+          if (!_id) return formValues;
           if (fieldType === "radio" && value === "Other" && other?.value) {
-            formValues[id] = `Other : ${other.value}`;
+            formValues[_id] = `Other : ${other.value}`;
           } else if (
             fieldType === "checkbox" &&
             Array.isArray(value) &&
@@ -202,9 +207,9 @@ const FormBuilder = (formPage: FormPages) => {
             other?.value
           ) {
             value = value.splice(value.indexOf("Other"), 1);
-            formValues[id] = [...value, `Other : ${other.value}`];
+            formValues[_id] = [...value, `Other : ${other.value}`];
           } else {
-            formValues[id] = value;
+            formValues[_id] = value || null;
           }
           return formValues;
         },
@@ -256,7 +261,7 @@ const FormBuilder = (formPage: FormPages) => {
         <FormProvider {...form}>
           <div className={styles.container}>
             {sections.map(
-              ({ id, title, description, fields }, sectionIndex) => {
+              ({ _id, title, description, fields }, sectionIndex) => {
                 if (isFill && !(sectionIndex === activeSection)) return null;
 
                 let sectionHeader =
@@ -264,17 +269,19 @@ const FormBuilder = (formPage: FormPages) => {
                     ? `Section ${sectionIndex + 1} of ${sections.length}`
                     : undefined;
 
+                let isSelected = selectedId === sectionIndex.toString();
+
                 return (
                   <Fragment key={sectionIndex}>
                     <Section
-                      id={id}
                       title={title}
                       selectedId={selectedId}
                       description={description}
                       sectionIndex={sectionIndex}
                       sectionHeader={sectionHeader}
                       formPage={formPage}
-                      onClick={() => setSelectedId(id)}
+                      isSelected={isSelected}
+                      onClick={() => setSelectedId(sectionIndex.toString())}
                     />
                     <div
                       className={styles.wrapper}
@@ -287,22 +294,25 @@ const FormBuilder = (formPage: FormPages) => {
                       })}
                     >
                       {fields.map((field, fieldIndex) => {
+                        let fieldId = `${sectionIndex}${fieldIndex}`;
+                        let isSelected = selectedId === fieldId;
                         return (
                           <Field
-                            key={field.id}
+                            key={fieldId}
                             field={field}
+                            fieldId={fieldId}
                             tabIndex={-1}
                             sectionIndex={sectionIndex}
                             fieldIndex={fieldIndex}
                             formPage={formPage}
                             focusFieldId={focusFieldId}
+                            isSelected={isSelected}
                             {...(isEdit && {
-                              "data-field-id": field.id,
+                              "data-field-id": fieldId,
                               "data-draggable-id": fieldIndex,
                               "data-droppable-id": sectionIndex,
-                              selectedId: selectedId,
-                              draggable: dragId === field.id,
-                              onClick: () => setSelectedId(field.id),
+                              draggable: dragId === fieldId,
+                              onClick: () => setSelectedId(fieldId),
                               onDragStart: () =>
                                 handleDragStart(sectionIndex, fieldIndex),
                               onDragLeave: (e) =>

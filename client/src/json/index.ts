@@ -6,32 +6,26 @@ export const formData: FormDetail = {
   bgCode: "#f0ebf8",
   sections: [
     {
-      id: "43a1ce84-d3d1-4c97-b858-a48d85e55762",
       title: "Loreum Ispum",
       description: "Loreum Ispum",
       fields: [
         {
-          id: "ee8f3a59-7a20-4aef-b3f4-5731d84ba0a3",
           title: "Loreum Ipsum",
           fieldType: "input",
           description: "Loreum Ispum",
           rules: {
             required: { value: true },
           },
-          value: "",
         },
         {
-          id: "109489e9-2ddf-43a5-af55-e73d35489e50",
           title: "Loreum Ipsum",
           fieldType: "date",
           description: "",
           rules: {
             required: { value: true },
           },
-          value: "",
         },
         {
-          id: "91572682-d918-436a-98c9-9d7f6de50573",
           title: "Gender",
           fieldType: "radio",
 
@@ -45,10 +39,8 @@ export const formData: FormDetail = {
           rules: {
             required: { value: true },
           },
-          value: "",
         },
         {
-          id: "c7dcc839-7eab-4a88-a63d-269a798ee798",
           title: "Hobbies",
           fieldType: "checkbox",
 
@@ -65,7 +57,6 @@ export const formData: FormDetail = {
           value: [],
         },
         {
-          id: "c8a6df35-5310-4af3-8ffb-69732c5e1857",
           title: "Location",
           fieldType: "dropdown",
 
@@ -79,12 +70,10 @@ export const formData: FormDetail = {
       ],
     },
     {
-      id: "ad431f05-46b4-41dc-a803-c65eaa3fd94f",
       title: "Loreum Ispum",
       description: "Loreum Ispum",
       fields: [
         {
-          id: "e15459e7-1347-41ab-9334-4884be1d1cd1",
           title: "Loreum Ipsum",
           fieldType: "input",
           description: "",
@@ -92,7 +81,6 @@ export const formData: FormDetail = {
           value: "",
         },
         {
-          id: "3c4a7001-94da-4ad7-9513-187bac3f1dc8",
           title: "Loreum Ipsum",
           fieldType: "input",
           description: "",
@@ -100,7 +88,6 @@ export const formData: FormDetail = {
           value: "",
         },
         {
-          id: "32d54e03-7060-4a4d-a83b-3ac47f487e3a",
           title: "Gender",
           fieldType: "radio",
 
@@ -115,7 +102,6 @@ export const formData: FormDetail = {
           value: "",
         },
         {
-          id: "c1671459-27f1-4031-9720-2a411879980f",
           title: "Hobbies",
           fieldType: "checkbox",
 
@@ -130,13 +116,11 @@ export const formData: FormDetail = {
           value: [],
         },
         {
-          id: "c6b3af39-dfa3-4eba-b7ef-5b0194d6ba1b",
           title: "Location",
           fieldType: "dropdown",
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
           description: "",
           rules: { required: { value: true } },
-          value: "",
         },
       ],
     },
