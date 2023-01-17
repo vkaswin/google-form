@@ -46,9 +46,9 @@ const MultiOptions = ({
     });
   }, [fieldType, options]);
 
-  const name = `sections.${sectionIndex}.fields.${fieldIndex}.value`;
+  const name = `sections.${sectionIndex}.fields.${fieldIndex}.response`;
   const field = register(name, rules);
-  const value = formData.sections[sectionIndex].fields[fieldIndex].value;
+  const value = formData.sections[sectionIndex].fields[fieldIndex].response;
 
   const handleOtherOption = (value: Boolean) => {
     setValue(`sections.${sectionIndex}.fields.${fieldIndex}.other`, value);
@@ -163,7 +163,7 @@ const MultiOptions = ({
                 <Input
                   placeholder="Enter here"
                   register={register(
-                    `sections.${sectionIndex}.fields.${fieldIndex}.other.value`
+                    `sections.${sectionIndex}.fields.${fieldIndex}.otherReason`
                   )}
                 />
               </div>

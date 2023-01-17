@@ -13,8 +13,22 @@ const ResponseSchema = new mongoose.Schema(
       ref: "Form",
     },
     responses: {
-      type: [Object],
+      _id: false,
       required: true,
+      type: [
+        {
+          type: {
+            fieldId: {
+              required: true,
+              type: String,
+            },
+            response: {
+              required: true,
+              type: mongoose.SchemaTypes.Mixed,
+            },
+          },
+        },
+      ],
     },
   },
   { timestamps: true }

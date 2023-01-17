@@ -7,7 +7,7 @@ import PageNotFound from "pages/404";
 export const router = createHashRouter([
   {
     path: "/",
-    element: <Navigate to="/form/63c67cbd98d2a3ccee8b0c8c/edit" replace />,
+    element: <Navigate to="/form/63c6cd6579ae4c52238e98a1/edit" replace />,
   },
   {
     path: "/form/:formId/edit",

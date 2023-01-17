@@ -43,7 +43,8 @@ export type FormField = {
   title: string;
   fieldType: FormType;
   description: string;
-  value?: string | string[];
+  response?: string | string[];
+  otherReason?: string;
   required?: boolean;
   options?: string[];
   other?: Boolean;
@@ -141,7 +142,10 @@ export type HandleFormAction = (
   data: { action: FormActions } & FormIndexes
 ) => void;
 
-export type FormSubmitData = Record<string, string | string[] | null>;
+export type FormSubmitData = {
+  fieldId: string;
+  response: string | string[] | null;
+};
 
 export type FormResponse = {
   userId: string;

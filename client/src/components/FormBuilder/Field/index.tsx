@@ -137,8 +137,8 @@ const Field = ({
   }, [field.fieldType]);
 
   const error =
-    formErrors?.sections?.[sectionIndex]?.fields?.[fieldIndex]?.value;
-  const name = `sections.${sectionIndex}.fields.${fieldIndex}.value`;
+    formErrors?.sections?.[sectionIndex]?.fields?.[fieldIndex]?.response;
+  const name = `sections.${sectionIndex}.fields.${fieldIndex}.response`;
   const registerField = register(name, field.rules);
 
   let component = useMemo<ReactNode>(() => {
@@ -160,7 +160,7 @@ const Field = ({
       return (
         <Input
           placeholder="Short answer text"
-          defaultValue={field.value}
+          defaultValue={field.response}
           register={registerField}
           {...(isEdit ? { disabled: true } : { register: registerField })}
         />
@@ -169,7 +169,7 @@ const Field = ({
       return (
         <TextArea
           placeholder="Long answer text"
-          defaultValue={field.value}
+          defaultValue={field.response}
           {...(isEdit ? { disabled: true } : { register: registerField })}
         />
       );
@@ -177,7 +177,7 @@ const Field = ({
       return (
         <DatePicker
           placeholder="Month, day, year"
-          value={field.value || ""}
+          value={field.response || ""}
           {...(isEdit
             ? { disabled: true }
             : {
@@ -191,8 +191,10 @@ const Field = ({
     } else if (field.fieldType === "rating") {
       return (
         <Rating
-          {...(field.value && {
-            rating: !Array.isArray(field.value) ? parseInt(field.value) : 0,
+          {...(field.response && {
+            rating: !Array.isArray(field.response)
+              ? parseInt(field.response)
+              : 0,
           })}
           {...(isEdit
             ? { disabled: true }
@@ -365,37 +367,36 @@ const Field = ({
                 )}
               />
             </div>
-            {field.fieldType === "input" ||
-              field.fieldType === "textarea" ||
-              (field.fieldType === "date" && (
-                <div className={styles.rules}>
-                  {formRules.map(({ label, name, type }, index) => {
-                    return (
-                      <div key={index} className={styles.rule_field}>
-                        <div>
-                          <label>{label}</label>
-                          <Input
-                            placeholder="Enter here"
-                            register={register(
-                              `sections.${sectionIndex}.fields.${fieldIndex}.rules.${name}.value`
-                            )}
-                            {...(type && { type })}
-                          />
-                        </div>
-                        <div>
-                          <label>Error Message</label>
-                          <Input
-                            placeholder="Enter here"
-                            register={register(
-                              `sections.${sectionIndex}.fields.${fieldIndex}.rules.${name}.message`
-                            )}
-                          />
-                        </div>
+            {(field.fieldType === "input" ||
+              field.fieldType === "textarea") && (
+              <div className={styles.rules}>
+                {formRules.map(({ label, name, type }, index) => {
+                  return (
+                    <div key={index} className={styles.rule_field}>
+                      <div>
+                        <label>{label}</label>
+                        <Input
+                          placeholder="Enter here"
+                          register={register(
+                            `sections.${sectionIndex}.fields.${fieldIndex}.rules.${name}.value`
+                          )}
+                          {...(type && { type })}
+                        />
                       </div>
-                    );
-                  })}
-                </div>
-              ))}
+                      <div>
+                        <label>Error Message</label>
+                        <Input
+                          placeholder="Enter here"
+                          register={register(
+                            `sections.${sectionIndex}.fields.${fieldIndex}.rules.${name}.message`
+                          )}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
             <div className={styles.highlight}></div>
           </Fragment>
         )}

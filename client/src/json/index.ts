@@ -28,7 +28,6 @@ export const formData: FormDetail = {
         {
           title: "Gender",
           fieldType: "radio",
-
           options: ["Male", "Female"],
           other: false,
           description: "",
@@ -46,7 +45,6 @@ export const formData: FormDetail = {
           rules: {
             required: { value: true },
           },
-          value: [],
         },
         {
           title: "Location",
@@ -56,7 +54,6 @@ export const formData: FormDetail = {
           rules: {
             required: { value: true },
           },
-          value: "",
         },
       ],
     },
@@ -69,14 +66,12 @@ export const formData: FormDetail = {
           fieldType: "input",
           description: "",
           rules: { required: { value: true } },
-          value: "",
         },
         {
           title: "Loreum Ipsum",
           fieldType: "input",
           description: "",
           rules: { required: { value: true } },
-          value: "",
         },
         {
           title: "Gender",
@@ -86,7 +81,6 @@ export const formData: FormDetail = {
           other: true,
           description: "",
           rules: { required: { value: true } },
-          value: "",
         },
         {
           title: "Hobbies",
@@ -96,7 +90,6 @@ export const formData: FormDetail = {
           other: true,
           description: "",
           rules: { required: { value: true } },
-          value: [],
         },
         {
           title: "Location",

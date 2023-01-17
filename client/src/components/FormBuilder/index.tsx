@@ -196,40 +196,41 @@ const FormBuilder = (formPage: FormPages) => {
         formId: formData._id,
         userId: "6303217405f1714edcfc1cb6",
       };
-      let res = await sendResponse(body);
-      console.log(res);
+      await sendResponse(body);
     } catch (error) {
       console.log(error);
     }
   };
 
   const getFormResponse = (data: FormDetail): FormSubmitData[] => {
-    let formData = data.sections.reduce((formData, section, index) => {
-      let formValues = section.fields.reduce(
-        (formValues, { value, fieldType, other, _id }) => {
-          if (!_id) return formValues;
-          //TODO HANDLE OTHER VALUE
-          if (other) {
-            if (fieldType === "radio" && value === "Other") {
-              //   formValues[_id] = `Other : ${other.value}`;
+    let formData = data.sections.reduce((formData, section) => {
+      section.fields.forEach(
+        ({ response, fieldType, other, otherReason, _id }) => {
+          if (!_id) return;
+          let data: FormSubmitData = {
+            fieldId: _id,
+            response: null,
+          };
+          if (other && otherReason) {
+            if (fieldType === "radio" && response === "Other") {
+              data.response = `Other : ${otherReason}`;
             } else if (
               fieldType === "checkbox" &&
-              Array.isArray(value) &&
-              value.includes("Other")
+              Array.isArray(response) &&
+              response.includes("Other")
             ) {
-              //   formValues[_id] = [
-              //     ...value.filter((val) => val !== "Other"),
-              //     `Other : ${other.value}`,
-              //   ];
+              data.response = [
+                ...response.filter((val) => val !== "Other"),
+                `Other : ${otherReason}`,
+              ];
             }
-          } else {
-            formValues[_id] = value || null;
+          } else if (response) {
+            data.response = response;
           }
-          return formValues;
-        },
-        {} as FormSubmitData
+          formData.push(data);
+        }
       );
-      formData[index] = formValues;
+
       return formData;
     }, [] as FormSubmitData[]);
 
