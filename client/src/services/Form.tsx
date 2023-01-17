@@ -1,10 +1,17 @@
-import { AxiosPromise } from "axios";
-import { FormDetail } from "types/Form";
+import { FormDetail, FormResponse } from "types/Form";
 import { axios } from "./index";
 
 export const getFormById = (formId: string) => {
-  return axios({
+  return axios<FormDetail>({
     method: "get",
     url: `http://localhost:8000/api/form/${formId}`,
-  }) as AxiosPromise<FormDetail>;
+  });
+};
+
+export const sendResponse = (data: FormResponse) => {
+  return axios({
+    method: "post",
+    url: `http://localhost:8000/api/response/submit`,
+    data,
+  });
 };

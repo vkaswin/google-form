@@ -125,14 +125,8 @@ const Field = ({
   setDragId,
   ...props
 }: FieldProps) => {
-  const {
-    register,
-    clearValue,
-    setValue,
-    setFormValues,
-    formErrors,
-    formValues,
-  } = useFormContext();
+  const { register, clearValue, setValue, setFormData, formErrors, formData } =
+    useFormContext();
 
   let { isEdit } = formPage;
 
@@ -246,14 +240,14 @@ const Field = ({
       case "duplicate-field":
         let formField = JSON.parse(JSON.stringify(field)) as FormField;
         focusFieldId.current = `${sectionIndex}${fieldIndex + 1}`;
-        let form = { ...formValues };
+        let form = { ...formData };
         form.sections[sectionIndex].fields.splice(fieldIndex + 1, 0, formField);
-        setFormValues(form);
+        setFormData(form);
         break;
 
       case "add-section":
-        focusFieldId.current = `${formValues.sections.length}`;
-        setValue(`sections.${formValues.sections.length}`, {
+        focusFieldId.current = `${formData.sections.length}`;
+        setValue(`sections.${formData.sections.length}`, {
           title: "",
           description: "",
           fields: [field],
@@ -262,7 +256,7 @@ const Field = ({
 
       case "add-field":
         setValue(
-          `sections.${sectionIndex}.fields.${formValues.sections[sectionIndex].fields.length}`,
+          `sections.${sectionIndex}.fields.${formData.sections[sectionIndex].fields.length}`,
           field
         );
         break;

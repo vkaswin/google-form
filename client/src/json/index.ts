@@ -30,11 +30,7 @@ export const formData: FormDetail = {
           fieldType: "radio",
 
           options: ["Male", "Female"],
-          other: {
-            enabled: true,
-            checked: false,
-            value: "",
-          },
+          other: false,
           description: "",
           rules: {
             required: { value: true },
@@ -45,11 +41,7 @@ export const formData: FormDetail = {
           fieldType: "checkbox",
 
           options: ["Football", "Basketball", "Cricket"],
-          other: {
-            enabled: true,
-            checked: false,
-            value: "",
-          },
+          other: true,
           description: "",
           rules: {
             required: { value: true },
@@ -59,7 +51,6 @@ export const formData: FormDetail = {
         {
           title: "Location",
           fieldType: "dropdown",
-
           options: ["Chennai", "Hyderabad", "Mumbai", "Delhi", "Bangalore"],
           description: "",
           rules: {
@@ -92,11 +83,7 @@ export const formData: FormDetail = {
           fieldType: "radio",
 
           options: ["Male", "Female"],
-          other: {
-            enabled: true,
-            checked: false,
-            value: "",
-          },
+          other: true,
           description: "",
           rules: { required: { value: true } },
           value: "",
@@ -106,11 +93,7 @@ export const formData: FormDetail = {
           fieldType: "checkbox",
 
           options: ["Football", "Basketball", "Cricket"],
-          other: {
-            enabled: true,
-            checked: false,
-            value: "",
-          },
+          other: true,
           description: "",
           rules: { required: { value: true } },
           value: [],

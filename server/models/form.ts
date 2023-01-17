@@ -44,11 +44,8 @@ const FormSchema = new mongoose.Schema(
                   type: [String],
                 },
                 other: {
-                  default: null,
-                  type: {
-                    enabled: Boolean,
-                    checked: Boolean,
-                  },
+                  default: false,
+                  type: Boolean,
                 },
                 rules: {
                   default: {},

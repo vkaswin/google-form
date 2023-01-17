@@ -14,6 +14,7 @@ type MultiOptionsProps = { formPage: FormPages; fieldId: string } & FormField &
   FormIndexes;
 
 const MultiOptions = ({
+  _id,
   fieldId,
   fieldType,
   options,
@@ -23,7 +24,7 @@ const MultiOptions = ({
   fieldIndex,
   formPage: { isEdit },
 }: MultiOptionsProps) => {
-  const { register, setValue, clearValue, watch, formValues, formErrors } =
+  const { register, setValue, clearValue, watch, formData, formErrors } =
     useFormContext();
 
   let icon = useMemo<string>(() => {
@@ -47,16 +48,28 @@ const MultiOptions = ({
 
   const name = `sections.${sectionIndex}.fields.${fieldIndex}.value`;
   const field = register(name, rules);
-  const value = formValues.sections[sectionIndex].fields[fieldIndex].value;
+  const value = formData.sections[sectionIndex].fields[fieldIndex].value;
 
-  const handleOtherOption = () => {
-    if (!other) return;
-
-    setValue(
-      `sections.${sectionIndex}.fields.${fieldIndex}.other.enabled`,
-      !other.enabled
-    );
+  const handleOtherOption = (value: Boolean) => {
+    setValue(`sections.${sectionIndex}.fields.${fieldIndex}.other`, value);
   };
+
+  const otherField = useMemo(() => {
+    if (!other) return null;
+
+    let Component = fieldType === "checkbox" ? CheckBox : Radio;
+
+    let props = {
+      id: `${_id}-other`,
+      label: "Other",
+      defaultChecked:
+        fieldType === "checkbox" ? value?.includes("Other") : value === "Other",
+      value: "Other",
+      register: field,
+    };
+
+    return <Component {...props} />;
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -132,36 +145,21 @@ const MultiOptions = ({
           )}
         </Fragment>
       )}
-      {other?.enabled && (
+      {other && (
         <Fragment>
           <div className={styles.option_field}>
             {isEdit ? (
               <div>
                 <i className={icon}></i>
                 <Input placeholder="Other..." disabled />
-                <i className="bx-x" onClick={handleOtherOption}></i>
+                <i
+                  className="bx-x"
+                  onClick={() => handleOtherOption(false)}
+                ></i>
               </div>
             ) : (
               <div>
-                {fieldType === "checkbox" && (
-                  <CheckBox
-                    id="checkbox-other-option"
-                    placeholder="Enter here"
-                    label="Other"
-                    defaultChecked={other.checked}
-                    value="Other"
-                    register={field}
-                  />
-                )}
-                {fieldType === "radio" && (
-                  <Radio
-                    id="radio-other-option"
-                    label="Other"
-                    defaultChecked={other.checked}
-                    value="Other"
-                    register={field}
-                  />
-                )}
+                {otherField}
                 <Input
                   placeholder="Enter here"
                   register={register(
@@ -191,18 +189,10 @@ const MultiOptions = ({
             >
               <span>Add Option</span>
             </div>
-            {fieldType !== "dropdown" && other && !other.enabled && (
-              <div
-                className={styles.other_option}
-                onClick={() =>
-                  setValue(
-                    `sections.${sectionIndex}.fields.${fieldIndex}.other.enabled`,
-                    !other.enabled
-                  )
-                }
-              >
+            {fieldType !== "dropdown" && !other && (
+              <div className={styles.other_option}>
                 <span>or </span>
-                <span>add "Other"</span>
+                <span onClick={() => handleOtherOption(true)}>add "Other"</span>
               </div>
             )}
           </div>

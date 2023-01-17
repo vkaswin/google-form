@@ -154,7 +154,7 @@ export type UseForm<T = FormValues> = {
   validate: ValidateField;
   handleSubmit: FormSubmit<T>;
   clearValue: ClearValue;
-  setFormValues: Dispatch<SetStateAction<T>>;
-  formValues: Readonly<T>;
+  setFormData: Dispatch<SetStateAction<T>>;
+  formData: Readonly<T>;
   formErrors: Readonly<Record<string, any>>;
 };

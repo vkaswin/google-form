@@ -60,7 +60,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
 
   let { current: formFields } = useRef<FormFields>({});
 
-  let [formValues, setFormValues] = useState<T>({} as T);
+  let [formData, setFormData] = useState<T>({} as T);
 
   let [formErrors, setFormErrors] = useState<T>({} as T);
 
@@ -172,7 +172,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
 
   const setFieldValue: FormValueSetter = (name, ref) => {
     let field = get(name, formFields);
-    let value = get(name, formValues);
+    let value = get(name, formData);
 
     if (isCheckBoxOrRadioInput(ref.type)) {
       let fieldValue = ref.value || ref.checked;
@@ -209,7 +209,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
       value = ref.value;
     }
 
-    set(name, value, formValues);
+    set(name, value, formData);
   };
 
   const validateField: FormValidate = ({ name, ref, updateState = true }) => {
@@ -283,13 +283,13 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
         errorType = "pattern";
       }
     } else if (typeof validateFn === "function") {
-      let value = get(name, formValues);
+      let value = get(name, formData);
       if (validateFn(value)) {
         error = typeof validate === "object" ? validate.message : undefined;
         errorType = "validate";
       }
     } else {
-      let value = get(name, formValues);
+      let value = get(name, formData);
 
       if (
         (typeof required === "boolean" ? required : required?.value) &&
@@ -385,7 +385,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
               ? watchName.includes(name)
               : watchName === name
           ) {
-            let value = get(name, formValues);
+            let value = get(name, formData);
             fn(name, event, value);
           }
         }
@@ -459,7 +459,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
       let isValid = validateAllFields();
 
       if (isValid && typeof onValid === "function") {
-        onValid(formValues);
+        onValid(formData);
       } else if (typeof onInvalid === "function") {
         // focusField();
         onInvalid(formErrors);
@@ -488,13 +488,13 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
 
   const setValue: SetValue = (name, value) => {
     let field = get(name, formFields);
-    set(name, value, formValues);
+    set(name, value, formData);
     if (field) validateField({ name, ref: field.ref });
-    setFormValues({ ...formValues });
+    setFormData({ ...formData });
   };
 
   const getValue: GetValue = (name) => {
-    let value = get(name, formValues);
+    let value = get(name, formData);
     if (typeof value === "undefined") return;
     return value;
   };
@@ -506,9 +506,9 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
           ref.checked = false;
         }
         if (field.refs.length > 1) {
-          set(name, [], formValues);
+          set(name, [], formData);
         } else {
-          set(name, null, formValues);
+          set(name, null, formData);
         }
       }
     } else {
@@ -517,7 +517,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
       } else {
         field.ref.value = "";
       }
-      set(name, null, formValues);
+      set(name, null, formData);
     }
   };
 
@@ -550,8 +550,8 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     if (!field) return;
     unset(name, formFields);
     unset(name, formErrors);
-    unset(name, formValues);
-    setFormValues({ ...formValues });
+    unset(name, formData);
+    setFormData({ ...formData });
   };
 
   const unset: FormUnSet = (name: string, fields: any) => {
@@ -597,8 +597,8 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     resetField,
     handleSubmit,
     clearValue,
-    setFormValues,
-    formValues,
+    setFormData,
+    formData,
     formErrors,
   };
 };

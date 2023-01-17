@@ -18,12 +18,12 @@ import Responses from "./Responses";
 import useForm from "hooks/useForm";
 import useTitle from "hooks/useTitle";
 import { FormProvider } from "context/form";
+import { useParams } from "react-router-dom";
+import { getFormById, sendResponse } from "services/Form";
+
 import { setFormTheme, focusElement, isEmpty } from "helpers";
-import { formData } from "json";
 
 import styles from "./FormBuilder.module.scss";
-import { useParams } from "react-router-dom";
-import { getFormById } from "services/Form";
 
 let initialDragRef = {
   source: {
@@ -54,9 +54,9 @@ const FormBuilder = (formPage: FormPages) => {
 
   let { formId } = useParams();
 
-  let { formValues, setFormValues, reset, handleSubmit } = form;
+  let { formData, setFormData, reset, handleSubmit } = form;
 
-  let { sections = [], colorCode, bgCode, title } = formValues;
+  let { sections = [], colorCode, bgCode, title } = formData;
 
   useTitle(title);
 
@@ -71,7 +71,7 @@ const FormBuilder = (formPage: FormPages) => {
     );
     if (element) focusElement(element);
     focusFieldId.current = null;
-  }, [formValues]);
+  }, [formData]);
 
   useEffect(() => {
     if (!colorCode || !bgCode) return;
@@ -79,10 +79,11 @@ const FormBuilder = (formPage: FormPages) => {
   }, [colorCode, bgCode]);
 
   const getFormDetails = async () => {
+    if (!formId) return;
+
     try {
-      if (!formId) return;
       const res = await getFormById(formId);
-      setFormValues(res.data);
+      setFormData(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -151,7 +152,7 @@ const FormBuilder = (formPage: FormPages) => {
       return;
 
     let { dragElement } = dragRef.current;
-    let form = { ...formValues };
+    let form = { ...formData };
 
     if (dragElement) {
       focusFieldId.current = dragElement.getAttribute("data-field-id");
@@ -163,7 +164,7 @@ const FormBuilder = (formPage: FormPages) => {
       form.sections[source.droppableId].fields.splice(source.draggableId, 1)[0]
     );
 
-    setFormValues(form);
+    setFormData(form);
   };
 
   const handleDragOver: HandleDragOver = (e) => {
@@ -173,7 +174,7 @@ const FormBuilder = (formPage: FormPages) => {
   };
 
   const handleTheme = (theme: { colorCode: ColorCodes; bgCode: string }) => {
-    setFormValues({ ...formValues, ...theme });
+    setFormData({ ...formData, ...theme });
   };
 
   const onSubmit = (data: any, action: "next" | "back" | "submit") => {
@@ -186,28 +187,41 @@ const FormBuilder = (formPage: FormPages) => {
     }
   };
 
-  const submitResponse = (data: FormDetail) => {
+  const submitResponse = async (data: FormDetail) => {
+    if (!formData._id) return;
+
     try {
-      let formData = getFormData(data);
-      console.log(formData);
-    } catch (error) {}
+      let body = {
+        responses: getFormResponse(data),
+        formId: formData._id,
+        userId: "6303217405f1714edcfc1cb6",
+      };
+      let res = await sendResponse(body);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const getFormData = (data: FormDetail): FormSubmitData[] => {
+  const getFormResponse = (data: FormDetail): FormSubmitData[] => {
     let formData = data.sections.reduce((formData, section, index) => {
       let formValues = section.fields.reduce(
         (formValues, { value, fieldType, other, _id }) => {
           if (!_id) return formValues;
-          if (fieldType === "radio" && value === "Other" && other?.value) {
-            formValues[_id] = `Other : ${other.value}`;
-          } else if (
-            fieldType === "checkbox" &&
-            Array.isArray(value) &&
-            value.includes("Other") &&
-            other?.value
-          ) {
-            value = value.splice(value.indexOf("Other"), 1);
-            formValues[_id] = [...value, `Other : ${other.value}`];
+          //TODO HANDLE OTHER VALUE
+          if (other) {
+            if (fieldType === "radio" && value === "Other") {
+              //   formValues[_id] = `Other : ${other.value}`;
+            } else if (
+              fieldType === "checkbox" &&
+              Array.isArray(value) &&
+              value.includes("Other")
+            ) {
+              //   formValues[_id] = [
+              //     ...value.filter((val) => val !== "Other"),
+              //     `Other : ${other.value}`,
+              //   ];
+            }
           } else {
             formValues[_id] = value || null;
           }
@@ -239,7 +253,7 @@ const FormBuilder = (formPage: FormPages) => {
   };
 
   const handleTitle = (title: string) => {
-    setFormValues({ ...formValues, title });
+    setFormData({ ...formData, title });
   };
 
   let { isEdit, isFill, isPreview } = formPage;

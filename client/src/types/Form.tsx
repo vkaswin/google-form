@@ -1,6 +1,7 @@
 import { DragEvent, TouchEvent } from "react";
 
 export type FormDetail = {
+  _id?: Readonly<string>;
   title: string;
   colorCode: ColorCodes;
   bgCode: string;
@@ -45,11 +46,7 @@ export type FormField = {
   value?: string | string[];
   required?: boolean;
   options?: string[];
-  other?: {
-    enabled: boolean;
-    checked: boolean;
-    value?: string;
-  };
+  other?: Boolean;
   rules: FormRules;
 };
 
@@ -145,3 +142,9 @@ export type HandleFormAction = (
 ) => void;
 
 export type FormSubmitData = Record<string, string | string[] | null>;
+
+export type FormResponse = {
+  userId: string;
+  formId: string;
+  responses: FormSubmitData[];
+};
