@@ -4,18 +4,9 @@ import {
   useContext,
   useEffect,
   useState,
-  Dispatch,
-  SetStateAction,
 } from "react";
+import { AuthContext as AuthContextType, User } from "types/Auth";
 import { cookies } from "helpers";
-
-type User = {};
-
-type AuthContextType = {
-  user: User | null;
-  setUser: Dispatch<SetStateAction<User | null>>;
-  logout: () => void;
-};
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -32,8 +23,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const getUser = (): void => {
+    return;
     let token = cookie.get("auth_token");
-    if (!token) return;
+
+    if (!token && !window.location.hash.includes("/auth/login")) {
+      let url = window.encodeURIComponent(window.location.hash.substring(1));
+      window.location.hash = `#/auth/login?url=${url}`;
+      return;
+    }
   };
 
   const logout = () => {
@@ -42,7 +39,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider value={{ user, setUser, logout }}>
-      {user ? <div>Loading...</div> : children}
+      {children}
     </AuthContext.Provider>
   );
 };

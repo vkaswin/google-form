@@ -1,0 +1,51 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  span {
+    color: var(--primary-color);
+    font-size: 24px;
+    font-family: "Poppins-Medium", sans-serif;
+  }
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 50px;
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .error_msg {
+    display: block;
+    margin-top: 5px;
+    color: #da3025;
+    font-size: 14px;
+  }
+}
+.cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  button {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 7px 0px;
+    width: 100%;
+    border-radius: 4px;
+  }
+  span {
+    color: var(--text-color);
+    cursor: default;
+    span {
+      color: var(--primary-color);
+      font-family: "Poppins-Medium", sans-serif;
+      cursor: pointer;
+    }
+  }
+}

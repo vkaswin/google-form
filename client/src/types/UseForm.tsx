@@ -6,7 +6,8 @@ export type FormRegister = (
 ) =>
   | ({
       ref: (ref: any) => void;
-      onInput?: <T>(event: ChangeEvent<T>) => void;
+      onInput: <T>(event: ChangeEvent<T>) => void;
+      onBlur: <T>(event: FocusEvent<T>) => void;
     } & FormRules)
   | undefined;
 

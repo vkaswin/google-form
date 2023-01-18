@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useRef } from "react";
+import { ComponentProps, Fragment, useEffect, useRef, useState } from "react";
 import { FormRegister } from "types/UseForm";
 
 import styles from "./Input.module.scss";
@@ -15,6 +15,8 @@ const Input = ({
   ...props
 }: InputProps) => {
   let inputRef = useRef<HTMLInputElement>(null);
+
+  let [mask, setMask] = useState(true);
 
   useEffect(() => {
     if (!inputRef.current) return;
@@ -40,9 +42,11 @@ const Input = ({
   return (
     <div ref={inputRef} className={styles.field}>
       <input
-        type={type}
+        type={type === "password" ? (mask ? "password" : "text") : type}
         placeholder={placeholder}
-        className={`${styles.field} ${className || ""}`.trim()}
+        className={`${styles.field} ${
+          type === "password" ? styles.space : ""
+        } ${className || ""}`.trim()}
         onFocus={handleFocus}
         {...(type === "number" && {
           onWheel: (e) => (e.target as HTMLInputElement).blur(),
@@ -50,6 +54,15 @@ const Input = ({
         {...(register && register)}
         {...props}
       />
+      {type === "password" && (
+        <Fragment>
+          {mask ? (
+            <i className="bx-hide" onClick={() => setMask(false)}></i>
+          ) : (
+            <i className="bx-show" onClick={() => setMask(true)}></i>
+          )}
+        </Fragment>
+      )}
     </div>
   );
 };

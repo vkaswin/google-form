@@ -15,6 +15,7 @@ app
   .use(cors())
   .use(express.json())
   .use(express.urlencoded({ extended: false }))
+  .use("/thumbnail", express.static("public/form"))
   .use(Routes);
 
 app.get("/", (req: Request, res: Response) => {

@@ -1,14 +1,15 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const ResponseSchema = new mongoose.Schema(
+const ResponseSchema = new Schema(
   {
     userId: {
-      type: mongoose.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       required: true,
       ref: "User",
     },
     formId: {
-      type: mongoose.Types.ObjectId,
+      type: Schema.Types.ObjectId,
+      index: true,
       required: true,
       ref: "Form",
     },
@@ -24,7 +25,7 @@ const ResponseSchema = new mongoose.Schema(
             },
             response: {
               required: true,
-              type: mongoose.SchemaTypes.Mixed,
+              type: Schema.Types.Mixed,
             },
           },
         },

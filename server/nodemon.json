@@ -5,6 +5,7 @@
         "middleware/**/*.ts",
         "routes/**/*.ts",
         "config/**/*.ts",
+        "utils/**/*.ts",
         "./index.ts"
     ],
     "ignore": [

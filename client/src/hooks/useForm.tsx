@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, FocusEvent } from "react";
 import {
   FormErrorTypes,
   FormGetter,
@@ -371,8 +371,9 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
           field,
         });
       },
-      onBlur: (event: FocusEvent) => {
+      onBlur: (event) => {
         let ref = event.target as unknown as HTMLInputElement;
+        if (!isSubmitted.current) return;
         validateField({ name, ref });
       },
       onInput: (event) => {
@@ -389,7 +390,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
             fn(name, event, value);
           }
         }
-        // if (!isSubmitted.current) return;
+        if (!isSubmitted.current) return;
         validateField({ name, ref });
         if (typeof onInput === "function") onInput(event);
       },

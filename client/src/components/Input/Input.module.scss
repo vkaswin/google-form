@@ -1,26 +1,6 @@
 .field {
   position: relative;
   width: 100%;
-  input {
-    background-color: #f8f9fa;
-    border-width: 0px 0px 1px 0px;
-    border-color: #9e9e9e;
-    border-style: solid;
-    color: var(--text-color);
-    outline: none;
-    padding: 5px 10px;
-    height: 35px;
-    &:disabled {
-      border-color: #9e9e9e;
-      border-style: dashed;
-      padding: 5px 5px;
-    }
-  }
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
   &::after {
     content: "";
     position: absolute;
@@ -36,6 +16,38 @@
   }
   &:is(.blur)::after {
     animation: hideLine 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  input {
+    background-color: #f8f9fa;
+    border-width: 0px 0px 1px 0px;
+    border-color: #9e9e9e;
+    border-style: solid;
+    color: var(--text-color);
+    outline: none;
+    padding: 5px 10px;
+    height: 35px;
+    &:disabled {
+      border-color: #9e9e9e;
+      border-style: dashed;
+      padding: 5px 5px;
+    }
+    &:is(.space) {
+      padding: 5px 35px 5px 10px;
+    }
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #606368;
+    font-size: 20px;
+    cursor: pointer;
   }
 }
 

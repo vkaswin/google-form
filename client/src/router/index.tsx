@@ -1,12 +1,12 @@
 import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "hooks/useAuth";
-import { router } from "./router";
+import Router from "./router";
 
 const App = () => {
   return (
     <AuthProvider>
       <RouterProvider
-        router={router}
+        router={Router}
         fallbackElement={<div>Loading...</div>}
       ></RouterProvider>
     </AuthProvider>
