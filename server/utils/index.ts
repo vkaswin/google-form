@@ -1,3 +1,4 @@
+import { Response, Request, NextFunction } from "express";
 import { sign } from "jsonwebtoken";
 import puppeteer from "puppeteer";
 import path from "path";
@@ -21,10 +22,25 @@ const screenShotFormPage = async (formId: string) => {
   }
 };
 
+const asyncHandler = <T>(
+  cb: (req: Request, res: Response, next: NextFunction) => T
+) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await cb(req, res, next);
+    } catch (error: any) {
+      res.status(400).send({ message: error?.message || "Error" });
+      console.log(error?.message);
+      console.log(error?.stack);
+      console.log(error?.name);
+    }
+  };
+};
+
 const generateJwtToken = (payload: string | object | Buffer) => {
   return sign(payload, process.env.JWT_SECRET as string, {
     expiresIn: process.env.JWT_EXPIRE,
   });
 };
 
-export { screenShotFormPage, generateJwtToken };
+export { screenShotFormPage, asyncHandler, generateJwtToken };
