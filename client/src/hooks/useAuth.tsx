@@ -7,6 +7,7 @@ import {
 } from "react";
 import { AuthContext as AuthContextType, User } from "types/Auth";
 import { cookies } from "helpers";
+import jwtDecode from "jwt-decode";
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -23,13 +24,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const getUser = (): void => {
-    return;
     let token = cookie.get("auth_token");
 
-    if (!token && !window.location.hash.includes("/auth/login")) {
+    if (token) {
+      let decoded = jwtDecode<User>(token);
+      setUser(decoded);
+    } else if (!window.location.hash.includes("/auth/login")) {
       let url = window.encodeURIComponent(window.location.hash.substring(1));
       window.location.hash = `#/auth/login?url=${url}`;
-      return;
     }
   };
 

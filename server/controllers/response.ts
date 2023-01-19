@@ -1,10 +1,12 @@
 import Response from "../models/response";
 import Form from "../models/form";
 import mongoose from "mongoose";
-import { asyncHandler } from "../utils";
+import { asyncHandler, CustomError } from "../utils";
 
 const submitResponse = asyncHandler(async (req, res) => {
-  if (!req.body) throw new Error("Invalid data");
+  if (!req.body)
+    throw new CustomError({ message: "Invalid data", status: 400 });
+
   await Response.create(req.body);
   res.status(200).send({ message: "Success" });
 });

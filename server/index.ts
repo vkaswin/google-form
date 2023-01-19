@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config";
@@ -17,10 +17,6 @@ app
   .use(express.urlencoded({ extended: false }))
   .use("/thumbnail", express.static("public/form"))
   .use(Routes);
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
-});
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);

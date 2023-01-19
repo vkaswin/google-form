@@ -1,15 +1,24 @@
+import { Fragment } from "react";
 import Input from "components/Input";
 import useForm from "hooks/useForm";
-import { Fragment } from "react";
+import useAuth from "hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { loginUser } from "services/User";
+import { User } from "types/Auth";
+import jwtDecode from "jwt-decode";
+
+import { cookies } from "helpers";
 
 import styles from "./Login.module.scss";
 
 const Login = () => {
+  const { setUser } = useAuth();
+
   const navigate = useNavigate();
 
   const location = useLocation();
+
+  const cookie = cookies();
 
   const searchParams = new URLSearchParams(location.search);
 
@@ -20,8 +29,10 @@ const Login = () => {
       let {
         data: { token },
       } = await loginUser(data);
+      cookie.set({ name: "auth_token", value: token, days: 14 });
       let redirectUrl = searchParams.get("url");
-      console.log(token, redirectUrl);
+      let decoded = jwtDecode<User>(token);
+      setUser(decoded);
       navigate(redirectUrl || "/form/list");
     } catch (error: any) {
       if (error?.message === "User not exist") navigate("/auth/register");

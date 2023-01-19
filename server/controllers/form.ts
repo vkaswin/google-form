@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Form from "../models/form";
-import { screenShotFormPage, asyncHandler } from "../utils";
+import { screenShotFormPage, asyncHandler, CustomError } from "../utils";
 
 const createForm = asyncHandler(async (req, res) => {
   let data = await Form.create(req.body);
@@ -15,7 +15,7 @@ const getFormById = asyncHandler(async (req, res) => {
   } = req;
 
   if (!mongoose.Types.ObjectId.isValid(formId))
-    throw new Error("Invalid form id");
+    throw new CustomError({ message: "Invalid form id", status: 400 });
 
   let formDetail = await Form.findById(formId);
   res.status(200).send(formDetail);
