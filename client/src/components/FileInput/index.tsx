@@ -1,10 +1,12 @@
+import { ComponentProps } from "react";
+
 import styles from "./FileInput.module.scss";
 
-type FileInputProps = {};
+type FileInputProps = ComponentProps<"input">;
 
-const FileInput = ({}: FileInputProps) => {
+const FileInput = ({ className }: FileInputProps) => {
   return (
-    <div className={styles.filed}>
+    <div className={`${styles.field} ${className || ""}`.trim()}>
       <input type="file" />
     </div>
   );

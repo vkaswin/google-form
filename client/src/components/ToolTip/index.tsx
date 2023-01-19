@@ -53,7 +53,7 @@ const ToolTip = ({ selector, children, className, ...props }: ToolTipProps) => {
     element.onmouseenter = show;
     element.onmouseleave = hide;
     setReferenceElement(element);
-  }, []);
+  }, [selector]);
 
   if (!referenceElement) return null;
 

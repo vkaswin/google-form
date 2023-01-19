@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, ComponentProps } from "react";
+import { useState, useMemo, ComponentProps } from "react";
 import { clickOutside } from "helpers";
 import { FormRegister } from "types/UseForm";
 import { CSSTransition } from "react-transition-group";
@@ -47,21 +47,21 @@ const DatePicker = ({
   );
   let [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
-  let {
-    attributes,
-    styles: style,
-    state,
-  } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
-    modifiers: [
-      {
-        name: "offset",
-        options: {
-          offset: [0, 10],
+  let { attributes, styles: style } = usePopper(
+    referenceElement,
+    popperElement,
+    {
+      placement: "bottom-start",
+      modifiers: [
+        {
+          name: "offset",
+          options: {
+            offset: [0, 10],
+          },
         },
-      },
-    ],
-  });
+      ],
+    }
+  );
 
   const handleNext = () => {
     if (date.getMonth() === 11) {

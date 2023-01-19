@@ -207,64 +207,46 @@ const Field = ({
     } else {
       return null;
     }
-  }, [{ ...field }]);
+  }, [field]);
 
   const handleFormAction: HandleFormAction = ({
     fieldIndex,
     sectionIndex,
     action,
   }) => {
-    let formField;
-
-    if (action === "add-section" || action === "add-field") {
-      formField = {
+    if (action === "delete-field") {
+      clearValue(`sections.${sectionIndex}.fields.${fieldIndex}`);
+    } else if (action === "duplicate-field") {
+      let formField = JSON.parse(JSON.stringify(field)) as FormField;
+      focusFieldId.current = `${sectionIndex}${fieldIndex + 1}`;
+      let form = { ...formData };
+      form.sections[sectionIndex].fields.splice(fieldIndex + 1, 0, formField);
+      setFormData(form);
+    } else if (action === "add-field" || action === "add-section") {
+      let field = {
         title: "",
         type: "radio",
         options: ["Option 1"],
-        other: {
-          enabled: false,
-          checked: false,
-          value: "",
-        },
+        other: false,
         description: "",
         rules: {
           required: { value: false },
         },
-        value: "",
       };
-    }
 
-    switch (action) {
-      case "delete-field":
-        clearValue(`sections.${sectionIndex}.fields.${fieldIndex}`);
-        break;
-
-      case "duplicate-field":
-        let formField = JSON.parse(JSON.stringify(field)) as FormField;
-        focusFieldId.current = `${sectionIndex}${fieldIndex + 1}`;
-        let form = { ...formData };
-        form.sections[sectionIndex].fields.splice(fieldIndex + 1, 0, formField);
-        setFormData(form);
-        break;
-
-      case "add-section":
-        focusFieldId.current = `${formData.sections.length}`;
-        setValue(`sections.${formData.sections.length}`, {
+      if (action === "add-field") {
+        let fieldIndex = formData.sections[sectionIndex].fields.length;
+        focusFieldId.current = `${fieldIndex}`;
+        setValue(`sections.${sectionIndex}.fields.${fieldIndex}`, field);
+      } else {
+        let section = {
           title: "",
           description: "",
           fields: [field],
-        });
-        break;
-
-      case "add-field":
-        setValue(
-          `sections.${sectionIndex}.fields.${formData.sections[sectionIndex].fields.length}`,
-          field
-        );
-        break;
-
-      default:
-        return;
+        };
+        focusFieldId.current = `${formData.sections.length}`;
+        setValue(`sections.${formData.sections.length}`, section);
+      }
     }
   };
 

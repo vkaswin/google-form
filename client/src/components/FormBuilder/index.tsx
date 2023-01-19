@@ -111,9 +111,6 @@ const FormBuilder = (formPage: FormPages) => {
     draggableId
   ) => {
     event.stopPropagation();
-    let element = document.querySelector(
-      `[data-draggable-id='${draggableId}'][data-droppable-id='${droppableId}']`
-    ) as HTMLElement;
     dragRef.current = {
       ...dragRef.current,
       destination: { droppableId, draggableId },
@@ -180,7 +177,7 @@ const FormBuilder = (formPage: FormPages) => {
   const onSubmit = (data: any, action: "next" | "back" | "submit") => {
     if (action === "next") {
       setActiveSection((section) => section + 1);
-    } else if (action == "back") {
+    } else if (action === "back") {
       setActiveSection((section) => section - 1);
     } else {
       submitResponse(data);
@@ -257,7 +254,7 @@ const FormBuilder = (formPage: FormPages) => {
     setFormData({ ...formData, title });
   };
 
-  let { isEdit, isFill, isPreview } = formPage;
+  let { isEdit, isFill } = formPage;
 
   return (
     <Fragment>

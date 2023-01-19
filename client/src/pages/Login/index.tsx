@@ -1,7 +1,7 @@
 import Input from "components/Input";
 import useForm from "hooks/useForm";
 import { Fragment } from "react";
-import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { loginUser } from "services/User";
 
 import styles from "./Login.module.scss";

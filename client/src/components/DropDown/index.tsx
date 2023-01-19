@@ -81,7 +81,7 @@ const DropDown = ({
     element.onclick = open;
 
     setReferenceElement(element);
-  }, []);
+  }, [selector]);
 
   const onEntered = (element: HTMLElement) => {
     if (!element) return;

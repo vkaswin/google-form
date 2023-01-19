@@ -1,4 +1,4 @@
-import { useRef, useState, FocusEvent } from "react";
+import { useRef, useState } from "react";
 import {
   FormErrorTypes,
   FormGetter,
@@ -399,7 +399,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
   };
 
   const focusField = () => {
-    let errorKeys = Object.keys(formErrors);
+    /*let errorKeys = Object.keys(formErrors);
 
     if (errorKeys.length === 0) return;
 
@@ -427,7 +427,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     }
 
     ref.focus();
-    ref.scrollIntoView({ behavior: "smooth", block: "center" });
+    ref.scrollIntoView({ behavior: "smooth", block: "center" });*/
   };
 
   const validateAllFields: FormValidateAllFields<T> = () => {
@@ -462,7 +462,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
       if (isValid && typeof onValid === "function") {
         onValid(formData);
       } else if (typeof onInvalid === "function") {
-        // focusField();
+        focusField();
         onInvalid(formErrors);
       }
     };

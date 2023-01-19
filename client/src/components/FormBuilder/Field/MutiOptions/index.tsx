@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useMemo } from "react";
 import { FormField, FormIndexes, FormPages } from "types/Form";
 import Input from "components/Input";
 import Radio from "components/Radio";
@@ -24,7 +24,7 @@ const MultiOptions = ({
   fieldIndex,
   formPage: { isEdit },
 }: MultiOptionsProps) => {
-  const { register, setValue, clearValue, watch, formData, formErrors } =
+  const { register, setValue, clearValue, formData, formErrors } =
     useFormContext();
 
   let icon = useMemo<string>(() => {

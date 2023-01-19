@@ -1,5 +1,4 @@
 import { ComponentProps } from "react";
-import { FormRules } from "types/Form";
 import { FormRegister } from "types/UseForm";
 
 import styles from "./TextArea.module.scss";
