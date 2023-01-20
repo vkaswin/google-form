@@ -8,3 +8,9 @@ router.post("/login", login);
 router.post("/register", register);
 
 export default router;
+
+declare interface Response {
+  user: {
+    _id: string;
+  };
+}

@@ -1,4 +1,4 @@
-const baseURL = "http://localhost:8000";
+export const baseURL = "http://localhost:8000";
 const userUrl = `${baseURL}/api/user`;
 const formUrl = `${baseURL}/api/form`;
 const responseUrl = `${baseURL}/api/respose`;

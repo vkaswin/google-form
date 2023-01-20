@@ -1,3 +1,40 @@
 .container {
-  color: black;
+  .template {
+    background-color: #f1f3f4;
+    padding: 15px 0px;
+    .wrapper {
+      max-width: 920px;
+      margin: 0px auto;
+      .title {
+        margin-bottom: 15px;
+        span {
+          color: var(--text-color);
+          font-family: "Poppins-Medium", sans-serif;
+          font-size: 24px;
+        }
+      }
+      .list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 30px 15px;
+        max-width: 992px;
+        margin: 0px auto;
+      }
+    }
+  }
+  .form {
+    background-color: #fff;
+    padding: 15px 0px;
+    .wrapper {
+      max-width: 920px;
+      margin: 0px auto;
+      .list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 30px 15px;
+        max-width: 992px;
+        margin: 0px auto;
+      }
+    }
+  }
 }

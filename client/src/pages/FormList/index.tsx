@@ -5,6 +5,7 @@ import { getAllTemplates } from "services/Template";
 import { FormData } from "types/Form";
 import FormCard from "./FormCard";
 import TemplateCard from "./TemplateCard";
+import AddTemplate from "./TemplateCard/AddTemplate";
 
 import styles from "./FormList.module.scss";
 
@@ -30,20 +31,51 @@ const FormList = () => {
     }
   };
 
+  const handleTemplate = async (templateId: string) => {
+    console.log(templateId);
+  };
+
+  const handleForm = (formId: string) => {
+    window.open(`/google-form-clone#/form/${formId}/edit`);
+  };
+
+  const handleCreateFrom = async () => {
+    console.log("create form");
+  };
+
   return (
     <Fragment>
       <Header />
       <div className={styles.container}>
-        <h1>FormList</h1>
         <div className={styles.template}>
-          {templates.map((template) => {
-            return <TemplateCard {...template} />;
-          })}
+          <div className={styles.wrapper}>
+            <div className={styles.title}>
+              <span>Start a new form</span>
+            </div>
+            <div className={styles.list}>
+              <AddTemplate onClick={handleCreateFrom} />
+              {templates.map((template) => {
+                return (
+                  <TemplateCard
+                    key={template._id}
+                    onClick={handleTemplate}
+                    {...template}
+                  />
+                );
+              })}
+            </div>
+          </div>
         </div>
-        <div className={styles.fom}>
-          {forms.map((form) => {
-            return <FormCard {...form} />;
-          })}
+        <div className={styles.form}>
+          <div className={styles.wrapper}>
+            <div className={styles.list}>
+              {forms.map((form) => {
+                return (
+                  <FormCard key={form._id} onClick={handleForm} {...form} />
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </Fragment>

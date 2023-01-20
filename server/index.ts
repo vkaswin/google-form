@@ -15,7 +15,8 @@ app
   .use(cors())
   .use(express.json())
   .use(express.urlencoded({ extended: false }))
-  .use("/thumbnail", express.static("public/form"))
+  .use("/form", express.static("public/form"))
+  .use("/template", express.static("public/template"))
   .use(Routes);
 
 app.listen(port, () => {

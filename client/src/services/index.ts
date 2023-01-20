@@ -1,6 +1,13 @@
 import Axios from "axios";
+import { cookies } from "helpers";
 
-export const axios = Axios.create();
+const cookie = cookies();
+
+export const axios = Axios.create({
+  headers: {
+    authorization: cookie.get("auth_token"),
+  },
+});
 
 axios.interceptors.request.use(
   (config) => {

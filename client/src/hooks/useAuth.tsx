@@ -17,7 +17,7 @@ const AuthContext = createContext({} as AuthContextType);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   let [user, setUser] = useState<User | null>(null);
-  let [loading, setLoading] = useState(true);
+
   let cookie = cookies();
 
   useEffect(() => {
@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       let decoded = jwtDecode<User>(token);
       setUser(decoded);
     }
-    setLoading(false);
   };
 
   const logout = () => {
@@ -39,13 +38,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider value={{ user, setUser, logout }}>
-      {loading ? (
-        <div>
-          <span>Loading</span>
-        </div>
-      ) : (
-        children
-      )}
+      {children}
     </AuthContext.Provider>
   );
 };
