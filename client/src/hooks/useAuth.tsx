@@ -17,6 +17,7 @@ const AuthContext = createContext({} as AuthContextType);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   let [user, setUser] = useState<User | null>(null);
+  let [loading, setLoading] = useState(true);
   let cookie = cookies();
 
   useEffect(() => {
@@ -25,14 +26,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const getUser = (): void => {
     let token = cookie.get("auth_token");
-
     if (token) {
       let decoded = jwtDecode<User>(token);
       setUser(decoded);
-    } else if (!window.location.hash.includes("/auth/login")) {
-      let url = window.encodeURIComponent(window.location.hash.substring(1));
-      window.location.hash = `#/auth/login?url=${url}`;
     }
+    setLoading(false);
   };
 
   const logout = () => {
@@ -41,7 +39,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider value={{ user, setUser, logout }}>
-      {children}
+      {loading ? (
+        <div>
+          <span>Loading</span>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };

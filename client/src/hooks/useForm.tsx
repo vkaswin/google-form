@@ -349,7 +349,11 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     }
     if (pattern instanceof RegExp ? pattern : pattern?.value) {
       formRules.pattern =
-        pattern instanceof RegExp ? pattern.source : pattern?.value?.source;
+        pattern instanceof RegExp
+          ? pattern.source
+          : typeof pattern?.value === "string"
+          ? new RegExp(pattern.value).source
+          : pattern?.value?.source;
     }
     if (valueAsNumber) {
       formRules.valueAsDate = valueAsDate;

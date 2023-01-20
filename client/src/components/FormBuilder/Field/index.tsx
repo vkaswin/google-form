@@ -207,7 +207,17 @@ const Field = ({
     } else {
       return null;
     }
-  }, [field]);
+  }, [
+    field,
+    fieldId,
+    fieldIndex,
+    formPage,
+    isEdit,
+    name,
+    registerField,
+    sectionIndex,
+    setValue,
+  ]);
 
   const handleFormAction: HandleFormAction = ({
     fieldIndex,

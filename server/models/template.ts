@@ -1,12 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
-const FormSchema = new Schema(
+const TemplateSchema = new Schema(
   {
-    creatorId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     title: {
       type: String,
       required: true,
@@ -18,6 +13,10 @@ const FormSchema = new Schema(
     colorCode: {
       type: String,
       required: true,
+    },
+    isDefault: {
+      default: false,
+      type: Boolean,
     },
     sections: {
       required: true,
@@ -50,10 +49,6 @@ const FormSchema = new Schema(
                 options: {
                   default: [],
                   type: [String],
-                },
-                other: {
-                  default: false,
-                  type: Boolean,
                 },
                 rules: {
                   default: {},
@@ -94,4 +89,4 @@ const FormSchema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Form", FormSchema);
+export default mongoose.model("Template", TemplateSchema);

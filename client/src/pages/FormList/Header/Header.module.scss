@@ -1,0 +1,11 @@
+.container {
+  position: sticky;
+  top: 0px;
+  left: 0px;
+  background-color: white;
+  border-bottom: 1px solid #dadce0;
+  display: flex;
+  flex-direction: column;
+  padding: 15px 15px 0px 15px;
+  z-index: 999;
+}

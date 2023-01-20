@@ -4,11 +4,13 @@ import {
   getFormById,
   updateFormById,
   deleteFormById,
+  getAllForms,
 } from "../controllers/form";
 
 const router = Router();
 
 router.post("/create", createForm);
+router.get("/all", getAllForms);
 router
   .route("/:formId")
   .get(getFormById)

@@ -3,8 +3,16 @@ import { sign } from "jsonwebtoken";
 import puppeteer from "puppeteer";
 import path from "path";
 
-const screenShotFormPage = async (formId: string) => {
-  const filePath = path.join(process.cwd(), "public", "form", `${formId}.png`);
+const screenShotFormPage = async (
+  formId: string,
+  folderName: "form" | "template"
+) => {
+  const filePath = path.join(
+    process.cwd(),
+    "public",
+    folderName,
+    `${formId}.png`
+  );
   const url = `http://localhost:3000/#/form/${formId}/fill`;
   const browser = await puppeteer.launch();
   const page = await browser.newPage();

@@ -1,4 +1,4 @@
-import { ComponentProps } from "react";
+import { ComponentProps, useState } from "react";
 import { FormRegister } from "types/UseForm";
 
 import styles from "./Rating.module.scss";
@@ -21,6 +21,8 @@ const Rating = ({
   register,
   onChange,
 }: RatingProps) => {
+  let [value, setValue] = useState(rating);
+
   const starFilled = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -45,13 +47,14 @@ const Rating = ({
     </svg>
   );
 
-  let star = Array(rating)
+  let star = Array(value)
     .fill(starFilled)
-    .concat(Array(5 - rating).fill(starOutline));
+    .concat(Array(5 - value).fill(starOutline));
 
   return (
     <div
       className={`${styles.container} ${className || ""}`.trim()}
+      {...(!disabled && { onMouseLeave: () => setValue(rating) })}
       {...(register && { ...register })}
     >
       {star.map((list, index) => {
@@ -59,7 +62,10 @@ const Rating = ({
           <div
             key={index}
             style={{ cursor: disabled ? "default" : "pointer" }}
-            {...(!disabled && { onMouseEnter: () => onChange?.(index + 1) })}
+            {...(!disabled && {
+              onMouseEnter: () => setValue(index + 1),
+              onClick: () => onChange?.(index + 1),
+            })}
           >
             {list}
           </div>

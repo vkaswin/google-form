@@ -20,7 +20,6 @@ import useTitle from "hooks/useTitle";
 import { FormProvider } from "context/form";
 import { useParams } from "react-router-dom";
 import { getFormById, sendResponse } from "services/Form";
-
 import { setFormTheme, focusElement, isEmpty } from "helpers";
 
 import styles from "./FormBuilder.module.scss";
@@ -60,9 +59,12 @@ const FormBuilder = (formPage: FormPages) => {
 
   useTitle(title);
 
-  useEffect(() => {
-    getFormDetails();
-  }, [formId]);
+  useEffect(
+    () => {
+      getFormDetails();
+    }, // eslint-disable-next-line
+    [formId]
+  );
 
   useEffect(() => {
     if (!focusFieldId.current) return;
@@ -271,121 +273,125 @@ const FormBuilder = (formPage: FormPages) => {
       )}
       {activeTab === 0 && (
         <FormProvider {...form}>
-          <div className={styles.container}>
-            {sections.map(
-              ({ _id, title, description, fields }, sectionIndex) => {
-                if (isFill && !(sectionIndex === activeSection)) return null;
+          <div className={styles.bg}>
+            <div className={styles.container}>
+              {sections.map(
+                ({ _id, title, description, fields }, sectionIndex) => {
+                  if (isFill && !(sectionIndex === activeSection)) return null;
 
-                let sectionHeader =
-                  sections.length > 1
-                    ? `Section ${sectionIndex + 1} of ${sections.length}`
-                    : undefined;
+                  let sectionHeader =
+                    sections.length > 1
+                      ? `Section ${sectionIndex + 1} of ${sections.length}`
+                      : undefined;
 
-                let isSelected = selectedId === sectionIndex.toString();
+                  let isSelected = selectedId === sectionIndex.toString();
 
-                return (
-                  <Fragment key={sectionIndex}>
-                    <Section
-                      title={title}
-                      selectedId={selectedId}
-                      description={description}
-                      sectionIndex={sectionIndex}
-                      sectionHeader={sectionHeader}
-                      formPage={formPage}
-                      isSelected={isSelected}
-                      onClick={() => setSelectedId(sectionIndex.toString())}
-                    />
-                    <div
-                      className={styles.wrapper}
-                      {...(isEdit && {
-                        "data-droppable-id": sectionIndex,
-                        onDragEnter: (e) => handleDragEnter(e, sectionIndex, 0),
-                        onDragLeave: (e) => handleDragLeave(e, sectionIndex, 0),
-                        onDragOver: handleDragOver,
-                        onDrop: handleDrop,
-                      })}
-                    >
-                      {fields.map((field, fieldIndex) => {
-                        let fieldId = `${sectionIndex}${fieldIndex}`;
-                        let isSelected = selectedId === fieldId;
-                        return (
-                          <Field
-                            key={fieldId}
-                            field={field}
-                            fieldId={fieldId}
-                            tabIndex={-1}
-                            sectionIndex={sectionIndex}
-                            fieldIndex={fieldIndex}
-                            formPage={formPage}
-                            focusFieldId={focusFieldId}
-                            isSelected={isSelected}
-                            {...(isEdit && {
-                              "data-field-id": fieldId,
-                              "data-draggable-id": fieldIndex,
-                              "data-droppable-id": sectionIndex,
-                              draggable: dragId === fieldId,
-                              onClick: () => setSelectedId(fieldId),
-                              onDragStart: () =>
-                                handleDragStart(sectionIndex, fieldIndex),
-                              onDragLeave: (e) =>
-                                handleDragLeave(e, sectionIndex, fieldIndex),
-                              onDragEnter: (e) =>
-                                handleDragEnter(e, sectionIndex, fieldIndex),
-                              onDragEnd: handleDragEnd,
-                              setDragId: setDragId,
-                            })}
-                          />
-                        );
-                      })}
-                    </div>
-                  </Fragment>
-                );
-              }
-            )}
-            {isFill && (
-              <div className={styles.cta}>
-                <div>
-                  {activeSection > 0 && (
-                    <button
-                      className={styles.btn_navigate}
-                      onClick={handleSubmit(
-                        (data) => onSubmit(data, "back"),
-                        (errors) => onInvalid(errors, "back")
-                      )}
-                    >
-                      Back
-                    </button>
-                  )}
-                  {activeSection < sections.length - 1 && (
-                    <button
-                      className={styles.btn_navigate}
-                      onClick={handleSubmit(
-                        (data) => onSubmit(data, "next"),
-                        (errors) => onInvalid(errors, "next")
-                      )}
-                    >
-                      Next
-                    </button>
-                  )}
-                  {activeSection === sections.length - 1 && (
-                    <button
-                      className={styles.btn_submit}
-                      onClick={handleSubmit(
-                        (data) => onSubmit(data, "submit"),
-                        onInvalid
-                      )}
-                    >
-                      Submit
-                    </button>
-                  )}
+                  return (
+                    <Fragment key={sectionIndex}>
+                      <Section
+                        title={title}
+                        selectedId={selectedId}
+                        description={description}
+                        sectionIndex={sectionIndex}
+                        sectionHeader={sectionHeader}
+                        formPage={formPage}
+                        isSelected={isSelected}
+                        onClick={() => setSelectedId(sectionIndex.toString())}
+                      />
+                      <div
+                        className={styles.wrapper}
+                        {...(isEdit && {
+                          "data-droppable-id": sectionIndex,
+                          onDragEnter: (e) =>
+                            handleDragEnter(e, sectionIndex, 0),
+                          onDragLeave: (e) =>
+                            handleDragLeave(e, sectionIndex, 0),
+                          onDragOver: handleDragOver,
+                          onDrop: handleDrop,
+                        })}
+                      >
+                        {fields.map((field, fieldIndex) => {
+                          let fieldId = `${sectionIndex}${fieldIndex}`;
+                          let isSelected = selectedId === fieldId;
+                          return (
+                            <Field
+                              key={fieldId}
+                              field={field}
+                              fieldId={fieldId}
+                              tabIndex={-1}
+                              sectionIndex={sectionIndex}
+                              fieldIndex={fieldIndex}
+                              formPage={formPage}
+                              focusFieldId={focusFieldId}
+                              isSelected={isSelected}
+                              {...(isEdit && {
+                                "data-field-id": fieldId,
+                                "data-draggable-id": fieldIndex,
+                                "data-droppable-id": sectionIndex,
+                                draggable: dragId === fieldId,
+                                onClick: () => setSelectedId(fieldId),
+                                onDragStart: () =>
+                                  handleDragStart(sectionIndex, fieldIndex),
+                                onDragLeave: (e) =>
+                                  handleDragLeave(e, sectionIndex, fieldIndex),
+                                onDragEnter: (e) =>
+                                  handleDragEnter(e, sectionIndex, fieldIndex),
+                                onDragEnd: handleDragEnd,
+                                setDragId: setDragId,
+                              })}
+                            />
+                          );
+                        })}
+                      </div>
+                    </Fragment>
+                  );
+                }
+              )}
+              {isFill && (
+                <div className={styles.cta}>
+                  <div>
+                    {activeSection > 0 && (
+                      <button
+                        className={styles.btn_navigate}
+                        onClick={handleSubmit(
+                          (data) => onSubmit(data, "back"),
+                          (errors) => onInvalid(errors, "back")
+                        )}
+                      >
+                        Back
+                      </button>
+                    )}
+                    {activeSection < sections.length - 1 && (
+                      <button
+                        className={styles.btn_navigate}
+                        onClick={handleSubmit(
+                          (data) => onSubmit(data, "next"),
+                          (errors) => onInvalid(errors, "next")
+                        )}
+                      >
+                        Next
+                      </button>
+                    )}
+                    {activeSection === sections.length - 1 && (
+                      <button
+                        className={styles.btn_submit}
+                        onClick={handleSubmit(
+                          (data) => onSubmit(data, "submit"),
+                          onInvalid
+                        )}
+                      >
+                        Submit
+                      </button>
+                    )}
+                  </div>
+                  <button className={styles.btn_clear} onClick={clearForm}>
+                    Clear Form
+                  </button>
                 </div>
-                <button className={styles.btn_clear} onClick={clearForm}>
-                  Clear Form
-                </button>
+              )}
+              <div className={styles.footer}>
+                <span>Google Form</span>
               </div>
-            )}
-            <div className={styles.footer}>
-              <span>Google Form</span>
             </div>
           </div>
         </FormProvider>

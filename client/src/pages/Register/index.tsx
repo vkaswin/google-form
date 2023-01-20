@@ -13,8 +13,7 @@ const Register = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      let res = await registerUser(data);
-      console.log(res);
+      await registerUser(data);
       navigate("/auth/login");
     } catch (error) {
       console.log(error);

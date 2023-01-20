@@ -15,7 +15,7 @@ type ValidateFunction = (value: FormValueType) => boolean | undefined;
 
 type FormOptions = {
   required?: boolean | { value?: boolean; message?: string };
-  pattern?: RegExp | { value?: RegExp; message?: string };
+  pattern?: RegExp | { value?: RegExp | string; message?: string };
   minLength?: number | { value?: number; message?: string };
   maxLength?: number | { value?: number; message?: string };
   min?: string | { value?: string; message?: string };

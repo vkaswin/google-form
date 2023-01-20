@@ -10,8 +10,8 @@ export type FormDetail = {
 
 export type FormSection = {
   _id?: Readonly<string>;
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   fields: FormField[];
 };
 
@@ -31,7 +31,7 @@ export type FormType =
 
 export type FormRules = {
   required?: { value?: boolean; message?: string };
-  pattern?: { value?: RegExp; message?: string };
+  pattern?: { value?: RegExp | string; message?: string };
   minLength?: { value?: number; message?: string };
   maxLength?: { value?: number; message?: string };
   min?: { value?: string; message?: string };
@@ -40,12 +40,11 @@ export type FormRules = {
 
 export type FormField = {
   _id?: Readonly<string>;
-  title: string;
+  title?: string;
   fieldType: FormType;
-  description: string;
+  description?: string;
   response?: string | string[];
   otherReason?: string;
-  required?: boolean;
   options?: string[];
   other?: Boolean;
   rules: FormRules;
@@ -151,4 +150,9 @@ export type FormResponse = {
   userId: string;
   formId: string;
   responses: FormSubmitData[];
+};
+
+export type FormData = {
+  readonly _id: string;
+  title: string;
 };

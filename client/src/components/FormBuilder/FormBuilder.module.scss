@@ -1,3 +1,7 @@
+.bg {
+  background-color: var(--bg-color);
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -29,13 +33,13 @@
       padding: 0px 15px;
       height: 36px;
       min-width: 100px;
-      color: #6b3db7;
+      color: var(--primary-color);
     }
     .btn_submit {
-      background-color: #7349bd;
+      background-color: var(--primary-color);
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
       border-radius: 4px;
-      border: 1px solid #7349bd;
+      border: 1px solid var(--primary-color);
       color: white;
     }
     .btn_navigate {
