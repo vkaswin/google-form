@@ -4,10 +4,11 @@ import mongoose from "mongoose";
 import { asyncHandler, CustomError } from "../utils";
 
 const submitResponse = asyncHandler(async (req, res) => {
-  if (!req.body)
-    throw new CustomError({ message: "Invalid data", status: 400 });
+  let { body, user } = req;
 
-  await Response.create(req.body);
+  if (!body) throw new CustomError({ message: "Invalid data", status: 400 });
+
+  await Response.create({ ...req.body, userId: user._id });
   res.status(200).send({ message: "Success" });
 });
 
@@ -65,4 +66,20 @@ const getFormResponsesById = asyncHandler(async (req, res) => {
   res.status(200).send(formDetail);
 });
 
-export { submitResponse, getFormResponsesById };
+const checkResponseStatus = asyncHandler(async (req, res) => {
+  let {
+    user,
+    params: { formId },
+  } = req;
+
+  let data = await Response.findOne({
+    formId,
+    userId: user._id,
+  });
+
+  console.log(data);
+
+  res.status(200).send({ status: !!data });
+});
+
+export { submitResponse, getFormResponsesById, checkResponseStatus };

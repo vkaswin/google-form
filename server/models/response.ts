@@ -24,7 +24,7 @@ const ResponseSchema = new Schema(
               type: String,
             },
             response: {
-              required: true,
+              default: null,
               type: Schema.Types.Mixed,
             },
           },

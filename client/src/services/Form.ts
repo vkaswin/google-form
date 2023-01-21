@@ -54,6 +54,13 @@ const updateFormById = ({
   });
 };
 
+export const checkResponseStatus = (formId: string) => {
+  return axios<{ status: boolean }>({
+    method: "get",
+    url: `${Response.checkStatus}/${formId}`,
+  });
+};
+
 export {
   getFormById,
   sendResponse,

@@ -1,14 +1,15 @@
 import Axios from "axios";
 import { cookie } from "utils";
 
-export const axios = Axios.create({
-  headers: {
-    authorization: cookie.get("auth_token"),
-  },
-});
+export const axios = Axios.create({});
 
 axios.interceptors.request.use(
   (config) => {
+    let token = cookie.get("auth_token");
+    if (token) {
+      if (!config.headers) config.headers = {};
+      config.headers["authorization"] = token;
+    }
     return config;
   },
   (error) => {

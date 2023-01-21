@@ -19,7 +19,12 @@ import useForm from "hooks/useForm";
 import useTitle from "hooks/useTitle";
 import { FormProvider } from "context/form";
 import { useParams } from "react-router-dom";
-import { getFormById, sendResponse, updateFormById } from "services/Form";
+import {
+  getFormById,
+  sendResponse,
+  updateFormById,
+  checkResponseStatus,
+} from "services/Form";
 import { setFormTheme, focusElement, isEmpty } from "utils";
 
 import styles from "./FormBuilder.module.scss";
@@ -38,6 +43,8 @@ let initialDragRef = {
 
 const FormBuilder = (formPage: FormPages) => {
   let [selectedId, setSelectedId] = useState<string | null>(null);
+
+  let [isSubmited, setIsSubmited] = useState(false);
 
   let [activeTab, setActiveTab] = useState(0);
 
@@ -78,6 +85,7 @@ const FormBuilder = (formPage: FormPages) => {
 
   useEffect(() => {
     getFormDetails();
+    if (isFill) getResponseStatus();
   }, [formId]);
 
   useEffect(() => {
@@ -93,6 +101,18 @@ const FormBuilder = (formPage: FormPages) => {
     if (!colorCode || !bgCode) return;
     setFormTheme({ colorCode, bgCode });
   }, [colorCode, bgCode]);
+
+  const getResponseStatus = async () => {
+    if (!formId) return;
+    try {
+      let {
+        data: { status },
+      } = await checkResponseStatus(formId);
+      setIsSubmited(status);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getFormDetails = async () => {
     if (!formId) return;
@@ -207,10 +227,10 @@ const FormBuilder = (formPage: FormPages) => {
       let body = {
         responses: getFormResponse(data),
         formId: formData._id,
-        userId: "6303217405f1714edcfc1cb6",
       };
-      console.log(body);
-      //   await sendResponse(body);
+      await sendResponse(body);
+      clearForm();
+      setIsSubmited(true);
     } catch (error) {
       console.log(error);
     }
@@ -409,7 +429,18 @@ const FormBuilder = (formPage: FormPages) => {
           </div>
         </FormProvider>
       )}
-      {activeTab === 1 && <Responses />}
+      {activeTab === 1 && <Responses />},
+      {isSubmited && (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "fixed",
+            inset: "0",
+            background: "rgba(0,0,0,0.5)",
+          }}
+        ></div>
+      )}
     </Fragment>
   );
 };

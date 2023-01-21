@@ -1,7 +1,7 @@
 export const baseURL = "http://localhost:8000";
 const userUrl = `${baseURL}/api/user`;
 const formUrl = `${baseURL}/api/form`;
-const responseUrl = `${baseURL}/api/respose`;
+const responseUrl = `${baseURL}/api/response`;
 const templateUrl = `${baseURL}/api/template`;
 
 const User = {
@@ -16,6 +16,7 @@ const Form = {
 
 const Response = {
   submitResponse: `${responseUrl}/submit`,
+  checkStatus: `${responseUrl}/status`,
 };
 
 const Template = {

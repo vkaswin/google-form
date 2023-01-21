@@ -147,7 +147,6 @@ export type FormSubmitData = {
 };
 
 export type FormResponse = {
-  userId: string;
   formId: string;
   responses: FormSubmitData[];
 };
