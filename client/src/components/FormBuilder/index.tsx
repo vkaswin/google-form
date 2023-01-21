@@ -16,6 +16,7 @@ import Field from "./Field";
 import Header from "./Header";
 import Responses from "./Responses";
 import useForm from "hooks/useForm";
+import Modal from "components/Modal";
 import useTitle from "hooks/useTitle";
 import { FormProvider } from "context/form";
 import { useParams } from "react-router-dom";
@@ -45,6 +46,8 @@ const FormBuilder = (formPage: FormPages) => {
   let [selectedId, setSelectedId] = useState<string | null>(null);
 
   let [isSubmited, setIsSubmited] = useState(false);
+
+  let [isResponded, setIsResponded] = useState(false);
 
   let [activeTab, setActiveTab] = useState(0);
 
@@ -108,7 +111,7 @@ const FormBuilder = (formPage: FormPages) => {
       let {
         data: { status },
       } = await checkResponseStatus(formId);
-      setIsSubmited(status);
+      setIsResponded(status);
     } catch (error) {
       console.log(error);
     }
@@ -429,18 +432,17 @@ const FormBuilder = (formPage: FormPages) => {
           </div>
         </FormProvider>
       )}
-      {activeTab === 1 && <Responses />},
-      {isSubmited && (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "fixed",
-            inset: "0",
-            background: "rgba(0,0,0,0.5)",
-          }}
-        ></div>
-      )}
+      {activeTab === 1 && <Responses />}
+      <Modal isOpen={isResponded}>
+        <div>
+          <span>Responded</span>
+        </div>
+      </Modal>
+      <Modal isOpen={isSubmited}>
+        <div>
+          <span>Submited</span>
+        </div>
+      </Modal>
     </Fragment>
   );
 };

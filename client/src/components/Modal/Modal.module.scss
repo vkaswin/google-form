@@ -1,0 +1,74 @@
+.modal_enter {
+  .modal {
+    .modal_dialog {
+      animation: modal-anime 300ms ease-in-out forwards;
+    }
+  }
+  .modal_overlay {
+    animation: fade-in 300ms ease-in-out forwards;
+  }
+}
+.modal_exit {
+  .modal {
+    .modal_dialog {
+      animation: modal-anime 300ms ease-in-out forwards reverse;
+    }
+  }
+  .modal_overlay {
+    animation: fade-in 300ms ease-in-out forwards reverse;
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--zIndex, 1050);
+  overflow-y: auto;
+  .modal_dialog {
+    position: relative;
+    display: flex;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    .modal_content {
+      max-width: var(--modal-width);
+      width: 100%;
+      background-color: white;
+      margin: 15px;
+      border-radius: 4px;
+    }
+  }
+}
+
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--zIndex, 1049) - 1);
+}
+
+@keyframes modal-anime {
+  from {
+    transform: translateY(-150px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
