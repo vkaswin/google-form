@@ -10,13 +10,12 @@ import verifyToken from "../middleware/verifyToken";
 
 const router = Router();
 
-router.use(verifyToken);
-router.post("/create", createForm);
-router.get("/all", getAllForms);
+router.post("/create", verifyToken, createForm);
+router.get("/all", verifyToken, getAllForms);
+router.get("/:formId", getFormById);
 router
   .route("/:formId")
-  .get(getFormById)
-  .put(updateFormById)
-  .delete(deleteFormById);
+  .put(verifyToken, updateFormById)
+  .delete(verifyToken, deleteFormById);
 
 export default router;

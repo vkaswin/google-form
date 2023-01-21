@@ -1,12 +1,44 @@
 import mongoose from "mongoose";
 import Form from "../models/form";
+import Template from "../models/template";
 import { screenShotFormPage, asyncHandler, CustomError } from "../utils";
 
 const createForm = asyncHandler(async (req, res) => {
-  let data = await Form.create(req.body);
-  res.status(200).send({ message: "Success" });
-  let formId = data._id.toString();
-  screenShotFormPage(formId, "form");
+  let {
+    user,
+    body: { templateId },
+  } = req;
+
+  let [formDetail] = await Template.aggregate([
+    {
+      $match: {
+        ...(templateId
+          ? { _id: new mongoose.Types.ObjectId(templateId) }
+          : { isDefault: true }),
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        title: 1,
+        colorCode: 1,
+        bgCode: 1,
+        sections: 1,
+        creatorId: user._id,
+      },
+    },
+    { $unset: ["sections._id", "sections.fields._id"] },
+  ]);
+
+  let { _id } = await Form.create({
+    ...formDetail,
+    creatorId: user._id,
+  });
+
+  res.status(200).send({ formId: _id });
+
+  screenShotFormPage(_id.toString(), "form");
+  res.status(200).send({ message: "success" });
 });
 
 const getFormById = asyncHandler(async (req, res) => {
@@ -34,7 +66,14 @@ const deleteFormById = asyncHandler(async (req, res) => {
 });
 
 const getAllForms = asyncHandler(async (req, res) => {
-  let forms = await Form.find({}, { title: 1 });
+  let { user } = req;
+
+  let forms = await Form.find(
+    {
+      creatorId: user._id,
+    },
+    { title: 1 }
+  );
   res.status(200).send(forms);
 });
 

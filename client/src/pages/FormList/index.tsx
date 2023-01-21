@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import Header from "./Header";
-import { getAllForms } from "services/Form";
+import { createForm, getAllForms } from "services/Form";
 import { getAllTemplates } from "services/Template";
 import { FormData } from "types/Form";
 import FormCard from "./FormCard";
@@ -31,16 +31,21 @@ const FormList = () => {
     }
   };
 
-  const handleTemplate = async (templateId: string) => {
+  const handleCreateFrom = async (templateId?: string) => {
     console.log(templateId);
+    let data = templateId ? { templateId } : undefined;
+    try {
+      let {
+        data: { formId },
+      } = await createForm(data);
+      navigateToForm(formId);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleForm = (formId: string) => {
-    window.open(`/google-form-clone#/form/${formId}/edit`);
-  };
-
-  const handleCreateFrom = async () => {
-    console.log("create form");
+  const navigateToForm = (formId: string) => {
+    window.open(`/google-form#/form/${formId}/edit`);
   };
 
   return (
@@ -53,12 +58,12 @@ const FormList = () => {
               <span>Start a new form</span>
             </div>
             <div className={styles.list}>
-              <AddTemplate onClick={handleCreateFrom} />
+              <AddTemplate onClick={() => handleCreateFrom()} />
               {templates.map((template) => {
                 return (
                   <TemplateCard
                     key={template._id}
-                    onClick={handleTemplate}
+                    onClick={handleCreateFrom}
                     {...template}
                   />
                 );
@@ -71,7 +76,11 @@ const FormList = () => {
             <div className={styles.list}>
               {forms.map((form) => {
                 return (
-                  <FormCard key={form._id} onClick={handleForm} {...form} />
+                  <FormCard
+                    key={form._id}
+                    onClick={(formId) => navigateToForm(formId)}
+                    {...form}
+                  />
                 );
               })}
             </div>

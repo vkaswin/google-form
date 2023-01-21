@@ -12,6 +12,7 @@ const User = {
 const Form = {
   getFormById: `${formUrl}`,
   getAllForms: `${formUrl}/all`,
+  createForm: `${formUrl}/create`,
 };
 
 const Response = {

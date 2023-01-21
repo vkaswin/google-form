@@ -25,4 +25,12 @@ const getAllForms = (params?: any) => {
   });
 };
 
-export { getFormById, sendResponse, getAllForms };
+const createForm = (data: { templateId?: string } = {}) => {
+  return axios<{ formId: string }>({
+    method: "post",
+    url: Form.createForm,
+    data,
+  });
+};
+
+export { getFormById, sendResponse, getAllForms, createForm };

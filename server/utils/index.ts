@@ -13,7 +13,7 @@ const screenShotFormPage = async (
     folderName,
     `${formId}.png`
   );
-  const url = `http://localhost:3000/#/form/${formId}/fill`;
+  const url = `http://localhost:3000/google-form#/form/${formId}/fill`;
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "networkidle0" });
