@@ -1,7 +1,5 @@
 import Axios from "axios";
-import { cookies } from "helpers";
-
-const cookie = cookies();
+import { cookie } from "utils";
 
 export const axios = Axios.create({
   headers: {

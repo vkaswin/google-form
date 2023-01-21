@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import Header from "./Header";
-import { createForm, getAllForms } from "services/Form";
+import { createForm, getAllForms, deleteFormById } from "services/Form";
 import { getAllTemplates } from "services/Template";
 import { FormData } from "types/Form";
 import FormCard from "./FormCard";
@@ -32,7 +32,6 @@ const FormList = () => {
   };
 
   const handleCreateFrom = async (templateId?: string) => {
-    console.log(templateId);
     let data = templateId ? { templateId } : undefined;
     try {
       let {
@@ -45,7 +44,24 @@ const FormList = () => {
   };
 
   const navigateToForm = (formId: string) => {
-    window.open(`/google-form#/form/${formId}/edit`);
+    window.open(`#/form/${formId}/edit`);
+  };
+
+  const handleDeleteForm = async (formId: string) => {
+    if (!window.confirm("Are you sure to delete this form?")) return;
+
+    try {
+      let {
+        data: { message },
+      } = await deleteFormById(formId);
+      let form = [...forms];
+      console.log(message);
+      let index = form.findIndex(({ _id }) => _id === formId);
+      form.splice(index, 1);
+      setForms(form);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -78,7 +94,8 @@ const FormList = () => {
                 return (
                   <FormCard
                     key={form._id}
-                    onClick={(formId) => navigateToForm(formId)}
+                    handleOpenForm={navigateToForm}
+                    handleDeleteForm={handleDeleteForm}
                     {...form}
                   />
                 );

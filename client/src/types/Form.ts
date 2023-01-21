@@ -155,4 +155,6 @@ export type FormResponse = {
 export type FormData = {
   readonly _id: string;
   title: string;
+  updatedAt: string;
+  createdAt: string;
 };

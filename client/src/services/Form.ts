@@ -1,11 +1,11 @@
 import { axios } from "./index";
-import { Response, Form } from "./config";
+import { Response, Form, formUrl } from "./config";
 import { FormDetail, FormResponse, FormData } from "types/Form";
 
 const getFormById = (formId: string) => {
   return axios<FormDetail>({
     method: "get",
-    url: `${Form.getFormById}/${formId}`,
+    url: `${formUrl}/${formId}`,
   });
 };
 
@@ -33,4 +33,32 @@ const createForm = (data: { templateId?: string } = {}) => {
   });
 };
 
-export { getFormById, sendResponse, getAllForms, createForm };
+const deleteFormById = (formId: string) => {
+  return axios<{ formId: string; message: string }>({
+    method: "delete",
+    url: `${formUrl}/${formId}`,
+  });
+};
+
+const updateFormById = ({
+  formId,
+  data,
+}: {
+  formId: string;
+  data: FormDetail;
+}) => {
+  return axios<{ formId: string; message: string }>({
+    method: "put",
+    url: `${formUrl}/${formId}`,
+    data,
+  });
+};
+
+export {
+  getFormById,
+  sendResponse,
+  getAllForms,
+  createForm,
+  deleteFormById,
+  updateFormById,
+};

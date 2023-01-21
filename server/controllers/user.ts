@@ -23,9 +23,11 @@ const register = asyncHandler(async (req, res) => {
   });
 
   res.status(200).send({
-    name: user.name,
-    email: user.email,
-    _id: user._id,
+    token: generateJwtToken({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    }),
   });
 });
 

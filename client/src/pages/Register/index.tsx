@@ -1,20 +1,40 @@
 import Input from "components/Input";
 import useForm from "hooks/useForm";
 import { Fragment } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import { registerUser } from "services/User";
+import { User } from "types/Auth";
+import useAuth from "hooks/useAuth";
+import { cookie } from "utils";
+import jwtDecode from "jwt-decode";
 
 import styles from "./Register.module.scss";
 
 const Register = () => {
+  const location = useLocation();
+
   const navigate = useNavigate();
 
   const { register, getValue, handleSubmit, formErrors } = useForm();
 
+  const { setUser } = useAuth();
+
+  const searchParams = new URLSearchParams(location.search);
+
+  let url = searchParams.get("url");
+
+  if (cookie.get("auth_token"))
+    return <Navigate replace to={url || "/form/list"} />;
+
   const onSubmit = async (data: any) => {
     try {
-      await registerUser(data);
-      navigate("/auth/login");
+      let {
+        data: { token },
+      } = await registerUser(data);
+      cookie.set({ name: "auth_token", value: token, days: 14 });
+      let decoded = jwtDecode<User>(token);
+      setUser(decoded);
+      navigate(url || "/form/list");
     } catch (error) {
       console.log(error);
     }

@@ -10,7 +10,7 @@ import {
 import { CSSTransition } from "react-transition-group";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { clickOutside } from "helpers";
+import { clickOutside } from "utils";
 
 import styles from "./DropDown.module.scss";
 

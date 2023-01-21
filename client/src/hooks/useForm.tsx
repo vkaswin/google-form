@@ -27,7 +27,7 @@ import {
   FormFields,
   FormUnSet,
 } from "types/UseForm";
-import { isEmpty } from "helpers";
+import { debounce, isEmpty } from "utils";
 
 const isCheckBoxOrRadioInput = (type: string): boolean => {
   return type === "checkbox" || type === "radio";
@@ -55,7 +55,17 @@ const defaultErrors = {
   validate: `Validation failed for this field`,
 };
 
-const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
+const useForm = <T extends FormValues = FormValues>(options?: {
+  onChange?: (formData: T) => void;
+}): UseForm<T> => {
+  let { onChange } = options || {};
+
+  let debouceOnChange: Function | null = null;
+
+  if (typeof onChange === "function") {
+    debouceOnChange = debounce(onChange, 500);
+  }
+
   let { current: formNames } = useRef<string[]>([]);
 
   let { current: formFields } = useRef<FormFields>({});
@@ -382,8 +392,11 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
       },
       onInput: (event) => {
         let ref = event.target as unknown as HTMLInputElement;
+
         setFieldValue(name, ref);
+
         let { name: watchName, fn } = watcher;
+
         if (watchName && fn) {
           if (
             Array.isArray(watchName)
@@ -394,9 +407,10 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
             fn(name, event, value);
           }
         }
-        if (!isSubmitted.current) return;
-        validateField({ name, ref });
-        if (typeof onInput === "function") onInput(event);
+
+        if (isSubmitted.current) validateField({ name, ref });
+
+        if (typeof debouceOnChange === "function") debouceOnChange(formData);
       },
       ...formRules,
     };
@@ -496,6 +510,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     set(name, value, formData);
     if (field) validateField({ name, ref: field.ref });
     setFormData({ ...formData });
+    debouceOnChange?.(formData);
   };
 
   const getValue: GetValue = (name) => {
@@ -557,6 +572,7 @@ const useForm = <T extends FormValues = FormValues>(): UseForm<T> => {
     unset(name, formErrors);
     unset(name, formData);
     setFormData({ ...formData });
+    debouceOnChange?.(formData);
   };
 
   const unset: FormUnSet = (name: string, fields: any) => {

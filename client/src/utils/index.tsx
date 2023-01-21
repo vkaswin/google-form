@@ -1,4 +1,4 @@
-export const cookies = () => {
+export const cookie = (() => {
   const set = <T,>({
     name,
     value,
@@ -29,7 +29,7 @@ export const cookies = () => {
     get,
     remove,
   };
-};
+})();
 
 export const clickOutside = ({
   ref,

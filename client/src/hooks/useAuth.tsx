@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { AuthContext as AuthContextType, User } from "types/Auth";
-import { cookies } from "helpers";
+import { cookie } from "utils";
 import jwtDecode from "jwt-decode";
 
 type AuthProviderProps = {
@@ -17,8 +17,6 @@ const AuthContext = createContext({} as AuthContextType);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   let [user, setUser] = useState<User | null>(null);
-
-  let cookie = cookies();
 
   useEffect(() => {
     getUser();

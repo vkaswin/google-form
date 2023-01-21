@@ -58,11 +58,33 @@ const getFormById = asyncHandler(async (req, res) => {
 });
 
 const updateFormById = asyncHandler(async (req, res) => {
-  //
+  let {
+    body,
+    params: { formId },
+  } = req;
+
+  if (!body) throw new CustomError({ message: "Invalid data", status: 400 });
+
+  await Form.findByIdAndUpdate(formId, body);
+
+  res
+    .status(200)
+    .send({ message: "Form has been updated successfully", formId });
 });
 
 const deleteFormById = asyncHandler(async (req, res) => {
-  //
+  let {
+    params: { formId },
+  } = req;
+
+  if (!mongoose.Types.ObjectId.isValid(formId))
+    throw new CustomError({ message: "Invalid form id", status: 400 });
+
+  await Form.findByIdAndDelete(formId);
+
+  res
+    .status(200)
+    .send({ message: "Form has been deleted successfully", formId });
 });
 
 const getAllForms = asyncHandler(async (req, res) => {
@@ -72,8 +94,8 @@ const getAllForms = asyncHandler(async (req, res) => {
     {
       creatorId: user._id,
     },
-    { title: 1 }
-  );
+    { title: 1, updatedAt: 1, createdAt: 1 }
+  ).sort({ updatedAt: -1 });
   res.status(200).send(forms);
 });
 

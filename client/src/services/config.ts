@@ -10,7 +10,6 @@ const User = {
 };
 
 const Form = {
-  getFormById: `${formUrl}`,
   getAllForms: `${formUrl}/all`,
   createForm: `${formUrl}/create`,
 };
@@ -23,4 +22,4 @@ const Template = {
   getAllTemplate: `${templateUrl}/all`,
 };
 
-export { User, Form, Response, Template };
+export { User, Form, Response, Template, formUrl };

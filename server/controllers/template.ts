@@ -9,7 +9,10 @@ const createTemplate = asyncHandler(async (req, res) => {
 });
 
 const getAllTemplates = asyncHandler(async (req, res) => {
-  let templates = await Template.find({ isDefault: false }, { title: 1 });
+  let templates = await Template.find(
+    { isDefault: false },
+    { title: 1, createdAt: 1, updatedAt: 1 }
+  );
   res.status(200).send(templates);
 });
 

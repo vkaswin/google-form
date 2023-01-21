@@ -11,7 +11,7 @@ const registerUser = (data: {
   password: string;
   confirmPassword: string;
 }) => {
-  return axios<{ name: string; email: string; _id: string }>({
+  return axios<{ token: string }>({
     method: "post",
     url: User.register,
     data,

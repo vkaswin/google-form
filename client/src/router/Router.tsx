@@ -7,11 +7,18 @@ import Login from "pages/Login";
 import Register from "pages/Register";
 import FormList from "pages/FormList";
 import PageNotFound from "pages/404";
+import { cookie } from "utils";
+import ProtectedRoute from "./ProtectedRoute";
 
 const Router = createHashRouter([
   {
     path: "/",
-    element: <Navigate to="/form/63c6cd6579ae4c52238e98a1/edit" replace />,
+    element: (
+      <Navigate
+        to={`${cookie.get("auth_token") ? "/form/list" : "/auth/login"}`}
+        replace
+      />
+    ),
   },
   {
     path: "/auth",
@@ -29,14 +36,17 @@ const Router = createHashRouter([
   },
   {
     path: "/form/list",
-    element: <FormList />,
+    element: <ProtectedRoute children={<FormList />} />,
   },
   {
     path: "/form/:formId/edit",
-    element: <EditForm />,
+    element: <ProtectedRoute children={<EditForm />} />,
   },
   { path: "/form/:formId/preview", element: <PreviewForm /> },
-  { path: "/form/:formId/fill", element: <FillForm /> },
+  {
+    path: "/form/:formId/fill",
+    element: <ProtectedRoute children={<FillForm />} />,
+  },
   {
     path: "*",
     element: <PageNotFound />,

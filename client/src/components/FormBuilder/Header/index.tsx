@@ -8,7 +8,7 @@ import {
 } from "react";
 import { ColorCodes } from "types/Form";
 import Themes from "./Themes";
-import { debounce, googleFormIcon } from "helpers";
+import { debounce, googleFormIcon } from "utils";
 
 import styles from "./Header.module.scss";
 

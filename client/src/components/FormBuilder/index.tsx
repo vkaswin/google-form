@@ -19,8 +19,8 @@ import useForm from "hooks/useForm";
 import useTitle from "hooks/useTitle";
 import { FormProvider } from "context/form";
 import { useParams } from "react-router-dom";
-import { getFormById, sendResponse } from "services/Form";
-import { setFormTheme, focusElement, isEmpty } from "helpers";
+import { getFormById, sendResponse, updateFormById } from "services/Form";
+import { setFormTheme, focusElement, isEmpty } from "utils";
 
 import styles from "./FormBuilder.module.scss";
 
@@ -49,9 +49,26 @@ const FormBuilder = (formPage: FormPages) => {
 
   let focusFieldId = useRef<string | null>(null);
 
-  let form = useForm<FormDetail>();
-
   let { formId } = useParams();
+
+  let { isEdit, isFill } = formPage;
+
+  const handleFormChange = async (data: FormDetail) => {
+    if (!formId) return;
+
+    try {
+      let {
+        data: { message },
+      } = await updateFormById({ formId, data });
+      console.log(message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  let form = useForm<FormDetail>({
+    ...(isEdit && { onChange: handleFormChange }),
+  });
 
   let { formData, setFormData, reset, handleSubmit } = form;
 
@@ -59,12 +76,9 @@ const FormBuilder = (formPage: FormPages) => {
 
   useTitle(title);
 
-  useEffect(
-    () => {
-      getFormDetails();
-    }, // eslint-disable-next-line
-    [formId]
-  );
+  useEffect(() => {
+    getFormDetails();
+  }, [formId]);
 
   useEffect(() => {
     if (!focusFieldId.current) return;
@@ -195,7 +209,8 @@ const FormBuilder = (formPage: FormPages) => {
         formId: formData._id,
         userId: "6303217405f1714edcfc1cb6",
       };
-      await sendResponse(body);
+      console.log(body);
+      //   await sendResponse(body);
     } catch (error) {
       console.log(error);
     }
@@ -255,8 +270,6 @@ const FormBuilder = (formPage: FormPages) => {
   const handleTitle = (title: string) => {
     setFormData({ ...formData, title });
   };
-
-  let { isEdit, isFill } = formPage;
 
   return (
     <Fragment>

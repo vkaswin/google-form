@@ -1,6 +1,6 @@
 import { ComponentProps, useState } from "react";
 import { usePopper } from "react-popper";
-import { clickOutside } from "helpers";
+import { clickOutside } from "utils";
 import { FormRegister } from "types/UseForm";
 import { CSSTransition } from "react-transition-group";
 
