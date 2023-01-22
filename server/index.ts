@@ -9,7 +9,7 @@ const port = process.env.PORT;
 const app = express();
 
 app
-  .use(cors)
+  .use(cors())
   .use(express.json())
   .use(express.urlencoded({ extended: false }))
   .use("/form", express.static("public/form"))
