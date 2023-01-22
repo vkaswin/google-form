@@ -23,4 +23,4 @@ const Template = {
   getAllTemplate: `${templateUrl}/all`,
 };
 
-export { User, Form, Response, Template, formUrl };
+export { User, Form, Response, Template, formUrl, responseUrl };

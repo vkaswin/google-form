@@ -1,19 +1,23 @@
 .container {
-  max-width: 768px;
+  max-width: 1024px;
   padding: 15px;
   margin: 0px auto;
   table {
+    border: 1px solid black;
     background-color: white;
+    border-collapse: collapse;
     width: 100%;
     thead {
       td {
         font-family: "Poppins-Medium";
-        color: var(--primary-color);
       }
     }
     td {
       padding: 10px;
       text-align: start;
+    }
+    td {
+      border: 1px solid black;
     }
   }
 }

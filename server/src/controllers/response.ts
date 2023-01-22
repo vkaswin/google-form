@@ -13,12 +13,13 @@ const submitResponse = asyncHandler(async (req, res) => {
 });
 
 const getFormResponsesById = asyncHandler(async (req, res) => {
-  let { params } = req;
-
-  let formId = new mongoose.Types.ObjectId(params.formId);
+  let {
+    user,
+    params: { formId },
+  } = req;
 
   let [formDetail] = await Form.aggregate([
-    { $match: { _id: formId } },
+    { $match: { _id: new mongoose.Types.ObjectId(formId) } },
     {
       $project: {
         creatorId: 1,
@@ -47,21 +48,40 @@ const getFormResponsesById = asyncHandler(async (req, res) => {
     },
   ]);
 
-  let [{ responses }] = await Response.aggregate([
+  if (!formDetail) {
+    throw new CustomError({ message: "Form not found", status: 400 });
+  }
+
+  if (formDetail.creatorId.toString() !== user._id) {
+    throw new CustomError({
+      message:
+        "Form creator only have the access to view the submitted responses",
+      status: 400,
+    });
+  }
+
+  let data = await Response.aggregate([
     {
-      $match: { formId },
+      $match: { formId: new mongoose.Types.ObjectId(formId) },
     },
     {
-      $group: {
-        _id: formId,
-        responses: {
-          $push: "$responses",
-        },
+      $project: {
+        userId: 1,
+        responses: 1,
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        foreignField: "_id",
+        localField: "userId",
+        as: "user",
+        pipeline: [{ $project: { name: 1, email: 1 } }],
       },
     },
   ]);
 
-  formDetail.responses = responses;
+  formDetail.responses = data || [];
 
   res.status(200).send(formDetail);
 });

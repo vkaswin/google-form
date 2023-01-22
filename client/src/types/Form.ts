@@ -157,3 +157,19 @@ export type FormData = {
   updatedAt: string;
   createdAt: string;
 };
+
+export type FormResponses = {
+  readonly _id: string;
+  bgCode: string;
+  colorCode: ColorCodes;
+  title: string;
+  description: string;
+  fields: {
+    readonly _id: string;
+    title: string;
+  }[];
+  responses: {
+    readonly _id: string;
+    response: string | string[];
+  }[][];
+};

@@ -20,7 +20,7 @@ import Modal from "components/Modal";
 import useTitle from "hooks/useTitle";
 import useAuth from "hooks/useAuth";
 import { FormProvider } from "context/form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   getFormById,
   sendResponse,
@@ -45,13 +45,19 @@ let initialDragRef = {
 };
 
 const FormBuilder = (formPage: FormPages) => {
+  let location = useLocation();
+
+  let searchParams = new URLSearchParams(location.search);
+
   let [selectedId, setSelectedId] = useState<string | null>(null);
 
   let [isSubmited, setIsSubmited] = useState(false);
 
   let [isResponded, setIsResponded] = useState(false);
 
-  let [activeTab, setActiveTab] = useState(0);
+  let [activeTab, setActiveTab] = useState(
+    searchParams.get("response") ? 1 : 0
+  );
 
   let [activeSection, setActiveSection] = useState<number>(0);
 
@@ -426,7 +432,7 @@ const FormBuilder = (formPage: FormPages) => {
           </div>
         </FormProvider>
       )}
-      {activeTab === 1 && <Responses />}
+      {activeTab === 1 && <Responses formId={formId} />}
       <Modal isOpen={isResponded}>
         <div>
           <span>Responded</span>

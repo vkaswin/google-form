@@ -1,6 +1,6 @@
 import { axios } from "./index";
-import { Response, Form, formUrl } from "./config";
-import { FormDetail, FormResponse, FormData } from "types/Form";
+import { Response, Form, formUrl, responseUrl } from "./config";
+import { FormDetail, FormResponse, FormData, FormResponses } from "types/Form";
 
 const getFormById = (formId: string) => {
   return axios<{ creatorId: string } & FormDetail>({
@@ -63,6 +63,13 @@ export const checkResponseStatus = (formId: string) => {
   return axios<{ status: boolean }>({
     method: "get",
     url: `${Response.checkStatus}/${formId}`,
+  });
+};
+
+export const getFormResponsesById = (formId: string) => {
+  return axios<FormResponses>({
+    method: "get",
+    url: `${responseUrl}/${formId}`,
   });
 };
 

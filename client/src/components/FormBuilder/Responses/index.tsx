@@ -1,32 +1,62 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getFormResponsesById } from "services/Form";
+import { FormResponses } from "types/Form";
 
 import styles from "./Responses.module.scss";
 
-const Responses = () => {
+type ResponsesProps = {
+  formId?: string;
+};
+
+const Responses = ({ formId }: ResponsesProps) => {
+  let [formDetail, setFormDetail] = useState<FormResponses>();
+
   useEffect(() => {
+    if (!formId) return;
     getFormResponse();
-  }, []);
+  }, [formId]);
 
   const getFormResponse = async () => {
+    if (!formId) return;
+
     try {
+      let { data } = await getFormResponsesById(formId);
+      setFormDetail(data);
     } catch (error) {
       console.log(error);
     }
   };
+
+  if (!formDetail) return null;
+
+  let { responses, fields } = formDetail;
+
   return (
     <div className={styles.container}>
       <table>
         <thead>
           <tr>
-            <td>Title</td>
-            <td>Question</td>
+            <td>S.No</td>
+            {fields.map(({ title, _id }) => {
+              return <td key={_id}>{title}</td>;
+            })}
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Loruem Ispum</td>
-            <td>Loreum Ispum</td>
-          </tr>
+          {responses.map((response, index) => {
+            return (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                {response.map(({ response }, ind) => {
+                  return (
+                    <td key={ind}>
+                      {Array.isArray(response) ? response.join(", ") : response}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
