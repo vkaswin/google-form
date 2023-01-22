@@ -29,28 +29,36 @@ const Responses = ({ formId }: ResponsesProps) => {
 
   if (!formDetail) return null;
 
-  let { responses, fields } = formDetail;
-
+  let { formResponses, fields } = formDetail;
+  console.log(formResponses);
   return (
     <div className={styles.container}>
       <table>
         <thead>
           <tr>
             <td>S.No</td>
+            <td>Name</td>
+            <td>Email</td>
             {fields.map(({ title, _id }) => {
               return <td key={_id}>{title}</td>;
             })}
           </tr>
         </thead>
         <tbody>
-          {responses.map((response, index) => {
+          {formResponses.map(({ responses, user }, index) => {
             return (
               <tr key={index}>
                 <td>{index + 1}</td>
-                {response.map(({ response }, ind) => {
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                {responses.map(({ response }, ind) => {
                   return (
                     <td key={ind}>
-                      {Array.isArray(response) ? response.join(", ") : response}
+                      {response
+                        ? Array.isArray(response)
+                          ? response.join(", ")
+                          : response
+                        : "-"}
                     </td>
                   );
                 })}

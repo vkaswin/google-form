@@ -1,4 +1,5 @@
 import { DragEvent, TouchEvent } from "react";
+import { User } from "./Auth";
 
 export type FormDetail = {
   _id?: Readonly<string>;
@@ -168,8 +169,12 @@ export type FormResponses = {
     readonly _id: string;
     title: string;
   }[];
-  responses: {
+  formResponses: {
     readonly _id: string;
-    response: string | string[];
-  }[][];
+    user: User;
+    responses: {
+      readonly fieldId: string;
+      response: string | string[];
+    }[];
+  }[];
 };

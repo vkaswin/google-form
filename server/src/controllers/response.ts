@@ -65,12 +65,6 @@ const getFormResponsesById = asyncHandler(async (req, res) => {
       $match: { formId: new mongoose.Types.ObjectId(formId) },
     },
     {
-      $project: {
-        userId: 1,
-        responses: 1,
-      },
-    },
-    {
       $lookup: {
         from: "users",
         foreignField: "_id",
@@ -79,9 +73,15 @@ const getFormResponsesById = asyncHandler(async (req, res) => {
         pipeline: [{ $project: { name: 1, email: 1 } }],
       },
     },
+    {
+      $project: {
+        responses: 1,
+        user: { $first: "$user" },
+      },
+    },
   ]);
 
-  formDetail.responses = data || [];
+  formDetail.formResponses = data || [];
 
   res.status(200).send(formDetail);
 });
