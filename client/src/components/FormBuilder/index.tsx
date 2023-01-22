@@ -65,7 +65,7 @@ const FormBuilder = (formPage: FormPages) => {
 
   let navigate = useNavigate();
 
-  let { user } = useAuth();
+  let { user, logout } = useAuth();
 
   let { isEdit, isFill } = formPage;
 
@@ -121,9 +121,9 @@ const FormBuilder = (formPage: FormPages) => {
     if (isEdit && formDetail.creatorId !== user?._id) {
       toast("Form creator only have the edit access", { type: "error" });
       navigate("/form/list");
+    } else {
+      setFormData(formDetail);
     }
-
-    setFormData(formDetail);
   };
 
   const handleDragStart: HandleDragStart = (droppableId, draggableId) => {
@@ -294,6 +294,8 @@ const FormBuilder = (formPage: FormPages) => {
           colorCode={colorCode}
           bgCode={bgCode}
           title={title}
+          user={user}
+          logout={logout}
           handleTitle={handleTitle}
           handleTheme={handleTheme}
           setActiveTab={setActiveTab}

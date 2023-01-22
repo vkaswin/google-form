@@ -29,11 +29,12 @@ const FormList = () => {
   };
 
   const handleCreateFrom = async (templateId?: string) => {
-    let data = templateId ? { templateId } : undefined;
-    let {
-      data: { formId },
-    } = await createForm(data);
-    navigateToForm(formId);
+    let body = templateId ? { templateId } : undefined;
+    let { data } = await createForm(body);
+    let form = [...forms];
+    form.unshift(data);
+    setForms(form);
+    navigateToForm(data._id);
   };
 
   const navigateToForm = (formId: string) => {

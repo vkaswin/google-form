@@ -30,15 +30,19 @@ const createForm = asyncHandler(async (req, res) => {
     { $unset: ["sections._id", "sections.fields._id"] },
   ]);
 
-  let { _id } = await Form.create({
+  let form = await Form.create({
     ...formDetail,
     creatorId: user._id,
   });
 
-  res.status(200).send({ formId: _id });
+  await screenShotFormPage(form._id.toString(), "form");
 
-  screenShotFormPage(_id.toString(), "form");
-  res.status(200).send({ message: "success" });
+  res.status(200).send({
+    _id: form._id,
+    title: form.title,
+    createdAt: form.createdAt,
+    updatedAt: form.updatedAt,
+  });
 });
 
 const getFormById = asyncHandler(async (req, res) => {
@@ -60,15 +64,16 @@ const getFormById = asyncHandler(async (req, res) => {
 const updateFormById = asyncHandler(async (req, res) => {
   let {
     body,
+    user,
     params: { formId },
   } = req;
 
   if (!mongoose.Types.ObjectId.isValid(formId))
     throw new CustomError({ message: "Invalid form id", status: 400 });
 
-  let formDetail = await Form.findById(formId);
+  let form = await Form.findById(formId, { creatorId: 1 });
 
-  if (formDetail && formDetail.toObject().creatorId.toString() !== formId)
+  if (form && form.creatorId.toString() !== user._id)
     throw new CustomError({
       message: "Form creator only have edit access",
       status: 400,

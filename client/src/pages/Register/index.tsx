@@ -1,23 +1,23 @@
 import Input from "components/Input";
 import useForm from "hooks/useForm";
 import { Fragment } from "react";
-import { useLocation, useNavigate, Navigate } from "react-router-dom";
-import { registerUser } from "services/User";
-import { User } from "types/Auth";
+import { useLocation, Navigate } from "react-router-dom";
 import useAuth from "hooks/useAuth";
 import { cookie } from "utils";
-import jwtDecode from "jwt-decode";
 
 import styles from "./Register.module.scss";
 
 const Register = () => {
   const location = useLocation();
 
-  const navigate = useNavigate();
+  const { register, getValue, handleSubmit, formErrors } = useForm<{
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }>();
 
-  const { register, getValue, handleSubmit, formErrors } = useForm();
-
-  const { setUser } = useAuth();
+  const { register: registerUser } = useAuth();
 
   const searchParams = new URLSearchParams(location.search);
 
@@ -25,16 +25,6 @@ const Register = () => {
 
   if (cookie.get("auth_token"))
     return <Navigate replace to={url || "/form/list"} />;
-
-  const onSubmit = async (data: any) => {
-    let {
-      data: { token },
-    } = await registerUser(data);
-    cookie.set({ name: "auth_token", value: token, days: 14 });
-    let decoded = jwtDecode<User>(token);
-    setUser(decoded);
-    navigate(url || "/form/list");
-  };
 
   return (
     <Fragment>
@@ -133,7 +123,7 @@ const Register = () => {
           )}
         </div>
         <div className={styles.cta}>
-          <button onClick={handleSubmit(onSubmit)}>Register</button>
+          <button onClick={handleSubmit(registerUser)}>Register</button>
         </div>
       </div>
     </Fragment>

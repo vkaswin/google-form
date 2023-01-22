@@ -26,7 +26,12 @@ const getAllForms = (params?: any) => {
 };
 
 const createForm = (data: { templateId?: string } = {}) => {
-  return axios<{ formId: string }>({
+  return axios<{
+    _id: string;
+    title: string;
+    updatedAt: string;
+    createdAt: string;
+  }>({
     method: "post",
     url: Form.createForm,
     data,

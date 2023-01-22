@@ -1,6 +1,6 @@
 import useAuth from "hooks/useAuth";
 import { ReactElement } from "react";
-import { Navigate } from "react-router";
+import { Navigate, useLocation } from "react-router";
 
 type ProtectedRouteProps = {
   children: ReactElement;
@@ -8,20 +8,21 @@ type ProtectedRouteProps = {
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, isLoading } = useAuth();
-
-  const url = window.encodeURIComponent(window.location.hash.substring(1));
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const redirectUrl = searchParams.get("url");
 
   if (isLoading) {
     return <div>Loading...</div>;
   } else {
-    if (!user)
+    if (!user) {
       return (
         <Navigate
           replace
-          to={`/auth/login${url.length ? `?url=${url}` : ""}`}
+          to={`/auth/login${redirectUrl ? `?url=${redirectUrl}` : ""}`}
         />
       );
-    else {
+    } else {
       return children;
     }
   }

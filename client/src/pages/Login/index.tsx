@@ -2,10 +2,7 @@ import { Fragment } from "react";
 import Input from "components/Input";
 import useForm from "hooks/useForm";
 import useAuth from "hooks/useAuth";
-import { useNavigate, useLocation, Navigate } from "react-router-dom";
-import { loginUser } from "services/User";
-import { User } from "types/Auth";
-import jwtDecode from "jwt-decode";
+import { useLocation, Navigate, useNavigate } from "react-router-dom";
 import { cookie } from "utils";
 
 import styles from "./Login.module.scss";
@@ -13,11 +10,14 @@ import styles from "./Login.module.scss";
 const Login = () => {
   const location = useLocation();
 
-  const { setUser } = useAuth();
+  const { login } = useAuth();
+
+  const { register, handleSubmit, formErrors } = useForm<{
+    email: string;
+    password: string;
+  }>();
 
   const navigate = useNavigate();
-
-  const { register, handleSubmit, formErrors } = useForm();
 
   const searchParams = new URLSearchParams(location.search);
 
@@ -25,21 +25,6 @@ const Login = () => {
 
   if (cookie.get("auth_token"))
     return <Navigate replace to={url || "/form/list"} />;
-
-  const onSubmit = async (data: any) => {
-    try {
-      let {
-        data: { token },
-      } = await loginUser(data);
-      cookie.set({ name: "auth_token", value: token, days: 14 });
-      let decoded = jwtDecode<User>(token);
-      setUser(decoded);
-      navigate(url || "/form/list");
-    } catch (error: any) {
-      if (error?.message === "User not exist")
-        navigate(`/auth/register${url ? `?url=${url}` : ""}`);
-    }
-  };
 
   return (
     <Fragment>
@@ -84,7 +69,7 @@ const Login = () => {
           )}
         </div>
         <div className={styles.cta}>
-          <button onClick={handleSubmit(onSubmit)}>Login</button>
+          <button onClick={handleSubmit(login)}>Login</button>
           <span>
             Dont't have an account ? &nbsp;
             <span onClick={() => navigate("/auth/register")}>Sign Up Here</span>
