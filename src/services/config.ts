@@ -1,4 +1,4 @@
-export const baseURL = "http://localhost:8000";
+export const baseURL = "https://google-form-server.vercel.app";
 const userUrl = `${baseURL}/api/user`;
 const formUrl = `${baseURL}/api/form`;
 const responseUrl = `${baseURL}/api/response`;
