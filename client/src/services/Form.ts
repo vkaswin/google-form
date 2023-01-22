@@ -3,7 +3,7 @@ import { Response, Form, formUrl } from "./config";
 import { FormDetail, FormResponse, FormData } from "types/Form";
 
 const getFormById = (formId: string) => {
-  return axios<FormDetail>({
+  return axios<{ creatorId: string } & FormDetail>({
     method: "get",
     url: `${formUrl}/${formId}`,
   });

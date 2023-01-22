@@ -1,16 +1,13 @@
 import { RouterProvider } from "react-router-dom";
-import { AuthProvider } from "hooks/useAuth";
-import Router from "./Router";
+import router from "./Router";
 
-const App = () => {
+const Router = () => {
   return (
-    <AuthProvider>
-      <RouterProvider
-        router={Router}
-        fallbackElement={<div>Loading...</div>}
-      ></RouterProvider>
-    </AuthProvider>
+    <RouterProvider
+      router={router}
+      fallbackElement={<div>Loading...</div>}
+    ></RouterProvider>
   );
 };
 
-export default App;
+export default Router;

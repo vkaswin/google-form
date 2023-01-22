@@ -8,6 +8,7 @@ import TemplateCard from "./TemplateCard";
 import AddTemplate from "./TemplateCard/AddTemplate";
 
 import styles from "./FormList.module.scss";
+import { toast } from "react-toastify";
 
 const FormList = () => {
   const [forms, setForms] = useState<FormData[]>([]);
@@ -19,28 +20,20 @@ const FormList = () => {
   }, []);
 
   const getFormData = async () => {
-    try {
-      let [{ data: templates }, { data: forms }] = await Promise.all([
-        getAllTemplates(),
-        getAllForms(),
-      ]);
-      setTemplates(templates);
-      setForms(forms);
-    } catch (error) {
-      console.log(error);
-    }
+    let [{ data: templates }, { data: forms }] = await Promise.all([
+      getAllTemplates(),
+      getAllForms(),
+    ]);
+    setTemplates(templates);
+    setForms(forms);
   };
 
   const handleCreateFrom = async (templateId?: string) => {
     let data = templateId ? { templateId } : undefined;
-    try {
-      let {
-        data: { formId },
-      } = await createForm(data);
-      navigateToForm(formId);
-    } catch (error) {
-      console.log(error);
-    }
+    let {
+      data: { formId },
+    } = await createForm(data);
+    navigateToForm(formId);
   };
 
   const navigateToForm = (formId: string) => {
@@ -50,18 +43,14 @@ const FormList = () => {
   const handleDeleteForm = async (formId: string) => {
     if (!window.confirm("Are you sure to delete this form?")) return;
 
-    try {
-      let {
-        data: { message },
-      } = await deleteFormById(formId);
-      let form = [...forms];
-      console.log(message);
-      let index = form.findIndex(({ _id }) => _id === formId);
-      form.splice(index, 1);
-      setForms(form);
-    } catch (error) {
-      console.log(error);
-    }
+    let {
+      data: { message },
+    } = await deleteFormById(formId);
+    let form = [...forms];
+    toast(message, { type: "success" });
+    let index = form.findIndex(({ _id }) => _id === formId);
+    form.splice(index, 1);
+    setForms(form);
   };
 
   return (

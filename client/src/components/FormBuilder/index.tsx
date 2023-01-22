@@ -18,8 +18,9 @@ import Responses from "./Responses";
 import useForm from "hooks/useForm";
 import Modal from "components/Modal";
 import useTitle from "hooks/useTitle";
+import useAuth from "hooks/useAuth";
 import { FormProvider } from "context/form";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   getFormById,
   sendResponse,
@@ -27,6 +28,7 @@ import {
   checkResponseStatus,
 } from "services/Form";
 import { setFormTheme, focusElement, isEmpty } from "utils";
+import { toast } from "react-toastify";
 
 import styles from "./FormBuilder.module.scss";
 
@@ -61,19 +63,16 @@ const FormBuilder = (formPage: FormPages) => {
 
   let { formId } = useParams();
 
+  let navigate = useNavigate();
+
+  let { user } = useAuth();
+
   let { isEdit, isFill } = formPage;
 
   const handleFormChange = async (data: FormDetail) => {
     if (!formId) return;
 
-    try {
-      let {
-        data: { message },
-      } = await updateFormById({ formId, data });
-      console.log(message);
-    } catch (error) {
-      console.log(error);
-    }
+    await updateFormById({ formId, data });
   };
 
   let form = useForm<FormDetail>({
@@ -107,25 +106,24 @@ const FormBuilder = (formPage: FormPages) => {
 
   const getResponseStatus = async () => {
     if (!formId) return;
-    try {
-      let {
-        data: { status },
-      } = await checkResponseStatus(formId);
-      setIsResponded(status);
-    } catch (error) {
-      console.log(error);
-    }
+
+    let {
+      data: { status },
+    } = await checkResponseStatus(formId);
+    setIsResponded(status);
   };
 
   const getFormDetails = async () => {
     if (!formId) return;
 
-    try {
-      const res = await getFormById(formId);
-      setFormData(res.data);
-    } catch (error) {
-      console.log(error);
+    const { data: formDetail } = await getFormById(formId);
+
+    if (isEdit && formDetail.creatorId !== user?._id) {
+      toast("Form creator only have the edit access", { type: "error" });
+      navigate("/form/list");
     }
+
+    setFormData(formDetail);
   };
 
   const handleDragStart: HandleDragStart = (droppableId, draggableId) => {
@@ -204,8 +202,6 @@ const FormBuilder = (formPage: FormPages) => {
   };
 
   const handleDragOver: HandleDragOver = (e) => {
-    // By default, data/elements cannot be dropped in other elements.
-    // To allow a drop, we must prevent the default handling of the element
     e.preventDefault();
   };
 
@@ -226,17 +222,13 @@ const FormBuilder = (formPage: FormPages) => {
   const submitResponse = async (data: FormDetail) => {
     if (!formData._id) return;
 
-    try {
-      let body = {
-        responses: getFormResponse(data),
-        formId: formData._id,
-      };
-      await sendResponse(body);
-      clearForm();
-      setIsSubmited(true);
-    } catch (error) {
-      console.log(error);
-    }
+    let body = {
+      responses: getFormResponse(data),
+      formId: formData._id,
+    };
+    await sendResponse(body);
+    clearForm();
+    setIsSubmited(true);
   };
 
   const getFormResponse = (data: FormDetail): FormSubmitData[] => {

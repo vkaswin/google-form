@@ -8,6 +8,7 @@ export type User = {
 
 export type AuthContext = {
   user: User | null;
+  isLoading: boolean;
   setUser: Dispatch<SetStateAction<User | null>>;
   logout: () => void;
 };

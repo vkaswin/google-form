@@ -27,17 +27,13 @@ const Register = () => {
     return <Navigate replace to={url || "/form/list"} />;
 
   const onSubmit = async (data: any) => {
-    try {
-      let {
-        data: { token },
-      } = await registerUser(data);
-      cookie.set({ name: "auth_token", value: token, days: 14 });
-      let decoded = jwtDecode<User>(token);
-      setUser(decoded);
-      navigate(url || "/form/list");
-    } catch (error) {
-      console.log(error);
-    }
+    let {
+      data: { token },
+    } = await registerUser(data);
+    cookie.set({ name: "auth_token", value: token, days: 14 });
+    let decoded = jwtDecode<User>(token);
+    setUser(decoded);
+    navigate(url || "/form/list");
   };
 
   return (

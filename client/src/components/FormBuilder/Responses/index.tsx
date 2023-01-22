@@ -7,7 +7,7 @@ const Responses = () => {
     getFormResponse();
   }, []);
 
-  const getFormResponse = () => {
+  const getFormResponse = async () => {
     try {
     } catch (error) {
       console.log(error);

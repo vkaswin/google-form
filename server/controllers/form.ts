@@ -63,6 +63,17 @@ const updateFormById = asyncHandler(async (req, res) => {
     params: { formId },
   } = req;
 
+  if (!mongoose.Types.ObjectId.isValid(formId))
+    throw new CustomError({ message: "Invalid form id", status: 400 });
+
+  let formDetail = await Form.findById(formId);
+
+  if (formDetail && formDetail.toObject().creatorId.toString() !== formId)
+    throw new CustomError({
+      message: "Form creator only have edit access",
+      status: 400,
+    });
+
   if (!body) throw new CustomError({ message: "Invalid data", status: 400 });
 
   await Form.findByIdAndUpdate(formId, body);

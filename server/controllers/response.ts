@@ -77,8 +77,6 @@ const checkResponseStatus = asyncHandler(async (req, res) => {
     userId: user._id,
   });
 
-  console.log(data);
-
   res.status(200).send({ status: !!data });
 });
 
