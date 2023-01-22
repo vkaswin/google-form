@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/google-form/static/css/main.4ecf8395.css",
-    "main.js": "/google-form/static/js/main.050c907e.js",
+    "main.css": "/google-form/static/css/main.45bdd0ba.css",
+    "main.js": "/google-form/static/js/main.043a474b.js",
     "static/media/icons.svg": "/google-form/static/media/icons.468e2c817b23619a961a.svg",
     "static/media/icons.eot": "/google-form/static/media/icons.5fc889455954d2025848.eot",
     "static/media/icons.woff": "/google-form/static/media/icons.68a81c0b9428d2d2ac1d.woff",
@@ -10,11 +10,11 @@
     "static/media/Poppins-Medium.ttf": "/google-form/static/media/Poppins-Medium.673ed42382ab264e0bf5.ttf",
     "static/media/Poppins-Bold.ttf": "/google-form/static/media/Poppins-Bold.cdb29a5d7ccf57ff05a3.ttf",
     "index.html": "/google-form/index.html",
-    "main.4ecf8395.css.map": "/google-form/static/css/main.4ecf8395.css.map",
-    "main.050c907e.js.map": "/google-form/static/js/main.050c907e.js.map"
+    "main.45bdd0ba.css.map": "/google-form/static/css/main.45bdd0ba.css.map",
+    "main.043a474b.js.map": "/google-form/static/js/main.043a474b.js.map"
   },
   "entrypoints": [
-    "static/css/main.4ecf8395.css",
-    "static/js/main.050c907e.js"
+    "static/css/main.45bdd0ba.css",
+    "static/js/main.043a474b.js"
   ]
 }
