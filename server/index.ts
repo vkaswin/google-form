@@ -1,13 +1,11 @@
 import express, { Express } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import connectDB from "./config";
-import Routes from "./routes";
+import connect from "./src/database/config";
+import Routes from "./src/routes";
 dotenv.config();
 
 const port = process.env.PORT;
-
-connectDB();
 
 const app: Express = express();
 
@@ -19,6 +17,12 @@ app
   .use("/template", express.static("public/template"))
   .use(Routes);
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-});
+connect()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });

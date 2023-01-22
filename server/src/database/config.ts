@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const connectDB = async () => {
+const connect = async () => {
   try {
     mongoose.set("strictQuery", true);
     const mongoURI =
@@ -15,4 +15,4 @@ const connectDB = async () => {
   }
 };
 
-export default connectDB;
+export default connect;

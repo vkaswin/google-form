@@ -1,11 +1,6 @@
 {
     "watch": [
-        "models/**/*.ts",
-        "controllers/**/*.ts",
-        "middleware/**/*.ts",
-        "routes/**/*.ts",
-        "config/**/*.ts",
-        "utils/**/*.ts",
+        "src/**/*.ts",
         "./index.ts"
     ],
     "ignore": [
