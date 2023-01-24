@@ -1,27 +1,5 @@
 import { Response, Request, NextFunction } from "express";
 import { sign } from "jsonwebtoken";
-import puppeteer from "puppeteer";
-import path from "path";
-
-const screenShotFormPage = async (
-  formId: string,
-  folderName: "form" | "template"
-) => {
-  const filePath = path.join(
-    process.cwd(),
-    "public",
-    folderName,
-    `${formId}.png`
-  );
-  const url = `http://localhost:3000/google-form#/form/${formId}/preview`;
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto(url, { waitUntil: "networkidle0" });
-  await page.screenshot({
-    path: filePath,
-  });
-  await browser.close();
-};
 
 const generateJwtToken = (payload: string | object | Buffer) => {
   return sign(payload, process.env.JWT_SECRET as string, {
@@ -53,4 +31,4 @@ const asyncHandler = <T>(
   };
 };
 
-export { screenShotFormPage, asyncHandler, generateJwtToken, CustomError };
+export { asyncHandler, generateJwtToken, CustomError };

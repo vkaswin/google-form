@@ -8,26 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomError = exports.generateJwtToken = exports.asyncHandler = exports.screenShotFormPage = void 0;
+exports.CustomError = exports.generateJwtToken = exports.asyncHandler = void 0;
 const jsonwebtoken_1 = require("jsonwebtoken");
-const puppeteer_1 = __importDefault(require("puppeteer"));
-const path_1 = __importDefault(require("path"));
-const screenShotFormPage = (formId, folderName) => __awaiter(void 0, void 0, void 0, function* () {
-    const filePath = path_1.default.join(process.cwd(), "public", folderName, `${formId}.png`);
-    const url = `http://localhost:3000/google-form#/form/${formId}/preview`;
-    const browser = yield puppeteer_1.default.launch();
-    const page = yield browser.newPage();
-    yield page.goto(url, { waitUntil: "networkidle0" });
-    yield page.screenshot({
-        path: filePath,
-    });
-    yield browser.close();
-});
-exports.screenShotFormPage = screenShotFormPage;
 const generateJwtToken = (payload) => {
     return (0, jsonwebtoken_1.sign)(payload, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE,

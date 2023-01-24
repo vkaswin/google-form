@@ -1,4 +1,7 @@
-export const baseURL = "http://localhost:8000";
+export const baseURL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8000"
+    : "https://google-form-two.vercel.app";
 const userUrl = `${baseURL}/api/user`;
 const formUrl = `${baseURL}/api/form`;
 const responseUrl = `${baseURL}/api/response`;

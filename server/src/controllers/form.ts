@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Form from "../models/form";
 import Template from "../models/template";
-import { screenShotFormPage, asyncHandler, CustomError } from "../utils";
+import { asyncHandler, CustomError } from "../utils";
 
 const createForm = asyncHandler(async (req, res) => {
   let {
@@ -34,8 +34,6 @@ const createForm = asyncHandler(async (req, res) => {
     ...formDetail,
     creatorId: user._id,
   });
-
-  await screenShotFormPage(form._id.toString(), "form");
 
   res.status(200).send({
     _id: form._id,

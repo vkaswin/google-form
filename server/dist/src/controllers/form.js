@@ -38,7 +38,6 @@ const createForm = (0, utils_1.asyncHandler)((req, res) => __awaiter(void 0, voi
         { $unset: ["sections._id", "sections.fields._id"] },
     ]);
     let form = yield form_1.default.create(Object.assign(Object.assign({}, formDetail), { creatorId: user._id }));
-    yield (0, utils_1.screenShotFormPage)(form._id.toString(), "form");
     res.status(200).send({
         _id: form._id,
         title: form.title,

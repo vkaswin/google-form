@@ -18,7 +18,13 @@ const utils_1 = require("../utils");
 const createTemplate = (0, utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.body)
         throw new utils_1.CustomError({ message: "Invalid data", status: 400 });
-    yield template_1.default.create(req.body);
+    let template = yield template_1.default.create(req.body);
+    res.status(200).send({
+        _id: template._id,
+        title: template.title,
+        createdAt: template.createdAt,
+        updatedAt: template.updatedAt,
+    });
 }));
 exports.createTemplate = createTemplate;
 const getAllTemplates = (0, utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
