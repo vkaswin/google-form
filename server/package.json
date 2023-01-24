@@ -4,7 +4,8 @@
     "description": "Google Form",
     "main": "index.js",
     "scripts": {
-        "start": "tsc && node dist/index.js",
+        "build": "tsc",
+        "start": "node dist/index.js",
         "dev": "nodemon index.ts",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
