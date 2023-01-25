@@ -52,7 +52,7 @@ const FormList = () => {
     try {
       let {
         data: { list, pageMeta },
-      } = await getAllForms({ limit: 5, search, page });
+      } = await getAllForms({ limit: 15, search, page });
       setForms(list);
       setPageMeta(pageMeta);
     } finally {
