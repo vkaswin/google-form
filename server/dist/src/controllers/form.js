@@ -85,10 +85,29 @@ const deleteFormById = (0, utils_1.asyncHandler)((req, res) => __awaiter(void 0,
 }));
 exports.deleteFormById = deleteFormById;
 const getAllForms = (0, utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { user } = req;
-    let forms = yield form_1.default.find({
-        creatorId: user._id,
-    }, { title: 1, updatedAt: 1, createdAt: 1 }).sort({ updatedAt: -1 });
-    res.status(200).send(forms);
+    let { user, query } = req;
+    let limit = query.limit ? +query.limit : 25;
+    let page = query.page ? +query.page : 1;
+    let skip = (page - 1) * limit;
+    let filterQuery = Object.assign({ creatorId: user._id }, (query.search && {
+        title: { $regex: query.search, $options: "i" },
+    }));
+    let total = yield form_1.default.find(filterQuery).countDocuments();
+    let forms = yield form_1.default.find(filterQuery, {
+        title: 1,
+        updatedAt: 1,
+        createdAt: 1,
+    })
+        .sort({ updatedAt: -1 })
+        .limit(limit)
+        .skip(skip);
+    res.status(200).send({
+        list: forms,
+        pageMeta: {
+            page,
+            total,
+            totalPages: Math.ceil(total / limit),
+        },
+    });
 }));
 exports.getAllForms = getAllForms;

@@ -82,6 +82,8 @@ const getFormResponsesById = (0, utils_1.asyncHandler)((req, res) => __awaiter(v
             $project: {
                 responses: 1,
                 user: { $first: "$user" },
+                createdAt: 1,
+                updatedAt: 1,
             },
         },
     ]);
