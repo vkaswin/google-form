@@ -19,7 +19,6 @@ import {
 import TextArea from "components/TextArea";
 import Input from "components/Input";
 import TextEditor from "components/TextEditor";
-import DatePicker from "components/DatePicker";
 import ToolTip from "components/ToolTip";
 import Rating from "components/Rating";
 import Switch from "components/Switch";
@@ -159,6 +158,7 @@ const Field = ({
     } else if (field.fieldType === "input") {
       return (
         <Input
+          type={field.rules?.max || field.rules?.min ? "number" : "text"}
           placeholder="Short answer text"
           defaultValue={field.response}
           register={registerField}
@@ -175,14 +175,14 @@ const Field = ({
       );
     } else if (field.fieldType === "date") {
       return (
-        <DatePicker
+        <Input
+          type="date"
           placeholder="Month, day, year"
-          value={field.response || ""}
+          defaultValue={field.response}
           {...(isEdit
             ? { disabled: true }
             : {
                 register: registerField,
-                onChange: (value) => setValue(name, value),
               })}
         />
       );
@@ -235,7 +235,7 @@ const Field = ({
     } else if (action === "add-field" || action === "add-section") {
       let field = {
         title: "",
-        type: "radio",
+        fieldType: "radio",
         options: ["Option 1"],
         other: false,
         description: "",
@@ -261,7 +261,6 @@ const Field = ({
   };
 
   const handleFormType = (value: string) => {
-    //TODO REMOVE AND ADD CERTAIN FIELD WHEN CHANGE FIELD TYPE
     setValue(`sections.${sectionIndex}.fields.${fieldIndex}.fieldType`, value);
   };
 
@@ -353,6 +352,7 @@ const Field = ({
               <Switch
                 id={fieldId}
                 label="Required"
+                value=""
                 defaultChecked={field.rules.required?.value || false}
                 register={register(
                   `sections.${sectionIndex}.fields.${fieldIndex}.rules.required.value`

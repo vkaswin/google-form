@@ -1,5 +1,7 @@
 .bg {
   background-color: var(--bg-color);
+  padding-top: 111px;
+  min-height: 100vh;
 }
 
 .container {
@@ -62,6 +64,29 @@
   span {
     color: #6c6a70;
     font-size: 24px;
+  }
+}
+
+.popup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  padding: 60px 30px;
+  h2 {
+    display: block;
+    text-align: center;
+    font-size: 30px;
+    font-family: "Poppins-Medium";
+    font-weight: normal;
+    color: var(--text-color);
+  }
+  span {
+    display: block;
+    text-align: center;
+    font-size: 20px;
+    color: var(--text-color);
   }
 }
 

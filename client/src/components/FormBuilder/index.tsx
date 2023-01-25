@@ -55,13 +55,11 @@ const FormBuilder = (formPage: FormPages) => {
 
   let [isResponded, setIsResponded] = useState(false);
 
-  let [activeTab, setActiveTab] = useState(
-    searchParams.get("response") ? 1 : 0
-  );
-
   let [activeSection, setActiveSection] = useState<number>(0);
 
   let [dragId, setDragId] = useState<string | null>(null);
+
+  let [isLoading, setIsLoading] = useState(true);
 
   let dragRef = useRef<FormDragRef>(initialDragRef);
 
@@ -122,13 +120,17 @@ const FormBuilder = (formPage: FormPages) => {
   const getFormDetails = async () => {
     if (!formId) return;
 
-    const { data: formDetail } = await getFormById(formId);
+    try {
+      const { data: formDetail } = await getFormById(formId);
 
-    if (isEdit && formDetail.creatorId !== user?._id) {
-      toast("Form creator only have the edit access", { type: "error" });
-      navigate("/form/list");
-    } else {
-      setFormData(formDetail);
+      if (isEdit && formDetail.creatorId !== user?._id) {
+        toast("Form creator only have the edit access", { type: "error" });
+        navigate("/form/list");
+      } else {
+        setFormData(formDetail);
+      }
+    } finally {
+      if (isLoading) setIsLoading(false);
     }
   };
 
@@ -289,160 +291,181 @@ const FormBuilder = (formPage: FormPages) => {
   };
 
   const handleTitle = (title: string) => {
-    setFormData({ ...formData, title });
+    if (!formId) return;
+    let form = { ...formData, title };
+    updateFormById({ formId, data: form });
+    setFormData(form);
   };
 
   return (
     <Fragment>
       {isEdit && (
         <Header
-          activeTab={activeTab}
+          formId={formId}
           colorCode={colorCode}
           bgCode={bgCode}
           title={title}
           user={user}
+          params={searchParams}
+          navigate={navigate}
           logout={logout}
           handleTitle={handleTitle}
           handleTheme={handleTheme}
-          setActiveTab={setActiveTab}
         />
       )}
-      {activeTab === 0 && (
-        <FormProvider {...form}>
-          <div className={styles.bg}>
-            <div className={styles.container}>
-              {sections.map(
-                ({ _id, title, description, fields }, sectionIndex) => {
-                  if (isFill && !(sectionIndex === activeSection)) return null;
+      {searchParams.get("tab") === "responses" ? (
+        <Responses formId={formId} />
+      ) : (
+        <Fragment>
+          <FormProvider {...form}>
+            <div className={styles.bg}>
+              {isLoading ? (
+                <div>Loading...</div>
+              ) : (
+                <div className={styles.container}>
+                  {sections.map(
+                    ({ _id, title, description, fields }, sectionIndex) => {
+                      if (isFill && !(sectionIndex === activeSection))
+                        return null;
 
-                  let sectionHeader =
-                    sections.length > 1
-                      ? `Section ${sectionIndex + 1} of ${sections.length}`
-                      : undefined;
+                      let sectionHeader =
+                        sections.length > 1
+                          ? `Section ${sectionIndex + 1} of ${sections.length}`
+                          : undefined;
 
-                  let isSelected = selectedId === sectionIndex.toString();
+                      let isSelected = selectedId === sectionIndex.toString();
 
-                  return (
-                    <Fragment key={sectionIndex}>
-                      <Section
-                        title={title}
-                        selectedId={selectedId}
-                        description={description}
-                        sectionIndex={sectionIndex}
-                        sectionHeader={sectionHeader}
-                        formPage={formPage}
-                        isSelected={isSelected}
-                        onClick={() => setSelectedId(sectionIndex.toString())}
-                      />
-                      <div
-                        className={styles.wrapper}
-                        {...(isEdit && {
-                          "data-droppable-id": sectionIndex,
-                          onDragEnter: (e) =>
-                            handleDragEnter(e, sectionIndex, 0),
-                          onDragLeave: (e) =>
-                            handleDragLeave(e, sectionIndex, 0),
-                          onDragOver: handleDragOver,
-                          onDrop: handleDrop,
-                        })}
-                      >
-                        {fields.map((field, fieldIndex) => {
-                          let fieldId = `${sectionIndex}${fieldIndex}`;
-                          let isSelected = selectedId === fieldId;
-                          return (
-                            <Field
-                              key={fieldId}
-                              field={field}
-                              fieldId={fieldId}
-                              tabIndex={-1}
-                              sectionIndex={sectionIndex}
-                              fieldIndex={fieldIndex}
-                              formPage={formPage}
-                              focusFieldId={focusFieldId}
-                              isSelected={isSelected}
-                              {...(isEdit && {
-                                "data-field-id": fieldId,
-                                "data-draggable-id": fieldIndex,
-                                "data-droppable-id": sectionIndex,
-                                draggable: dragId === fieldId,
-                                onClick: () => setSelectedId(fieldId),
-                                onDragStart: () =>
-                                  handleDragStart(sectionIndex, fieldIndex),
-                                onDragLeave: (e) =>
-                                  handleDragLeave(e, sectionIndex, fieldIndex),
-                                onDragEnter: (e) =>
-                                  handleDragEnter(e, sectionIndex, fieldIndex),
-                                onDragEnd: handleDragEnd,
-                                setDragId: setDragId,
-                              })}
-                            />
-                          );
-                        })}
+                      return (
+                        <Fragment key={sectionIndex}>
+                          <Section
+                            title={title}
+                            selectedId={selectedId}
+                            description={description}
+                            sectionIndex={sectionIndex}
+                            sectionHeader={sectionHeader}
+                            formPage={formPage}
+                            isSelected={isSelected}
+                            onClick={() =>
+                              setSelectedId(sectionIndex.toString())
+                            }
+                          />
+                          <div
+                            className={styles.wrapper}
+                            {...(isEdit && {
+                              "data-droppable-id": sectionIndex,
+                              onDragEnter: (e) =>
+                                handleDragEnter(e, sectionIndex, 0),
+                              onDragLeave: (e) =>
+                                handleDragLeave(e, sectionIndex, 0),
+                              onDragOver: handleDragOver,
+                              onDrop: handleDrop,
+                            })}
+                          >
+                            {fields.map((field, fieldIndex) => {
+                              let fieldId = `${sectionIndex}${fieldIndex}`;
+                              let isSelected = selectedId === fieldId;
+                              return (
+                                <Field
+                                  key={fieldId}
+                                  field={field}
+                                  fieldId={fieldId}
+                                  tabIndex={-1}
+                                  sectionIndex={sectionIndex}
+                                  fieldIndex={fieldIndex}
+                                  formPage={formPage}
+                                  focusFieldId={focusFieldId}
+                                  isSelected={isSelected}
+                                  {...(isEdit && {
+                                    "data-field-id": fieldId,
+                                    "data-draggable-id": fieldIndex,
+                                    "data-droppable-id": sectionIndex,
+                                    draggable: dragId === fieldId,
+                                    onClick: () => setSelectedId(fieldId),
+                                    onDragStart: () =>
+                                      handleDragStart(sectionIndex, fieldIndex),
+                                    onDragLeave: (e) =>
+                                      handleDragLeave(
+                                        e,
+                                        sectionIndex,
+                                        fieldIndex
+                                      ),
+                                    onDragEnter: (e) =>
+                                      handleDragEnter(
+                                        e,
+                                        sectionIndex,
+                                        fieldIndex
+                                      ),
+                                    onDragEnd: handleDragEnd,
+                                    setDragId: setDragId,
+                                  })}
+                                />
+                              );
+                            })}
+                          </div>
+                        </Fragment>
+                      );
+                    }
+                  )}
+                  {isFill && (
+                    <div className={styles.cta}>
+                      <div>
+                        {activeSection > 0 && (
+                          <button
+                            className={styles.btn_navigate}
+                            onClick={handleSubmit(
+                              (data) => onSubmit(data, "back"),
+                              (errors) => onInvalid(errors, "back")
+                            )}
+                          >
+                            Back
+                          </button>
+                        )}
+                        {activeSection < sections.length - 1 && (
+                          <button
+                            className={styles.btn_navigate}
+                            onClick={handleSubmit(
+                              (data) => onSubmit(data, "next"),
+                              (errors) => onInvalid(errors, "next")
+                            )}
+                          >
+                            Next
+                          </button>
+                        )}
+                        {activeSection === sections.length - 1 && (
+                          <button
+                            className={styles.btn_submit}
+                            onClick={handleSubmit(
+                              (data) => onSubmit(data, "submit"),
+                              onInvalid
+                            )}
+                          >
+                            Submit
+                          </button>
+                        )}
                       </div>
-                    </Fragment>
-                  );
-                }
-              )}
-              {isFill && (
-                <div className={styles.cta}>
-                  <div>
-                    {activeSection > 0 && (
-                      <button
-                        className={styles.btn_navigate}
-                        onClick={handleSubmit(
-                          (data) => onSubmit(data, "back"),
-                          (errors) => onInvalid(errors, "back")
-                        )}
-                      >
-                        Back
+                      <button className={styles.btn_clear} onClick={clearForm}>
+                        Clear Form
                       </button>
-                    )}
-                    {activeSection < sections.length - 1 && (
-                      <button
-                        className={styles.btn_navigate}
-                        onClick={handleSubmit(
-                          (data) => onSubmit(data, "next"),
-                          (errors) => onInvalid(errors, "next")
-                        )}
-                      >
-                        Next
-                      </button>
-                    )}
-                    {activeSection === sections.length - 1 && (
-                      <button
-                        className={styles.btn_submit}
-                        onClick={handleSubmit(
-                          (data) => onSubmit(data, "submit"),
-                          onInvalid
-                        )}
-                      >
-                        Submit
-                      </button>
-                    )}
+                    </div>
+                  )}
+                  <div className={styles.footer}>
+                    <span>Google Form</span>
                   </div>
-                  <button className={styles.btn_clear} onClick={clearForm}>
-                    Clear Form
-                  </button>
                 </div>
               )}
-              <div className={styles.footer}>
-                <span>Google Form</span>
-              </div>
             </div>
-          </div>
-        </FormProvider>
+          </FormProvider>
+          <Modal isOpen={isSubmited || isResponded}>
+            <div className={styles.popup}>
+              <h2>Thank You!</h2>
+              {isResponded && <span>You have already submitted the form</span>}
+              {isSubmited && (
+                <span>You response have been saved successfully</span>
+              )}
+            </div>
+          </Modal>
+        </Fragment>
       )}
-      {activeTab === 1 && <Responses formId={formId} />}
-      <Modal isOpen={isResponded}>
-        <div>
-          <span>Responded</span>
-        </div>
-      </Modal>
-      <Modal isOpen={isSubmited}>
-        <div>
-          <span>Submited</span>
-        </div>
-      </Modal>
     </Fragment>
   );
 };

@@ -102,15 +102,38 @@ const deleteFormById = asyncHandler(async (req, res) => {
 });
 
 const getAllForms = asyncHandler(async (req, res) => {
-  let { user } = req;
+  let { user, query } = req;
 
-  let forms = await Form.find(
-    {
-      creatorId: user._id,
+  let limit = query.limit ? +query.limit : 25;
+  let page = query.page ? +query.page : 1;
+  let skip = (page - 1) * limit;
+
+  let filterQuery = {
+    creatorId: user._id,
+    ...(query.search && {
+      title: { $regex: query.search, $options: "i" },
+    }),
+  };
+
+  let total = await Form.find(filterQuery).countDocuments();
+
+  let forms = await Form.find(filterQuery, {
+    title: 1,
+    updatedAt: 1,
+    createdAt: 1,
+  })
+    .sort({ updatedAt: -1 })
+    .limit(limit)
+    .skip(skip);
+
+  res.status(200).send({
+    list: forms,
+    pageMeta: {
+      page,
+      total,
+      totalPages: Math.ceil(total / limit),
     },
-    { title: 1, updatedAt: 1, createdAt: 1 }
-  ).sort({ updatedAt: -1 });
-  res.status(200).send(forms);
+  });
 });
 
 export { getFormById, createForm, updateFormById, deleteFormById, getAllForms };

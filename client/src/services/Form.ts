@@ -1,6 +1,12 @@
 import { axios } from "./index";
 import { Response, Form, formUrl, responseUrl } from "./config";
-import { FormDetail, FormResponse, FormData, FormResponses } from "types/Form";
+import {
+  FormDetail,
+  FormResponse,
+  FormData,
+  FormResponses,
+  PageMeta,
+} from "types/Form";
 
 const getFormById = (formId: string) => {
   return axios<{ creatorId: string } & FormDetail>({
@@ -18,7 +24,10 @@ const sendResponse = (data: FormResponse) => {
 };
 
 const getAllForms = (params?: any) => {
-  return axios<FormData[]>({
+  return axios<{
+    list: FormData[];
+    pageMeta: PageMeta;
+  }>({
     method: "get",
     url: Form.getAllForms,
     params,

@@ -176,5 +176,13 @@ export type FormResponses = {
       readonly fieldId: string;
       response: string | string[];
     }[];
+    createdAt: string;
+    updatedAt: string;
   }[];
+};
+
+export type PageMeta = {
+  page: number;
+  total: number;
+  totalPages: number;
 };

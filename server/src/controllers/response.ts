@@ -77,6 +77,8 @@ const getFormResponsesById = asyncHandler(async (req, res) => {
       $project: {
         responses: 1,
         user: { $first: "$user" },
+        createdAt: 1,
+        updatedAt: 1,
       },
     },
   ]);

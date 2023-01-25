@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       let decoded = jwtDecode<User>(token);
       setUser(decoded);
     }
-    setIsLoading(false);
+    if (isLoading) setIsLoading(false);
   };
 
   const login: Login = async (data) => {
@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = () => {
+    document.title = "Google Form";
     let root = document.querySelector("html");
     if (root) root.removeAttribute("style");
     cookie.remove("auth_token");

@@ -28,8 +28,6 @@ type FormOptions = {
       };
   valueAsNumber?: boolean;
   valueAsDate?: boolean;
-  onInput?: <T>(event: ChangeEvent<T>) => void;
-  onBlur?: <T>(event: FocusEvent<T>) => void;
 };
 
 export type FormRules = {

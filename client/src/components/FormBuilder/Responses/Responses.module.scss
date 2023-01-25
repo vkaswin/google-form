@@ -1,20 +1,45 @@
 .container {
   padding: 15px;
   margin: 0px auto;
+  padding-top: 111px;
   table {
-    border: 1px solid black;
     background-color: white;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0px 15px;
     width: 100%;
     thead {
-      td {
-        font-family: "Poppins-Medium";
+      tr {
+        background-color: var(--bg-color);
+        color: var(--primary-color);
+        td {
+          padding: 10px;
+          font-family: "Poppins-Medium";
+        }
       }
     }
-    td {
-      padding: 10px;
-      text-align: center;
-      border: 1px solid black;
+    tbody {
+      tr {
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+        position: relative;
+        td {
+          padding: 10px;
+          &:first-child {
+            padding-left: 10px;
+            position: relative;
+            &::after {
+              content: "";
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 6px;
+              height: 100%;
+              background-color: var(--primary-color);
+              border-radius: 0px 4px 4px 0px;
+            }
+          }
+        }
+      }
     }
   }
 }

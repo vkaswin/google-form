@@ -75,7 +75,7 @@ const TextEditor = <E extends ElementType = "div">({
   };
 
   const handleToolBar = (action: ToolBarActions) => {
-    let selection = window.getSelection();
+    /*let selection = window.getSelection();
 
     if (!selection) return;
 
@@ -116,7 +116,7 @@ const TextEditor = <E extends ElementType = "div">({
     if (!element) return;
 
     selection.getRangeAt(0).insertNode(element);
-    clearSelection();
+    clearSelection();*/
   };
 
   const clearSelection = () => {

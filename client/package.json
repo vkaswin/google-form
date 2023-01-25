@@ -13,6 +13,7 @@
         "node-sass": "^7.0.3",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-paginate": "^8.1.4",
         "react-popper": "^2.3.0",
         "react-router-dom": "^6.4.3",
         "react-scripts": "5.0.1",

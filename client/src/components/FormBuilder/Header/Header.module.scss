@@ -1,5 +1,6 @@
 .container {
-  position: sticky;
+  position: fixed;
+  width: 100%;
   top: 0px;
   left: 0px;
   background-color: white;
@@ -48,21 +49,6 @@
         font-size: 24px;
         cursor: pointer;
       }
-      .avatar {
-        position: relative;
-        background-color: var(--primary-color);
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        cursor: pointer;
-        span {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          color: white;
-        }
-      }
     }
   }
   .bottom {
@@ -91,14 +77,6 @@
         border-top-right-radius: 4px;
       }
     }
-  }
-}
-
-.dropdown {
-  min-width: 150px;
-  i {
-    color: #606368 !important;
-    font-size: 24px !important;
   }
 }
 

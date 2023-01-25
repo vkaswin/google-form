@@ -333,7 +333,6 @@ const useForm = <T extends FormValues = FormValues>(options?: {
       required,
       valueAsDate,
       valueAsNumber,
-      onInput,
     } = options;
 
     let formRules = {} as FormRules;

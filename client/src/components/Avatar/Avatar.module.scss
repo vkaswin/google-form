@@ -1,0 +1,23 @@
+.avatar {
+  position: relative;
+  background-color: var(--primary-color);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+  }
+}
+
+.dropdown {
+  min-width: 150px;
+  i {
+    color: #606368 !important;
+    font-size: 24px !important;
+  }
+}
