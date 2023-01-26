@@ -1,7 +1,6 @@
 import { Navigate, useRoutes } from "react-router-dom";
 import EditForm from "pages/EditForm";
-import PreviewForm from "pages/PreviewForm";
-import FillForm from "pages/FillForm";
+import ViewForm from "pages/ViewForm";
 import AuthLayout from "layouts/AuthLayout";
 import Login from "pages/Login";
 import Register from "pages/Register";
@@ -43,10 +42,9 @@ const Routes = () => {
       path: "/form/:formId/edit",
       element: <ProtectedRoute children={<EditForm />} />,
     },
-    { path: "/form/:formId/preview", element: <PreviewForm /> },
     {
-      path: "/form/:formId/fill",
-      element: <ProtectedRoute children={<FillForm />} />,
+      path: "/form/:formId/view",
+      element: <ProtectedRoute children={<ViewForm />} />,
     },
     {
       path: "*",

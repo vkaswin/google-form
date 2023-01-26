@@ -70,7 +70,7 @@ const FormList = () => {
   };
 
   const navigateToForm = (formId: string) => {
-    window.open(`#/form/${formId}/edit`);
+    navigate(`/form/${formId}/edit`);
   };
 
   const handleDeleteForm = async (formId: string) => {

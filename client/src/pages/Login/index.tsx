@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import Input from "components/Input";
 import useForm from "hooks/useForm";
 import useAuth from "hooks/useAuth";
@@ -22,6 +22,15 @@ const Login = () => {
   const searchParams = new URLSearchParams(location.search);
 
   let url = searchParams.get("url");
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "enter") handleSubmit(login)(event);
+  };
 
   if (cookie.get("auth_token"))
     return <Navigate replace to={url || "/form/list"} />;

@@ -39,14 +39,15 @@
   background-color: #fff;
   border: 1px solid #dadce0;
   border-radius: 8px;
+  overflow: hidden;
   padding: 30px 25px 30px 25px;
   .field {
     margin: 15px 0px 30px 0px;
   }
   .highlight {
     position: absolute;
+    top: 6px;
     left: 0px;
-    bottom: 0px;
     height: 100%;
     width: 6px;
     border-radius: 6px 0px 0px 6px;

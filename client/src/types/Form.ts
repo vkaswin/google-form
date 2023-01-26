@@ -68,8 +68,7 @@ export type FormIndexes = {
 
 export type FormPages = {
   isEdit?: boolean;
-  isPreview?: boolean;
-  isFill?: boolean;
+  isView?: boolean;
 };
 
 export type FormDragRef = {

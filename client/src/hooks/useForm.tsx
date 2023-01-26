@@ -509,7 +509,6 @@ const useForm = <T extends FormValues = FormValues>(options?: {
     set(name, value, formData);
     if (field) validateField({ name, ref: field.ref });
     setFormData({ ...formData });
-    debouceOnChange?.(formData);
   };
 
   const getValue: GetValue = (name) => {
@@ -571,7 +570,6 @@ const useForm = <T extends FormValues = FormValues>(options?: {
     unset(name, formErrors);
     unset(name, formData);
     setFormData({ ...formData });
-    debouceOnChange?.(formData);
   };
 
   const unset: FormUnSet = (name: string, fields: any) => {
@@ -617,7 +615,10 @@ const useForm = <T extends FormValues = FormValues>(options?: {
     resetField,
     handleSubmit,
     clearValue,
-    setFormData,
+    setFormData: (data, notifyServer = true) => {
+      if (notifyServer) onChange?.(data);
+      setFormData(data);
+    },
     formData,
     formErrors,
   };

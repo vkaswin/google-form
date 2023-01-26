@@ -5,9 +5,10 @@ import Themes from "./Themes";
 import { debounce, googleFormIcon } from "utils";
 import Avatar from "components/Avatar";
 import { NavigateFunction } from "react-router-dom";
+import { toast } from "react-toastify";
+import ToolTip from "components/ToolTip";
 
 import styles from "./Header.module.scss";
-import { toast } from "react-toastify";
 
 type HeaderProps = {
   formId?: string;
@@ -63,7 +64,7 @@ const Header = ({
     <div className={styles.container}>
       <div className={styles.top}>
         <div className={styles.title}>
-          {googleFormIcon}
+          <div onClick={() => navigate("/form/list")}>{googleFormIcon}</div>
           <input
             ref={inputRef}
             name="title"
@@ -81,9 +82,11 @@ const Header = ({
             onChange={handleTheme}
           />
           <i
+            id="preview-form"
             className="bx-show"
-            onClick={() => window.open(`#/form/${formId}/preview`)}
+            onClick={() => window.open(`#/form/${formId}/view`)}
           ></i>
+          <ToolTip selector="#preview-form">Preview</ToolTip>
           <Avatar userName={user?.name} logout={logout} />
         </div>
       </div>

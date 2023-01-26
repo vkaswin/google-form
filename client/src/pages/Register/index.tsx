@@ -1,6 +1,6 @@
+import { Fragment, useEffect } from "react";
 import Input from "components/Input";
 import useForm from "hooks/useForm";
-import { Fragment } from "react";
 import { useLocation, Navigate } from "react-router-dom";
 import useAuth from "hooks/useAuth";
 import { cookie } from "utils";
@@ -22,6 +22,15 @@ const Register = () => {
   const searchParams = new URLSearchParams(location.search);
 
   let url = searchParams.get("url");
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "enter") handleSubmit(registerUser)(event);
+  };
 
   if (cookie.get("auth_token"))
     return <Navigate replace to={url || "/form/list"} />;

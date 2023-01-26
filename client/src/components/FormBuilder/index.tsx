@@ -1,4 +1,4 @@
-import { Fragment, useState, useRef, useEffect } from "react";
+import { Fragment, useState, useRef, useEffect, CSSProperties } from "react";
 import {
   FormDragRef,
   HandleDragOver,
@@ -71,16 +71,16 @@ const FormBuilder = (formPage: FormPages) => {
 
   let { user, logout } = useAuth();
 
-  let { isEdit, isFill } = formPage;
+  let { isEdit, isView } = formPage;
 
-  const handleFormChange = async (data: FormDetail) => {
+  const updateForm = async (data: FormDetail) => {
     if (!formId) return;
 
     await updateFormById({ formId, data });
   };
 
   let form = useForm<FormDetail>({
-    ...(isEdit && { onChange: handleFormChange }),
+    ...(isEdit && { onChange: updateForm }),
   });
 
   let { formData, setFormData, reset, handleSubmit } = form;
@@ -91,7 +91,7 @@ const FormBuilder = (formPage: FormPages) => {
 
   useEffect(() => {
     getFormDetails();
-    if (isFill) getResponseStatus();
+    if (isView) getResponseStatus();
   }, [formId]);
 
   useEffect(() => {
@@ -106,6 +106,9 @@ const FormBuilder = (formPage: FormPages) => {
   useEffect(() => {
     if (!colorCode || !bgCode) return;
     setFormTheme({ colorCode, bgCode });
+    return () => {
+      document.querySelector("html")!.removeAttribute("style");
+    };
   }, [colorCode, bgCode]);
 
   const getResponseStatus = async () => {
@@ -127,7 +130,7 @@ const FormBuilder = (formPage: FormPages) => {
         toast("Form creator only have the edit access", { type: "error" });
         navigate("/form/list");
       } else {
-        setFormData(formDetail);
+        setFormData(formDetail, false);
       }
     } finally {
       if (isLoading) setIsLoading(false);
@@ -293,7 +296,6 @@ const FormBuilder = (formPage: FormPages) => {
   const handleTitle = (title: string) => {
     if (!formId) return;
     let form = { ...formData, title };
-    updateFormById({ formId, data: form });
     setFormData(form);
   };
 
@@ -318,14 +320,17 @@ const FormBuilder = (formPage: FormPages) => {
       ) : (
         <Fragment>
           <FormProvider {...form}>
-            <div className={styles.bg}>
+            <div
+              className={styles.bg}
+              style={{ "--top": isEdit ? "111px" : "0px" } as CSSProperties}
+            >
               {isLoading ? (
                 <div>Loading...</div>
               ) : (
                 <div className={styles.container}>
                   {sections.map(
                     ({ _id, title, description, fields }, sectionIndex) => {
-                      if (isFill && !(sectionIndex === activeSection))
+                      if (isView && !(sectionIndex === activeSection))
                         return null;
 
                       let sectionHeader =
@@ -406,7 +411,7 @@ const FormBuilder = (formPage: FormPages) => {
                       );
                     }
                   )}
-                  {isFill && (
+                  {isView && (
                     <div className={styles.cta}>
                       <div>
                         {activeSection > 0 && (

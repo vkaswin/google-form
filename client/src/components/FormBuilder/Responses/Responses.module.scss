@@ -19,13 +19,13 @@
     }
     tbody {
       tr {
+        position: relative;
         background-color: #fff;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
-        position: relative;
         td {
           padding: 10px;
           &:first-child {
-            padding-left: 10px;
+            padding-left: 15px;
             position: relative;
             &::after {
               content: "";

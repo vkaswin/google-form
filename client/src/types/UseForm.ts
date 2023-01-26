@@ -153,7 +153,7 @@ export type UseForm<T = FormValues> = {
   validate: ValidateField;
   handleSubmit: FormSubmit<T>;
   clearValue: ClearValue;
-  setFormData: Dispatch<SetStateAction<T>>;
+  setFormData: (data: T, notifyServer?: boolean) => void;
   formData: Readonly<T>;
   formErrors: Readonly<Record<string, any>>;
 };

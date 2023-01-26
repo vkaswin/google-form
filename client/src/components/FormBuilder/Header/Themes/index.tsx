@@ -1,8 +1,9 @@
 import { CSSProperties, Fragment, useMemo } from "react";
 import { ColorCodeList, BGCodeList, ColorCodes } from "types/Form";
+import ToolTip from "components/ToolTip";
+import DropDown from "components/DropDown";
 
 import styles from "./Themes.module.scss";
-import DropDown from "components/DropDown";
 
 type ThemeProps = {
   colorCode?: ColorCodes;
@@ -58,8 +59,9 @@ const Themes = ({
 
   return (
     <Fragment>
-      <i id="theme" className="bx-customize"></i>
-      <DropDown selector="#theme" placement="bottom-end">
+      <i id="customize-theme" className="bx-customize"></i>
+      <ToolTip selector="#customize-theme">Customize Theme</ToolTip>
+      <DropDown selector="#customize-theme" placement="bottom-end">
         <div className={styles.container}>
           <div className={styles.color}>
             <b>Color</b>

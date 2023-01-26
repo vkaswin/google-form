@@ -30,7 +30,7 @@ const Header = ({ search, user, logout }: HeaderProps) => {
       </div>
       <div className={styles.search_box}>
         <input
-          placeholder="Search"
+          placeholder="Search by title"
           defaultValue={search || ""}
           onChange={handleChange}
         />
