@@ -29,7 +29,7 @@ const Register = () => {
   }, []);
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "enter") handleSubmit(registerUser)(event);
+    if (event.key === "Enter") handleSubmit(registerUser)(event);
   };
 
   if (cookie.get("auth_token"))

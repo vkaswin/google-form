@@ -29,7 +29,7 @@ const Login = () => {
   }, []);
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "enter") handleSubmit(login)(event);
+    if (event.key === "Enter") handleSubmit(login)(event);
   };
 
   if (cookie.get("auth_token"))
