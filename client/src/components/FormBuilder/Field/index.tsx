@@ -63,6 +63,7 @@ const formRules = [
   {
     label: "Pattern",
     name: "pattern",
+    type: "text",
   },
   {
     label: "MinLength",
@@ -77,12 +78,14 @@ const formRules = [
   {
     label: "Min",
     name: "min",
+    type: "text",
   },
   {
     label: "Max",
     name: "max",
+    type: "text",
   },
-];
+] as const;
 
 const icons: FormIcon[] = [
   {
@@ -158,7 +161,11 @@ const Field = ({
     } else if (field.fieldType === "input") {
       return (
         <Input
-          type={field.rules?.max || field.rules?.min ? "number" : "text"}
+          type={
+            field.rules?.max?.value || field.rules?.min?.value
+              ? "number"
+              : "text"
+          }
           placeholder="Short answer text"
           defaultValue={field.response}
           register={registerField}
@@ -368,6 +375,11 @@ const Field = ({
                       <div>
                         <label>{label}</label>
                         <Input
+                          defaultValue={
+                            formData?.sections?.[sectionIndex]?.fields?.[
+                              fieldIndex
+                            ]?.rules?.[name]?.value as string
+                          }
                           placeholder="Enter here"
                           register={register(
                             `sections.${sectionIndex}.fields.${fieldIndex}.rules.${name}.value`
@@ -378,6 +390,11 @@ const Field = ({
                       <div>
                         <label>Error Message</label>
                         <Input
+                          defaultValue={
+                            formData?.sections?.[sectionIndex]?.fields?.[
+                              fieldIndex
+                            ]?.rules?.[name]?.message as string
+                          }
                           placeholder="Enter here"
                           register={register(
                             `sections.${sectionIndex}.fields.${fieldIndex}.rules.${name}.message`
@@ -392,7 +409,6 @@ const Field = ({
             <div className={styles.highlight}></div>
           </Fragment>
         )}
-
         {isEdit && (
           <div
             className={styles.drag_icon}

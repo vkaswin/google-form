@@ -8,9 +8,7 @@ type ProtectedRouteProps = {
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, isLoading } = useAuth();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const redirectUrl = searchParams.get("url");
+  const { pathname } = useLocation();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -19,7 +17,9 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       return (
         <Navigate
           replace
-          to={`/auth/login${redirectUrl ? `?url=${redirectUrl}` : ""}`}
+          to={`/auth/login${
+            pathname ? `?url=${window.encodeURIComponent(pathname)}` : ""
+          }`}
         />
       );
     } else {

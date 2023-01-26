@@ -44,7 +44,12 @@ const Responses = ({ formId }: ResponsesProps) => {
               <td>Timestamp</td>
               <td>Responsed by</td>
               {fields.map(({ title, _id }) => {
-                return <td key={_id}>{title}</td>;
+                return (
+                  <td
+                    key={_id}
+                    dangerouslySetInnerHTML={{ __html: title }}
+                  ></td>
+                );
               })}
             </tr>
           </thead>

@@ -53,7 +53,7 @@ const Register = () => {
                 },
                 pattern: {
                   value: /^[A-Za-z ]+$/,
-                  message: "Invalid Email",
+                  message: "Name should contain alphabets only",
                 },
                 minLength: {
                   value: 3,

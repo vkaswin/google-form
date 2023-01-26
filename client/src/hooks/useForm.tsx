@@ -70,7 +70,7 @@ const useForm = <T extends FormValues = FormValues>(options?: {
 
   let { current: formFields } = useRef<FormFields>({});
 
-  let [formData, setFormData] = useState<T>({} as T);
+  let [formData, setFormValue] = useState<T>({} as T);
 
   let [formErrors, setFormErrors] = useState<T>({} as T);
 
@@ -603,6 +603,11 @@ const useForm = <T extends FormValues = FormValues>(options?: {
     }
   };
 
+  const setFormData = (data: T, notifyServer: boolean = true) => {
+    if (notifyServer) onChange?.(data);
+    setFormValue(data);
+  };
+
   return {
     watch,
     reset,
@@ -615,10 +620,7 @@ const useForm = <T extends FormValues = FormValues>(options?: {
     resetField,
     handleSubmit,
     clearValue,
-    setFormData: (data, notifyServer = true) => {
-      if (notifyServer) onChange?.(data);
-      setFormData(data);
-    },
+    setFormData,
     formData,
     formErrors,
   };
