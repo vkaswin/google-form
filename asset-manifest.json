@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/google-form/static/css/main.c68ceabe.css",
-    "main.js": "/google-form/static/js/main.a95fb263.js",
+    "main.js": "/google-form/static/js/main.deea735a.js",
     "static/media/icons.svg": "/google-form/static/media/icons.468e2c817b23619a961a.svg",
     "static/media/icons.eot": "/google-form/static/media/icons.5fc889455954d2025848.eot",
     "static/media/icons.woff": "/google-form/static/media/icons.68a81c0b9428d2d2ac1d.woff",
@@ -12,10 +12,10 @@
     "static/media/png": "/google-form/static/media/63cbc793b980b42e42c2d8b5.1ccdcbd44484bc77959e.png",
     "index.html": "/google-form/index.html",
     "main.c68ceabe.css.map": "/google-form/static/css/main.c68ceabe.css.map",
-    "main.a95fb263.js.map": "/google-form/static/js/main.a95fb263.js.map"
+    "main.deea735a.js.map": "/google-form/static/js/main.deea735a.js.map"
   },
   "entrypoints": [
     "static/css/main.c68ceabe.css",
-    "static/js/main.a95fb263.js"
+    "static/js/main.deea735a.js"
   ]
 }
