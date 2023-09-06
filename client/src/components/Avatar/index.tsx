@@ -11,7 +11,7 @@ type AvatarProps = {
 const Avatar = ({ userName, logout }: AvatarProps) => {
   const initial = useMemo(() => {
     if (!userName) return;
-    let [firstName, lastName] = userName.split(" ");
+    let [firstName, lastName = ""] = userName.split(" ");
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.trim();
   }, [userName]);
 
